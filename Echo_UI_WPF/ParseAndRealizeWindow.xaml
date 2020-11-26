@@ -1,0 +1,56 @@
+﻿<Window 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uc="clr-namespace:FlexibleRealization.UserInterface;assembly=FlexibleRealization_UserInterface_WPF"
+        xmlns:SimpleNLG_Properties="clr-namespace:SimpleNLG.Properties;assembly=SimpleNLG"    
+        xmlns:CoreNLP_Properties="clr-namespace:Stanford.CoreNLP.Properties;assembly=EnglishParsing"
+        x:Class="Echo.UserInterface.ParseAndRealizeWindow"
+        mc:Ignorable="d"
+        Title="Element Builder Tree Editor" Height="450" Width="800">
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+        
+        <Menu Grid.Row="0" FontSize="12" Background="White">
+            <MenuItem Header="_CoreNLP">
+                <MenuItem Header="_Hostname">
+                    <TextBox Width="100" Text="{Binding Source={x:Static CoreNLP_Properties:Settings.Default}, Path=CoreNLP_ServerHost}" TextChanged="CoreNLP_SettingChanged"/>
+                </MenuItem>
+                <MenuItem Header="_Port">
+                    <TextBox Width="100" Text="{Binding Source={x:Static CoreNLP_Properties:Settings.Default}, Path=CoreNLP_ServerPort}" TextChanged="CoreNLP_SettingChanged"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_SimpleNLG">
+                <MenuItem Header="_Hostname">
+                    <TextBox Width="100" Text="{Binding Source={x:Static SimpleNLG_Properties:Settings.Default}, Path=SimpleNLG_ServerHost}" TextChanged="SimpleNLG_SettingChanged"/>
+                </MenuItem>
+                <MenuItem Header="_Port">
+                    <TextBox Width="100" Text="{Binding Source={x:Static SimpleNLG_Properties:Settings.Default}, Path=SimpleNLG_ServerPort}" TextChanged="SimpleNLG_SettingChanged"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <TextBox x:Name="inputTextBox" Grid.Row="1" Grid.Column="0" Margin="0 0 0 5" 
+                 HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" 
+                 TextWrapping="NoWrap" TextInput="inputTextBox_TextInput" />
+        
+        <Button Grid.Row="1" Grid.Column="1" Name="parseButton" Content="Parse" Width="50" Margin="0 2 0 7" Click="parseButton_Click" />
+        
+        <uc:ElementBuilderGraphEditor Grid.Row="2" Grid.ColumnSpan="2" Name="GraphEditor"/>
+        
+        <TextBox x:Name="realizedTextBox" Grid.Row="3" Grid.ColumnSpan="2" Margin="0 5 0 0" 
+                 HorizontalAlignment="Stretch" VerticalContentAlignment="Center"
+                 TextWrapping="NoWrap" />
+
+    </Grid>
+</Window>
