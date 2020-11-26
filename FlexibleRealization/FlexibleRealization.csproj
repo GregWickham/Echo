@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69A075E7-46B1-4AEE-B5E9-8F7DA88D773A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FlexibleRealization</RootNamespace>
+    <AssemblyName>FlexibleRealization</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Element Builders\Interfaces\IElementBuilder.cs" />
+    <Compile Include="Element Builders\Interfaces\IElementTreeNode.cs" />
+    <Compile Include="Element Builders\Interfaces\IIndexRange.cs" />
+    <Compile Include="Element Builders\Interfaces\IPhraseHead.cs" />
+    <Compile Include="Element Builders\Interfaces\ISyntaxComponent.cs" />
+    <Compile Include="Element Builders\Interfaces\ISyntaxHead.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhAdverbPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhNounPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhWordPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Compounds\CompoundBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Compounds\CompoundNounBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\IndependentClauseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\SubordinateClauseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\NominalModifierBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\SyntaxHeadBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\ParticleParent.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\ParticleBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhAdverbBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhDeterminerBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhPronounBuilder.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\ClausalComplement.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\IndirectObject.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\Object.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\OpenClausalComplement.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\AdjectivalClause.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\AdjectivalModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\AppositionalModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\CaseMarking.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\Classifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\NominalModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\NominalModifierPossessive.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\NumericModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\Referent.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\RelativeClauseModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\AdverbialClauseModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\AdverbialModifier.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\ClausalSubject.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Auxiliary.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\AuxiliaryPassive.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Copula.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\Determiner.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\NominalSubject.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\DiscourseElement.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Dislocated.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Expletive.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Marker.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\ObliqueNominal.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Vocative.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Compound.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Conjuct.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\CoordinatingConjunction.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\FixedMultiWordExspression.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\FlatMultiWordExpression.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\GoesWith.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\List.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Orphan.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\OverriddenDisfluency.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Parataxis.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Punctuation.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Root.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\UnspecifiedDependency.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\SyntacticRelation.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\CoordinatedPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\FragmentBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\AdverbBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\AdjectiveBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\ConjunctionBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\DeterminerBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\ModalBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\NounBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\PrepositionBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\PronounBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\ParseToken.cs" />
+    <Compile Include="Element Builders\Parts of Speech\PunctuationBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\CoordinablePhraseBuilder.cs" />
+    <Compile Include="Element Builders\ElementBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\PhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\AdjectivePhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\AdverbPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\ClauseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\NounPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\ParentElementBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\PossessiveEnding.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\PrepositionalPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\VerbPhraseBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\PartOfSpeechBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\WordElementBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\VerbBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleNLG\SimpleNLG.csproj">
+      <Project>{2df23dcb-99f7-4e02-8e59-8792b9aeeab8}</Project>
+      <Name>SimpleNLG</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="SpicNSpan" AfterTargets="Clean">
+    <!-- bin -->
+    <RemoveDir Directories="$(TargetDir)" />
+    <!-- obj -->
+    <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" />
+  </Target>
+</Project>
