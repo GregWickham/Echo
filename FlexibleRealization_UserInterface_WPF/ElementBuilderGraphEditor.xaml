@@ -1,0 +1,33 @@
+﻿<UserControl x:Name="GraphEditor" x:Class="FlexibleRealization.UserInterface.ElementBuilderGraphEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:graphx="http://schemas.panthernet.ru/graphx/" xmlns:graphModels="clr-namespace:FlexibleRealization.UserInterface.ViewModels" 
+             xmlns:propertyTools="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    
+    <DockPanel LastChildFill="True">
+        <graphx:ZoomControl DockPanel.Dock="Left" x:Name="ZoomCtrl" Width="550">
+            <graphx:ZoomControl.Resources>
+                <ResourceDictionary Source="./Templates/ElementBuilderGraphXTemplates.xaml"/>
+            </graphx:ZoomControl.Resources>
+            <graphModels:ElementBuilderGraphArea x:Name="GraphArea" />
+        </graphx:ZoomControl>
+        <propertyTools:DockPanelSplitter Thickness="2"/>
+        <Grid DockPanel.Dock="Right">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" x:Name="ElementDescription" HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" Text="{Binding SelectedElementDescription}" Margin="4"/>
+            <propertyTools:PropertyGrid Grid.Row="1" x:Name="Properties" Width="Auto" Height="Auto" Background="WhiteSmoke" BorderBrush="DarkGray" BorderThickness="2"
+                SelectedObject="{Binding SelectedElementProperties}"
+                TabVisibility="Visible">
+            </propertyTools:PropertyGrid>
+        </Grid>
+    </DockPanel>
+
+
+</UserControl>
