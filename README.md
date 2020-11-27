@@ -13,4 +13,4 @@ Once the servers are running, you're ready to run Echo.  You can test the Simple
 
 The Visual Studio startup project for the user interface is `Echo_UI_WPF`:
 
-
+[Image of Echo WPF Window](/docs/images/EmptyWindow.jpg)
