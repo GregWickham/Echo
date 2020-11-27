@@ -2,7 +2,7 @@
 
 Echo does two things:
 
-1.  Accept output from the Stanford CoreNLP annotation pipeline, and transform it into a specification that can be realized by SimpleNLG; and
+1.  Transform output from the Stanford CoreNLP annotation pipeline into a specification that can be realized by SimpleNLG; and
 2.  Provide a user interface that can inspect the transformed specification as a directed graph.
 
 Echo connects to both CoreNLP and SimpleNLG in their server forms.  This permits relatively loose coupling to both systems, and allows CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server API's change).
