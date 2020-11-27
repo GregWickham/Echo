@@ -74,4 +74,4 @@ The process of incrementally handling more of these cases is test-driven.  The s
 
 CoreNLP appears to be an extremely stable system, with the very nice property that it *always* gives you *something* in the constituency parse.  That something is not always correct; but no matter how convoluted and bizarre the English input, I have yet to see it fail entirely.
 
-My intent is to achieve something like this behavior for Echo, such that if the syntax cannot be correctly parsed, it will at least construct a directed graph containing all the tokens, which the user can manually correct in the user interface to a reazlizable form.  This will require evolving the user interface from a simple graph inspector into a full-fledged graph editor.
+My intent is to achieve something like this behavior for Echo, such that if the syntax cannot be correctly parsed, it will at least construct a directed graph containing all the tokens, which the user can manually correct in the user interface to a realizable form.  This will require evolving the user interface from a simple graph inspector into a full-fledged graph editor.
