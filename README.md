@@ -47,10 +47,10 @@ The edges of the graph represent parent / child syntactic relations.  The line s
 
 When the parse / realize process is complete, the root node of the graph is initially selected.  This is shown in the above figure by the red border around the uppermost node.
 
-On the right side of the Echo window is a tab control that displays detailed information about the node selected in the graph.  In the figure, that selected node is the **Independent Clause*** at the root of the graph.
+On the right side of the Echo window is a tab control that displays detailed information about the node selected in the graph.  In the figure above, that selected node is the **Independent Clause** at the root of the graph.
 
 We can select a different node in the graph by clicking on it:
 
 ![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedCPPSelected.jpg)
 
-Now the tab control displays properties for the selected **Coordinated Prepositional Phrase**.
+Now the tab control displays properties for the selected **Coordinated Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
