@@ -28,7 +28,7 @@ To run the Echo pipeline, enter some text in the upper text box and press the "P
 This causes the following to happen:
 
 1.  The entered text is sent to the CoreNLP server and annotated.  
-2.  Echo uses selected information from the [Part-Of-Speech](https://stanfordnlp.github.io/CoreNLP/pos.html), [Constituency](https://stanfordnlp.github.io/CoreNLP/parse.html), and [Enhanced++ Dependency](https://universaldependencies.org/u/dep/index.html) annotations to construct the object graph displayed in the window.
+2.  Echo uses selected information from the [Part-Of-Speech](https://stanfordnlp.github.io/CoreNLP/pos.html), [Lemmatizer](https://stanfordnlp.github.io/CoreNLP/lemma.html), [Constituency](https://stanfordnlp.github.io/CoreNLP/parse.html), and [Enhanced++ Dependency](https://universaldependencies.org/u/dep/index.html) annotations to construct the object graph displayed in the window.
 3.  The object graph builds an XML specification and sends it to the SimpleNLG server to be realized.
 4.  The realized text is displayed in the text box at the bottom of the window.
 
