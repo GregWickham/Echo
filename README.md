@@ -63,7 +63,7 @@ Now the tab control displays properties for the selected **Coordinated Prepositi
 
 As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In most cases this will cause an unhandled exception to be thrown.
 
-The process of incrementally handling more of these cases is overwhelmingly test-driven.  The steps are:
+The process of incrementally handling more of these cases is test-driven.  The steps are:
 
 1. Identify a valid English syntactic construct that isn't handled properly;
 2. Locate the CoreNLP parse information that's capable of driving the correct transformation;
