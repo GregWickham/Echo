@@ -70,8 +70,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
             ParentElementBuilder.ChildRole.Complement => "C",
             ParentElementBuilder.ChildRole.Specifier => "S",
             ParentElementBuilder.ChildRole.Modal => "MD",
-            ParentElementBuilder.ChildRole.Coordinator => "C",
-            ParentElementBuilder.ChildRole.Coordinated => "E",
+            ParentElementBuilder.ChildRole.Coordinator => "CD",
+            ParentElementBuilder.ChildRole.Coordinated => "CE",
             ParentElementBuilder.ChildRole.Complementizer => "CM",
             ParentElementBuilder.ChildRole.Component => "W",
 
