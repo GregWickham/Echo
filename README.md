@@ -32,7 +32,7 @@ This causes the following to happen:
 3.  The object graph builds an XML specification and sends it to the SimpleNLG server to be realized.
 4.  The realized text is displayed in the text box at the bottom of the window.
 
-In the graph, the nodes on the lowest layer represent parse tokens.  These nodes are different from the other nodes, and this difference is reflected in their visual style.  The other nodes represent the syntactic structure of the parsed text, and their labels correspond roughly to the specification for [Penn Treebank II Constituent Tags](http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html).  However this correspondence is not exact because certain transformations are necessary in order to generate a specification in the format required by SimpleNLG.
+In the graph, the nodes on the lowest layer represent parse tokens.  These nodes are different from the other nodes, and this difference is reflected in their visual style.  The other nodes represent the syntactic structure of the parsed text, and their labels correspond roughly to the specification for [Penn Treebank II Constituent Tags](http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html).  However this correspondence is not exact, because certain transformations are necessary in order to generate a specification in the format required by SimpleNLG.
 
 The edges of the graph represent parent / child syntactic relations.  The line styles and labels of each edge denote the child's syntactic role within its parent element.  Edges (syntactic roles) are labeled as follows:
 
