@@ -41,7 +41,7 @@ The edges of the graph represent parent / child syntactic relations.  The line s
 * Specifier = **S**
 * Modal = **MD**
 * Coordinator = **CD**
-* Coordinated = **CE**
+* Coordinated Element = **CE**
 * Complementizer = **CM**
 * Component = **W**
 
