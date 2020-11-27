@@ -34,17 +34,23 @@ The edges of the graph represent parent / child syntactic relations.  The line s
 
 * Unassigned = **?**
 * Subject = **S**
-* Predicate **P**
-* Head **H**
-* Modifier **M**
-* Complement **C**
-* Specifier **S**
-* Modal **MD**
-* Coordinator **CD**
-* Coordinated **CE**
-* Complementizer **CM**
-* Component **W**
+* Predicate = **P**
+* Head = **H**
+* Modifier = **M**
+* Complement = **C**
+* Specifier = **S**
+* Modal = **MD**
+* Coordinator = **CD**
+* Coordinated = **CE**
+* Complementizer = **CM**
+* Component = **W**
 
 When the parse / realize process is done, the root node of the graph is initially selected.  This is shown in the above figure by the red border around the uppermost node.
 
 On the right side of the Echo window is a tab control that displays information about the node selected in the graph.  In the figure, that selected node is the **Independent Clause*** at the root of the graph.
+
+We can select a different node in the graph by clicking on it:
+
+![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedCPPSelected.jpg)
+
+Now the tab control displays properties for the selected **Coordinated Prepositional Phrase**.
