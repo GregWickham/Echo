@@ -5,7 +5,7 @@ Echo does two things:
 1.  Transform output from the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) annotation pipeline into a specification that can be realized by [SimpleNLG](https://github.com/simplenlg/simplenlg); and
 2.  Provide a user interface that can inspect the transformed specification as a directed graph.
 
-Echo connects to both CoreNLP and SimpleNLG in their server forms.  This permits relatively loose coupling to both systems, and allows CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server API's change).
+Echo connects to both CoreNLP and SimpleNLG in their server forms.  This permits relatively loose coupling to both systems, and allows CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server APIs change).
 
 ### Prerequisites
 
@@ -61,9 +61,16 @@ Now the tab control displays properties for the selected **Coordinated Prepositi
 
 ### Limitations
 
-As you can imagine, the English language contains a dizzying variety of syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In most cases this will cause an unhandled exception to be thrown.
+As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In most cases this will cause an unhandled exception to be thrown.
 
-### Planned Work
+The process of incrementally handling more of these cases is overwhelmingly test-driven.  The steps are:
+
+1. Identify a valid syntactic construct that isn't handled properly;
+2. Locate the CoreNLP parse information that's capable of driving the correct transformation;
+3. Add the required transformation logic; and
+4. Add new unit test case(s) that exercise the functionality.
+
+### Planned Evolution
 
 CoreNLP appears to be an extremely stable system, with the very nice property that it *always* gives you *something* in the constituency parse.  That something is not always correct; but no matter how convoluted and bizarre the English input, I have yet to see it fail entirely.
 
