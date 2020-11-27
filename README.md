@@ -7,9 +7,13 @@ Echo does two things:
 
 Echo connects to both CoreNLP and SimpleNLG in their server forms.  This permits relatively loose coupling to both systems, and allows CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server API's change).
 
+### Prerequisites
+
 To use Echo, the first step is to install and run the servers for CoreNLP and SimpleNLG.  The folder called `Server BAT files` contains two Windows batch files that I use to start the servers.  These batch files refer to specific locations in my file system, so you'll need to modify them to reflect the actual locations where you install the distribution `.jar` files.  The SimpleNLG server requires two `.jar` files that are not included in the SimpleNLG distribution -- `hsqldb_6148.jar` and `lexAccess2013dist.jar`.
 
 Once the servers are running, you're ready to run Echo.  You can test the SimpleNLG connection by using Visual Studio Test Explorer to run the unit tests in the `SimpleNLG_Tests` project.  The unit tests in `ParseAndRealize_Tests` exercise both the CoreNLP **and** SimpleNLG ends of the bridge.  Sometimes a few of the tests in `ParseAndRealize_Tests` will fail for reasons that I don't understand.  If this happens, try running those tests individually and they should work.
+
+### The User Interface
 
 The Visual Studio startup project for the user interface is `Echo_UI_WPF`:
 
@@ -54,3 +58,13 @@ We can select a different node in the graph by clicking on it:
 ![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedCPPSelected.jpg)
 
 Now the tab control displays properties for the selected **Coordinated Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
+
+### Limitations
+
+As you can imagine, the English language contains a dizzying variety of syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In most cases this will cause an unhandled exception to be thrown.
+
+### Planned Work
+
+CoreNLP appears to be an extremely stable system; and it seems to have the very nice feature that it *always* gives you *something* in the constituency parse.  That something is not always correct; but no matter how convoluted and bizarre the English input, I have yet to see it fail entirely.
+
+My objective is to achieve something like this behavior for Echo, such that if the syntax cannot be correctly parsed, it will at least construct a direct graph containing all the tokens, which the user can then correct in the user interface.  This will require evolving the user interface from a simple graph inspector into a full-fledged graph editor.
