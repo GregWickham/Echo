@@ -11,5 +11,6 @@ To use Echo, the first step is to install and run the servers for CoreNLP and Si
 
 Once the servers are running, you're ready to run Echo.  You can test the SimpleNLG connection by using Test Explorer to run the unit tests in the `SimpleNLG_Tests` project.  The unit tests in `ParseAndRealize_Tests` exercise both the CoreNLP **and** SimpleNLG ends of the bridge.  Sometimes a few of the tests in `ParseAndRealize_Tests` will fail for reasons that I don't understand.  If this happens, try running those tests individually and they should work.
 
-The Visual Studio startup project for the user interface is `Echo_UI_WPF`.
+The Visual Studio startup project for the user interface is `Echo_UI_WPF`:
+
 
