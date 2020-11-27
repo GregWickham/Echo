@@ -32,18 +32,18 @@ In the graph, the lowest layer of nodes represent parse tokens.  These nodes are
 
 The edges of the graph represent parent / child syntactic relations.  The line styles and labels of each edge denote the child's syntactic role within its parent element.  The syntactic roles are as follows:
 
-* Unassigned =  ?
-* Subject =     S
-* Predicate => "P",
-* Head => "H",
-* Modifier => "M",
-* Complement => "C",
-* Specifier => "S",
-* Modal => "MD",
-* Coordinator => "CD",
-* Coordinated => "CE",
-* Complementizer => "CM",
-* Component => "W",
+* Unassigned = **?**
+* Subject = **S**
+* Predicate **P**
+* Head **H**
+* Modifier **M**
+* Complement **C**
+* Specifier **S**
+* Modal **MD**
+* Coordinator **CD**
+* Coordinated **CE**
+* Complementizer **CM**
+* Component **W**
 
 When the parse / realize process is done, the root node of the graph is initially selected.  This is shown in the above figure by the red border around the uppermost node.
 
