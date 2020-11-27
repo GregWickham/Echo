@@ -30,7 +30,7 @@ This causes the following to happen:
 
 In the graph, the lowest layer of nodes represent parse tokens.  These nodes are different from the other nodes, and this difference is reflected in their visual style.  The other nodes represent the syntactic structure of the parsed text, and their labels correspond roughly to the specification for [Penn Treebank II Constituent Tags](http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html).  However this correspondence is not exact because certain transformations are necessary in order to generate a specification in the format required by SimpleNLG.
 
-The edges of the graph represent parent / child syntactic relations.  The line styles and labels of each edge denote the child's syntactic role within its parent element.  The syntactic roles are as follows:
+The edges of the graph represent parent / child syntactic relations.  The line styles and labels of each edge denote the child's syntactic role within its parent element.  Edges (syntactic roles) are labeled as follows:
 
 * Unassigned = **?**
 * Subject = **S**
@@ -45,9 +45,9 @@ The edges of the graph represent parent / child syntactic relations.  The line s
 * Complementizer = **CM**
 * Component = **W**
 
-When the parse / realize process is done, the root node of the graph is initially selected.  This is shown in the above figure by the red border around the uppermost node.
+When the parse / realize process is complete, the root node of the graph is initially selected.  This is shown in the above figure by the red border around the uppermost node.
 
-On the right side of the Echo window is a tab control that displays information about the node selected in the graph.  In the figure, that selected node is the **Independent Clause*** at the root of the graph.
+On the right side of the Echo window is a tab control that displays detailed information about the node selected in the graph.  In the figure, that selected node is the **Independent Clause*** at the root of the graph.
 
 We can select a different node in the graph by clicking on it:
 
