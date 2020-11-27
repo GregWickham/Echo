@@ -65,7 +65,7 @@ As you can imagine, the English language contains a dizzying variety of valid sy
 
 The process of incrementally handling more of these cases is overwhelmingly test-driven.  The steps are:
 
-1. Identify a valid syntactic construct that isn't handled properly;
+1. Identify a valid English syntactic construct that isn't handled properly;
 2. Locate the CoreNLP parse information that's capable of driving the correct transformation;
 3. Add the required transformation logic; and
 4. Add new unit test case(s) that exercise the functionality.
