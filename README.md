@@ -45,7 +45,7 @@ The edges of the graph represent parent / child syntactic relations.  The line s
 * Complementizer = **CM**
 * Component = **W**
 
-When the parse / realize process is complete, the root node of the graph is initially selected.  This selection is denoted in the above figure by the red border around the uppermost node.
+When the parse / realize process is complete, the root node of the graph is initially selected.  This selection is indicated in the above figure by a red border around the uppermost node.
 
 On the right side of the Echo window is a tab control that displays detailed information about the node selected in the graph.  In the figure above, that selected node is the **Independent Clause** at the root of the graph.
 
