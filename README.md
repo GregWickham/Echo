@@ -2,7 +2,7 @@
 
 Echo does two things:
 
-1.  Transform output from the Stanford CoreNLP annotation pipeline into a specification that can be realized by SimpleNLG; and
+1.  Transform output from the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) annotation pipeline into a specification that can be realized by [SimpleNLG](https://github.com/simplenlg/simplenlg); and
 2.  Provide a user interface that can inspect the transformed specification as a directed graph.
 
 Echo connects to both CoreNLP and SimpleNLG in their server forms.  This permits relatively loose coupling to both systems, and allows CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server API's change).
@@ -24,7 +24,7 @@ To run the Echo pipeline, enter some text in the upper text box and press the "P
 This causes the following to happen:
 
 1.  The entered text is sent to the CoreNLP server and annotated.  
-2.  Echo uses selected information from the Part-Of-Speech, Contituency, and Enhanced++ Dependency annotations to construct the object graph displayed in the window.
+2.  Echo uses selected information from the [Part-Of-Speech](https://stanfordnlp.github.io/CoreNLP/pos.html), [Contituency](https://stanfordnlp.github.io/CoreNLP/parse.html), and [Enhanced++ Dependency](https://universaldependencies.org/u/dep/index.html) annotations to construct the object graph displayed in the window.
 3.  The object graph builds an XML specification and sends it to the SimpleNLG server to be realized.
 4.  The realized text is displayed in the text box at the bottom of the window.
 
