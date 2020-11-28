@@ -47,7 +47,7 @@ The edges of the graph represent parent / child syntactic relations.  The line s
 * Coordinator = **CD**
 * Coordinated Element = **CE**
 * Complementizer = **CM**
-* Component of a Compond Word = **W**
+* Component of a Compound Word = **W**
 
 When the parse / realize process is complete, the root node of the graph is initially selected.  This selection is indicated in the above figure by a red border around the uppermost node.
 
