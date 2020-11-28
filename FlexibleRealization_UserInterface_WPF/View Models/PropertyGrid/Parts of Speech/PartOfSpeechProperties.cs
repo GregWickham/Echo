@@ -19,19 +19,19 @@ namespace FlexibleRealization.UserInterface.ViewModels
         public string Role => Parent.DescriptionFor(Model.AssignedRole);
 
 
-        [Category("Properties|")]
+        [Category("Features|")]
         [DisplayName("POS Tag")]
         public string Tag => Model.Token.PartOfSpeech;
 
-        [Category("Properties|")]
+        [Category("Features|")]
         [DisplayName("Index")]
         public int Index => Model.Token.Index;
 
-        [Category("Properties|")]
+        [Category("Features|")]
         [DisplayName("Word")]
         public string Word => Model.Token.Word;
 
-        [Category("Properties|")]
+        [Category("Features|")]
         [DisplayName("Lemma")]
         public string Lemma => Model.Token.Lemma;
     }
