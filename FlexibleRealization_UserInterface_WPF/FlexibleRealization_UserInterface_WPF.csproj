@@ -97,12 +97,14 @@
     <Compile Include="View Models\PropertyGrid\Parent Elements\ParentProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Clauses\IndependentClauseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Clauses\SubordinateClauseProperties.cs" />
+    <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\NominalModifierProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\AdjectivePhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\AdverbPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\CoordinatedPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\NounPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\PrepositionalPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\VerbPhraseProperties.cs" />
+    <Compile Include="View Models\PropertyGrid\Parts of Speech\CompoundWordProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parts of Speech\PartOfSpeechProperties.cs" />
   </ItemGroup>
   <ItemGroup>

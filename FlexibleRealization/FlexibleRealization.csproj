@@ -61,7 +61,7 @@
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\SubordinateClauseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\NominalModifierBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\SyntaxHeadBuilder.cs" />
-    <Compile Include="Element Builders\Parts of Speech\ParticleParent.cs" />
+    <Compile Include="Element Builders\Parent Elements\ParticleParent.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\ParticleBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhAdverbBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhDeterminerBuilder.cs" />

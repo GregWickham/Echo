@@ -16,6 +16,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
             AdverbPhraseBuilder apb => new AdverbPhraseProperties(apb),
             PrepositionalPhraseBuilder ppb => new PrepositionalPhraseProperties(ppb),
             CoordinatedPhraseBuilder cpb => new CoordinatedPhraseProperties(cpb),
+            NominalModifierBuilder nmb => new NominalModifierProperties(nmb),
+            CompoundBuilder cwb => new CompoundWordProperties(cwb),
 
             _ => new ParentProperties(builder)
         };
