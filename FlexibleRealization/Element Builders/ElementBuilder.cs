@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using SimpleNLG;
 using FlexibleRealization.Dependencies;
 
@@ -123,7 +125,7 @@ namespace FlexibleRealization
         }
 
         /// <summary>Return true if this is anywhere inside a nominal modifier</summary>
-        private protected bool IsPartOfANominalModifier => Ancestors.Any(Ancestors => Ancestors is NominalModifierBuilder);
+        private protected bool IsPartOfANominalModifier => Ancestors.Any(ancestor => ancestor is NominalModifierBuilder);
 
         /// <summary>Search for an ancestor ElementBuilder relative to which this ElementBuilder has ChildRole <paramref name="role"/>, either directly or through one or more intercedent phrase head relations.</summary>
         /// <returns>The searched for ancestor if found, or null if not found</returns>
@@ -351,6 +353,43 @@ namespace FlexibleRealization
 
         /// <summary>Build and return the <see cref="NLGElement"/> represented by this ElementBuilder</summary>
         public abstract NLGElement BuildElement();
+
+        public string XML
+        {
+            get
+            {
+                try
+                {
+                    NLGElement element = BuildElement();
+                    string serialized;
+                    using (var stringwriter = new System.IO.StringWriter())
+                    {
+                        var serializer = new XmlSerializer(element.GetType());
+                        serializer.Serialize(stringwriter, element);
+                        serialized = stringwriter.ToString();
+                    }
+                    // Strip out the namespace declarations to make the XML more compact, so it looks nice in the user interface
+                    XDocument document = XDocument.Parse(serialized);
+                    document.Descendants()
+                       .Attributes()
+                       .Where(x => x.IsNamespaceDeclaration)
+                       .Remove();
+                    foreach (var elem in document.Descendants())
+                        elem.Name = elem.Name.LocalName;
+                    foreach (var attr in document.Descendants().Attributes())
+                    {
+                        var elem = attr.Parent;
+                        attr.Remove();
+                        elem.Add(new XAttribute(attr.Name.LocalName, attr.Value));
+                    }
+                    return document.ToString();
+                }
+                catch (Exception)
+                {
+                    return "Can't build this element";
+                }
+            }
+        }
 
         #region Implementation of INotifyPropertyChanged
 

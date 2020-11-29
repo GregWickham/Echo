@@ -8,7 +8,7 @@ namespace FlexibleRealization
     /// <summary>The base class for PhraseBuilders that build a type of PhraseElement which CAN BE coordinated. ("Coordinable" = "Can be coordinated")</summary>
     /// <remarks>During the initial construction of the ElementBuilder from the CoreNLP constituency parse, we don't yet know whether a given
     /// phrase is going to be coordinated because its constituents are not all present.  When we reach the Configuration stage, we're able to make that
-    /// decision by checking to see whather we have multiple head elements and a coordinating conjunction.</remarks>
+    /// decision by checking to see whether we have multiple head elements and a coordinating conjunction.</remarks>
     public abstract class CoordinablePhraseBuilder : PhraseBuilder
     {
         /// <summary>If we decide during Configure that we're NOT going to build a CoordinatedPhraseElement, then we expect to have exactly one head element</summary>

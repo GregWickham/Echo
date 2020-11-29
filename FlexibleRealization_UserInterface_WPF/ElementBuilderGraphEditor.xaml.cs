@@ -1,11 +1,17 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 using System.Windows;
 using GraphX.Controls;
+using SimpleNLG;
 using FlexibleRealization.UserInterface.ViewModels;
 
 namespace FlexibleRealization.UserInterface
 {
     public delegate void ElementBuilderSelected_EventHandler(ElementBuilder selectedBuilder);
+
+    public delegate void RealizationFailed_EventHandler(IElementTreeNode failedBuilder);
+
+    public delegate void TextRealized_EventHandler(string realizedText);
 
     /// <summary>Interaction logic for ElementBuilderGraphEditor.xaml</summary>
     public partial class ElementBuilderGraphEditor : UserControl
@@ -31,8 +37,26 @@ namespace FlexibleRealization.UserInterface
             Loaded -= ElementBuilderGraphEditor_Loaded;
         }
 
+        /// <summary>Generate an editable tree from <paramref name="text"/>, try to realize the tree, and raise an event indicating the outcome</summary>
+        public void ParseText(string text)
+        {
+            IElementTreeNode editableTree = FlexibleRealizerFactory.EditableTreeFrom(text);
+            SetModel(editableTree);
+            try
+            {
+                IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(editableTree);
+                NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
+                string realized = SimpleNLG.Client.Realize(spec);
+                OnTextRealized(realized);
+            }
+            catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
+            {
+                OnRealizationFailed(editableTree);
+            }
+        }
+
         /// <summary>Assign <paramref name="elementBuilderTree"/> as the model for this editor</summary>
-        public void SetModel(IElementBuilder elementBuilderTree)
+        private void SetModel(IElementTreeNode elementBuilderTree)
         {
             ElementBuilderGraph graph = ElementBuilderGraphFactory.GraphOf(elementBuilderTree);
             GraphArea.LogicCore = new ElementBuilderLogicCore(graph);
@@ -59,8 +83,30 @@ namespace FlexibleRealization.UserInterface
             }
         }
 
-        /// <summary>Register for this event to be notified when an <see cref="ElementBuilder"/> is selected in the graph</summary>
+        /// <summary>Register for this event to be notified when an ElementBuilder is selected in the graph</summary>
         public event ElementBuilderSelected_EventHandler ElementBuilderSelected;
-        private void OnElementBuilderSelected(ElementBuilder builder) => ElementBuilderSelected?.Invoke(builder);
+        private void OnElementBuilderSelected(ElementBuilder builder)
+        {
+            ElementBuilderSelected?.Invoke(builder);
+            try
+            {
+                IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(builder);
+                NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
+                string realized = SimpleNLG.Client.Realize(spec);
+                OnTextRealized(realized);
+            }
+            catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
+            {
+                OnRealizationFailed(builder);
+            }
+        }
+
+        /// <summary>Notify listeners that this ElementBuilderGraphEditor has failed to realize text for an ElementBuilder</summary>
+        public event RealizationFailed_EventHandler RealizationFailed;
+        private void OnRealizationFailed(IElementTreeNode failed) => RealizationFailed?.Invoke(failed);
+
+        /// <summary>Notify listeners that this ElementBuilderGraphEditor has successfully realized some text</summary>
+        public event TextRealized_EventHandler TextRealized;
+        private void OnTextRealized(string realizedText) => TextRealized?.Invoke(realizedText);
     }
 }

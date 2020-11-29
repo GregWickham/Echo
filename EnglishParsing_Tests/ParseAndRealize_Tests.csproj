@@ -82,6 +82,10 @@
       <Project>{8e991b2f-4626-4715-b7ed-54498526aa19}</Project>
       <Name>EnglishParsing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FlexibleRealization\FlexibleRealization.csproj">
+      <Project>{69a075e7-46b1-4aee-b5e9-8f7da88d773a}</Project>
+      <Name>FlexibleRealization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SimpleNLG\SimpleNLG.csproj">
       <Project>{2df23dcb-99f7-4e02-8e59-8792b9aeeab8}</Project>
       <Name>SimpleNLG</Name>

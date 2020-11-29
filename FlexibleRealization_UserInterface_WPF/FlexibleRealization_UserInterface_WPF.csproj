@@ -118,6 +118,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EnglishParsing\EnglishParsing.csproj">
+      <Project>{8e991b2f-4626-4715-b7ed-54498526aa19}</Project>
+      <Name>EnglishParsing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FlexibleRealization\FlexibleRealization.csproj">
       <Project>{69a075e7-46b1-4aee-b5e9-8f7da88d773a}</Project>
       <Name>FlexibleRealization</Name>
