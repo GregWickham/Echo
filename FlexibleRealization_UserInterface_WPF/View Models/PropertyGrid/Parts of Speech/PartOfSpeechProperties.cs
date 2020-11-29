@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using PropertyTools.DataAnnotations;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
@@ -34,5 +34,10 @@ namespace FlexibleRealization.UserInterface.ViewModels
         [Category("Features|")]
         [DisplayName("Lemma")]
         public string Lemma => Model.Token.Lemma;
+
+        [Category("XML|")]
+        [FillTab]
+        [HeaderPlacement(HeaderPlacement.Collapsed)]
+        public string Serialized => Model.XML;
     }
 }

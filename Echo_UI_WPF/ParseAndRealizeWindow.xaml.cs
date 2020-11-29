@@ -33,6 +33,7 @@ namespace Echo.UserInterface
             realizedTextBox.Text = "";
         }
 
+        /// <summary>A color representing that realization has failed</summary>
         private static Brush RealizeFailedBrush = new SolidColorBrush(Color.FromArgb(100, 254, 0, 0));
 
         protected override void OnClosing(CancelEventArgs e)
@@ -52,11 +53,13 @@ namespace Echo.UserInterface
         /// <summary>If there's text in the inputTextBox, parse it</summary>
         private void parseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (inputTextBox.Text.Length > 0) GraphEditor.ParseText(inputTextBox.Text);
+            if (inputTextBox.Text.Length > 0) HandleTextInput(inputTextBox.Text);
         }
 
+        /// <summary>Send <paramref name="text"/> to the GraphEditor</summary>
         private void HandleTextInput(string text) => GraphEditor.ParseText(text);
 
+        /// <summary>The user has entered some text in the inputTextBox</summary>
         private void inputTextBox_TextInput(object sender, TextCompositionEventArgs e) => HandleTextInput(e.Text);
     }
 }

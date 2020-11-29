@@ -268,5 +268,10 @@ namespace FlexibleRealization.UserInterface.ViewModels
         }
 
         #endregion Features
+
+        [Category("XML|")]
+        [FillTab]
+        [HeaderPlacement(HeaderPlacement.Collapsed)]
+        public string Serialized => Model.XML;
     }
 }

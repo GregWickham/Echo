@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using SimpleNLG;
 
 namespace FlexibleRealization
@@ -26,7 +24,9 @@ namespace FlexibleRealization
                 case ConjunctionBuilder cb:
                     SetCoordinator(cb);
                     break;
-                default: throw new InvalidOperationException("Prepositional phrase can't fund a role for this element");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 

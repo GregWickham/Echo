@@ -50,7 +50,6 @@ namespace FlexibleRealization
                 default:
                     AddUnassignedChild(child);
                     break;
-                    //throw new InvalidOperationException("Verb phrase can't find a role for this element");
             }
         }
 

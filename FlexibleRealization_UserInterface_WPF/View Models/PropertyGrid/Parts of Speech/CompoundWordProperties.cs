@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using PropertyTools.DataAnnotations;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
@@ -16,5 +16,9 @@ namespace FlexibleRealization.UserInterface.ViewModels
         [DisplayName("Role")]
         public string Role => Parent.DescriptionFor(Model.AssignedRole);
 
+        [Category("XML|")]
+        [FillTab]
+        [HeaderPlacement(HeaderPlacement.Collapsed)]
+        public string Serialized => Model.XML;
     }
 }

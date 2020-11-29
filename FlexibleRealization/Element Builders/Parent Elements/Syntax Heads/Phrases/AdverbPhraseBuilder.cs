@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using SimpleNLG;
 
 namespace FlexibleRealization
@@ -26,7 +25,9 @@ namespace FlexibleRealization
                 case DeterminerBuilder db:
                     AddUnassignedChild(db);
                     break;
-                default: throw new InvalidOperationException("Adverb phrase can't find a role for this element");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 

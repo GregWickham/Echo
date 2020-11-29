@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using SimpleNLG;
+﻿using SimpleNLG;
 
 namespace FlexibleRealization
 {
+    /// <summary>This parent type can be returned by the constituency parse, but we eliminate it during Configuration</summary>
     public class ParticleParent : ParentElementBuilder
     {
         private WordElement Particle = new WordElement();
@@ -16,16 +14,14 @@ namespace FlexibleRealization
                 case ParticleBuilder pb:
                     AddChildWithRole(pb, ChildRole.Head);
                     break;
-                default: throw new InvalidOperationException("Particle parent can't find a role for this child type");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 
         public override NLGElement BuildElement() => BuildWord();
 
-        public WordElement BuildWord()
-        {
-
-            return Particle;
-        }
+        public WordElement BuildWord() => Particle;
     }
 }

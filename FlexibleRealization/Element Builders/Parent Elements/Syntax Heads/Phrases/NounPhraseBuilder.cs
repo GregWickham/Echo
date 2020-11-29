@@ -59,7 +59,9 @@ namespace FlexibleRealization
                 case SubordinateClauseBuilder scb:
                     AddComplement(scb);
                     break;
-                default: throw new InvalidOperationException("Noun phrase can't find a role for this element");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 

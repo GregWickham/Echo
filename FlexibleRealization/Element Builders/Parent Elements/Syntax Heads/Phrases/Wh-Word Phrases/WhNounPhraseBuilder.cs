@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FlexibleRealization
+﻿namespace FlexibleRealization
 {
     public class WhNounPhraseBuilder : WhWordPhraseBuilder
     {
@@ -16,7 +14,9 @@ namespace FlexibleRealization
                 case WhPronounBuilder wpb:
                     HeadWord = wpb;
                     break;
-                default: throw new InvalidOperationException("Wh-noun phrase can't find a role for this element");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 

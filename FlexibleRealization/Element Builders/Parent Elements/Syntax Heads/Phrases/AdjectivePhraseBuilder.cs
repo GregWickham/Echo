@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using SimpleNLG;
 
@@ -32,7 +31,9 @@ namespace FlexibleRealization
                 case ConjunctionBuilder cb:
                     SetCoordinator(cb);
                     break;
-                default: throw new InvalidOperationException("Adjective phrase can't find a role for this element");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 

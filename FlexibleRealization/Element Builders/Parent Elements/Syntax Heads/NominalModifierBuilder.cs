@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using SimpleNLG;
 
@@ -16,28 +15,22 @@ namespace FlexibleRealization
             switch (child)
             {
                 case NounBuilder nb:
-                    AssignRoleFor(nb);
+                    AddChildWithRole(nb, ChildRole.Head);
                     break;
                 case AdjectiveBuilder ab:
-                    AssignRoleFor(ab);
+                    AddChildWithRole(ab, ChildRole.Head);
                     break;
                 case AdjectivePhraseBuilder apb:
-                    AssignRoleFor(apb);
+                    AddChildWithRole(apb, ChildRole.Modifier);
                     break;
                 case NominalModifierBuilder nmb:
-                    AssignRoleFor(nmb);
+                    AddChildWithRole(nmb, ChildRole.Modifier);
                     break;
-                default: throw new InvalidOperationException("Nominal modifier can't find a role for this element");
+                default: 
+                    AddUnassignedChild(child);
+                    break;
             }
         }
-
-        private void AssignRoleFor(NounBuilder noun) => AddChildWithRole(noun, ChildRole.Head);
-
-        private void AssignRoleFor(AdjectiveBuilder adjective) => AddChildWithRole(adjective, ChildRole.Head);
-
-        private void AssignRoleFor(AdjectivePhraseBuilder phrase) => AddChildWithRole(phrase, ChildRole.Modifier);
-
-        private void AssignRoleFor(NominalModifierBuilder nominalModifier) => AddChildWithRole(nominalModifier, ChildRole.Modifier);
 
         #endregion Initial assignment of children
 
