@@ -63,6 +63,8 @@ Now that we've seen an example where the entire process of *Parse / Transform / 
 
 ![Image of clause that fails to realize](/docs/images/MisplacedPP.jpg)
 
+Even though the realized text looks okay, something is not quite right.
+
 This sentence is an interesting case because it illustrates the most fundamental problem this system can encounter:  *None of the annotations contain the information required to construct a fully correct realizer specification.*  Here's what we get from CoreNLP:
 
 ![Image of CoreNLP parse results](/docs/images/CoreNLPResult1.jpg)
