@@ -33,7 +33,7 @@ namespace FlexibleRealization
                     AddModifier(apb);
                     break;
                 case PrepositionalPhraseBuilder ppb:
-                    AddComplement(ppb);
+                    AddModifier(ppb);
                     break;
                 case ConjunctionBuilder cb:
                     SetCoordinator(cb);

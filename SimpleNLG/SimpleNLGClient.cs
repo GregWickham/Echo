@@ -8,7 +8,8 @@ namespace SimpleNLG
 {
 	public static class Client
 	{
-		//public static string Realize(NLGSpec specToRealize) => Realize(Serialize(specToRealize));
+		public static string Realize(NLGSpec specToRealize) => Realize(specToRealize.Serialize());
+
 		//public static string Realize(RequestType request) => Realize(new NLGSpec 
 		//{ 
 		//	Item = request 
@@ -61,19 +62,5 @@ namespace SimpleNLG
 				}
 			}
 		}
-
-		//private static string Serialize(NLGSpec spec)
-		//{
-		//	string serialized;
-		//	using (var stringwriter = new System.IO.StringWriter())
-		//	{
-		//		var serializer = new XmlSerializer(spec.GetType());
-		//		serializer.Serialize(stringwriter, spec);
-		//		serialized = stringwriter.ToString();
-		//	}
-		//	Console.WriteLine(serialized);
-		//	return serialized;
-		//}
-
 	}
 }
