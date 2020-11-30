@@ -77,8 +77,8 @@ In order to be semantically correct, the phrase "in the air" should be a modifie
 
 As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In these cases, one of two possible exceptions should be thrown:
 
-`TreeCannotBeTransformedToRealizableFormException` : In this case the user interface should display the **Editable Form** of the tree.
-`SpecCannotBeBuiltException` : This means that a transformation of the tree to **Realizable Form** succeeded, but something went wrong while trying to build the `NLGSpec` to be sent to the SimpleNLG server.  In this case the user interface should display the **Editable Form** of the tree.
+`TreeCannotBeTransformedToRealizableFormException` : The transformation of the tree from **Editable Form** to **Realizable Form** failed.
+`SpecCannotBeBuiltException` : The transformation to **Realizable Form** succeeded, but something went wrong while trying to build the `NLGSpec` to be sent to the SimpleNLG server.
 
 The process of incrementally handling more of these cases is test-driven.  The steps are:
 
