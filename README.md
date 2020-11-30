@@ -63,9 +63,20 @@ Now that we've seen an example where the entire process of *Parse / Transform / 
 
 ![Image of clause that fails to realize](/docs/images/ParsedButRealizeFailed1.jpg)
 
+Now the text box at the bottom of the window does not display realized text, because we couldn't get that far.  Instead, the text box is empty and has a red background color to indicate the error.
+
+This sentence is an interesting case because it illustrates the most fundamental problem this system can encounter:  *None of the annotations contain the information required to construct a fully correct realizer specification.*  Here's what we get from CoreNLP:
+
+![Image of CoreNLP parse results](/docs/images/CoreNLPResult1.jpg)
+
+The problem is with the prepositional phrase "in the air."
+
 ### Limitations
 
-As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In most cases this will cause an unhandled exception to be thrown.
+As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In these cases, one of two possible exceptions should be thrown:
+
+`TreeCannotBeTransformedToRealizableFormException` : In this case the user interface should display the **Editable Form** of the tree.
+`SpecCannotBeBuiltException` : This means that a transformation of the tree to **Realizable Form** succeeded, but something went wrong while trying to build the NLGSpec to be sent to the SimpleNLG server.  In this case the user interface should display the **Editable Form** of the tree.
 
 The process of incrementally handling more of these cases is test-driven.  The steps are:
 
