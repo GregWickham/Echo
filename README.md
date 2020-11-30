@@ -59,9 +59,26 @@ We can select a different node in the graph by clicking on it:
 
 Now the tab control displays properties for the selected **Coordinated Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
 
+Now that we've seen an example where the entire process of *Parse / Transform / Build / Realize* works perfectly, let's look at a case where it doesn't go quite as well:
+
+![Image of clause that fails to realize](/docs/images/ParsedButRealizeFailed1.jpg)
+
+Now the text box at the bottom of the window does not display realized text, because we couldn't get that far.  Instead, the text box is empty and has a red background color to indicate the error.
+
+This sentence is an interesting case because it illustrates the most fundamental problem this system can encounter:  *None of the annotations contain the information required to construct a fully correct realizer specification.*  Here's what we get from CoreNLP:
+
+![Image of CoreNLP parse results](/docs/images/CoreNLPResult1.jpg)
+
+The problem is with the prepositional phrase "in the air," at the end of the sentence.  The constituency parse places that phrase as a child of the noun phrase "growing confidence and growing strength;" and the Enhanced++ dependency graph says that the prepositional object "the air" is a [nominal modifier](https://universaldependencies.org/u/dep/nmod.html) of "confidence."  Although it would be possible for Echo to apply these relations and build a SimpleNLG specification that produces the correct output text, that's not the true goal here.  The actual goal is to arrive at a builder graph that has the correct syntax **and the correct semantics**, so we can use that graph as a foundation for semantically-aware systems in the future.  The "echo" feature, *i.e.* generating realized text, is really just a tool to verify that we're on the right path to that goal.
+
+In order to be semantically correct, the phrase "in the air" should be a modifier of the verb phrase "shall fight;" and the **only** way to get this right is through human intervention.  That's why the user interface is such an essential part of this project.
+
 ### Limitations
 
-As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In most cases this will cause an unhandled exception to be thrown.
+As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In these cases, one of two possible exceptions should be thrown:
+
+`TreeCannotBeTransformedToRealizableFormException` : The transformation of the tree from **Editable Form** to **Realizable Form** failed.
+`SpecCannotBeBuiltException` : The transformation to **Realizable Form** succeeded, but something went wrong while trying to build the `NLGSpec` to be sent to the SimpleNLG server.
 
 The process of incrementally handling more of these cases is test-driven.  The steps are:
 
