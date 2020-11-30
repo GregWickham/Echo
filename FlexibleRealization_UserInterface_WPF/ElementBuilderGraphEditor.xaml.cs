@@ -42,17 +42,7 @@ namespace FlexibleRealization.UserInterface
         {
             IElementTreeNode editableTree = FlexibleRealizerFactory.EditableTreeFrom(text);
             SetModel(editableTree);
-            try
-            {
-                IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(editableTree);
-                NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
-                string realized = SimpleNLG.Client.Realize(spec);
-                OnTextRealized(realized);
-            }
-            catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
-            {
-                OnRealizationFailed(editableTree);
-            }
+            TryToRealize(editableTree);
         }
 
         /// <summary>Assign <paramref name="elementBuilderTree"/> as the model for this editor</summary>
@@ -65,6 +55,21 @@ namespace FlexibleRealization.UserInterface
             Properties.DataContext = GraphArea;
             GraphArea.SetSelectedVertex(graph.Root);
             ZoomCtrl.ZoomToFill();
+        }
+
+        private void TryToRealize(IElementTreeNode editableTree)
+        {
+            try
+            {
+                IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(editableTree);
+                NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
+                string realized = SimpleNLG.Client.Realize(spec);
+                OnTextRealized(realized);
+            }
+            catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
+            {
+                OnRealizationFailed(editableTree);
+            }
         }
 
         /// <summary>If the selected <see cref="ElementVertex"/> has an associated <see cref="ElementBuilder"/>, notify listeners of the selection</summary>
@@ -88,17 +93,7 @@ namespace FlexibleRealization.UserInterface
         private void OnElementBuilderSelected(ElementBuilder builder)
         {
             ElementBuilderSelected?.Invoke(builder);
-            try
-            {
-                IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(builder);
-                NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
-                string realized = SimpleNLG.Client.Realize(spec);
-                OnTextRealized(realized);
-            }
-            catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
-            {
-                OnRealizationFailed(builder);
-            }
+            TryToRealize(builder);
         }
 
         /// <summary>Notify listeners that this ElementBuilderGraphEditor has failed to realize text for an ElementBuilder</summary>
