@@ -55,11 +55,11 @@ On the right side of the Echo window is a tab control that displays detailed inf
 
 We can select a different node in the graph by clicking on it:
 
-![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedCPPSelected.jpg)
+![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedPPSelected.jpg)
 
-Now the tab control displays properties for the selected **Coordinated Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
+The tab control displays properties for the selected **Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
 
-Now that we've seen an example where the entire process of *Parse / Transform / Build / Realize* works perfectly, let's look at a case where it doesn't go quite as well:
+Now that we've seen an example where the entire process of *Parse / Transform / Build / Realize* works perfectly, let's look at a case where it doesn't go quite so well:
 
 ![Image of clause that fails to realize](/docs/images/ParsedButRealizeFailed1.jpg)
 
@@ -77,10 +77,10 @@ In order to be semantically correct, the phrase "in the air" should be a modifie
 
 As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In these cases, one of two possible exceptions should be thrown:
 
-`TreeCannotBeTransformedToRealizableFormException` : The transformation of the tree from **Editable Form** to **Realizable Form** failed.
-`SpecCannotBeBuiltException` : The transformation to **Realizable Form** succeeded, but something went wrong while trying to build the `NLGSpec` to be sent to the SimpleNLG server.
+* `TreeCannotBeTransformedToRealizableFormException` : The transformation of the tree from **Editable Form** to **Realizable Form** failed.
+* `SpecCannotBeBuiltException` : The transformation to **Realizable Form** succeeded, but something went wrong while trying to build the `NLGSpec` to be sent to the SimpleNLG server.
 
-The process of incrementally handling more of these cases is test-driven.  The steps are:
+The process of incrementally handling more of these syntax cases is test-driven.  The steps are:
 
 1. Identify a valid English syntactic construct that isn't handled properly;
 2. Locate the CoreNLP parse information that's capable of driving the correct transformation;
