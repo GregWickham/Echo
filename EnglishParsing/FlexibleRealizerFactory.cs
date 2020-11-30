@@ -21,6 +21,7 @@ namespace FlexibleRealization
         public SpecCannotBeBuiltException(Exception inner) : base("SimpleNLG specification cannot be built from tree", inner) { }
     }
 
+    /// <summary>Provides static methods for creating and transforming element builder trees</summary>
     public static class FlexibleRealizerFactory
     {
         private static readonly java.lang.Class IndexAnnotationClass = new CoreAnnotations.IndexAnnotation().getClass();

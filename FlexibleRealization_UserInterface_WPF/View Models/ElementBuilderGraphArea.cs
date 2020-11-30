@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
-using GraphX.Common.Enums;
 using GraphX.Controls;
 using GraphX.Controls.Models;
 

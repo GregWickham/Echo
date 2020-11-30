@@ -8,27 +8,27 @@ namespace SimpleNLG
 {
 	public static class Client
 	{
-		public static string Realize(NLGSpec specToRealize) => Realize(Serialize(specToRealize));
-		public static string Realize(RequestType request) => Realize(new NLGSpec 
-		{ 
-			Item = request 
-		});
-		public static string Realize(DocumentElement documentElement) => Realize(new RequestType 
-		{ 
-			Document = documentElement 
-		});
-		public static string Realize(NLGElement[] documentChildren) => Realize(new DocumentElement
-		{
-			cat = documentCategory.DOCUMENT,
-			catSpecified = true,
-			child = documentChildren
-		});
-		public static string Realize(NLGElement documentChild) => Realize(new NLGElement[] 
-		{ 
-			documentChild 
-		});
+		//public static string Realize(NLGSpec specToRealize) => Realize(Serialize(specToRealize));
+		//public static string Realize(RequestType request) => Realize(new NLGSpec 
+		//{ 
+		//	Item = request 
+		//});
+		//public static string Realize(DocumentElement documentElement) => Realize(new RequestType 
+		//{ 
+		//	Document = documentElement 
+		//});
+		//public static string Realize(NLGElement[] documentChildren) => Realize(new DocumentElement
+		//{
+		//	cat = documentCategory.DOCUMENT,
+		//	catSpecified = true,
+		//	child = documentChildren
+		//});
+		//public static string Realize(NLGElement documentChild) => Realize(new NLGElement[] 
+		//{ 
+		//	documentChild 
+		//});
 
-		private static string Realize(string request)
+		public static string Realize(string request)
 		{
 			using (TcpClient client = new TcpClient(Properties.Settings.Default.SimpleNLG_ServerHost, Properties.Settings.Default.SimpleNLG_ServerPort))
             {
@@ -62,18 +62,18 @@ namespace SimpleNLG
 			}
 		}
 
-		private static string Serialize(NLGSpec spec)
-		{
-			string serialized;
-			using (var stringwriter = new System.IO.StringWriter())
-			{
-				var serializer = new XmlSerializer(spec.GetType());
-				serializer.Serialize(stringwriter, spec);
-				serialized = stringwriter.ToString();
-			}
-			Console.WriteLine(serialized);
-			return serialized;
-		}
+		//private static string Serialize(NLGSpec spec)
+		//{
+		//	string serialized;
+		//	using (var stringwriter = new System.IO.StringWriter())
+		//	{
+		//		var serializer = new XmlSerializer(spec.GetType());
+		//		serializer.Serialize(stringwriter, spec);
+		//		serialized = stringwriter.ToString();
+		//	}
+		//	Console.WriteLine(serialized);
+		//	return serialized;
+		//}
 
 	}
 }

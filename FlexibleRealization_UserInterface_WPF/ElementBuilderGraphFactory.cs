@@ -51,17 +51,17 @@ namespace FlexibleRealization.UserInterface
                 }
             }
 
-            void AddSyntacticRelationEdges()
-            {
-                foreach (PartOfSpeechVertex eachPartOfSpeechVertex in graph.PartsOfSpeech)
-                {
-                    PartOfSpeechBuilder eachPartOfSpeechBuilder = eachPartOfSpeechVertex.Model;
-                    foreach (SyntacticRelation eachDependency in eachPartOfSpeechBuilder.IncomingSyntacticRelations)
-                    {
-                        graph.AddEdge(new DependencyEdge(graph.TokenVertexFor(eachDependency.Governor), graph.TokenVertexFor(eachDependency.Dependent), eachDependency.Relation));
-                    }
-                }
-            }
+            //void AddSyntacticRelationEdges()
+            //{
+            //    foreach (PartOfSpeechVertex eachPartOfSpeechVertex in graph.PartsOfSpeech)
+            //    {
+            //        PartOfSpeechBuilder eachPartOfSpeechBuilder = eachPartOfSpeechVertex.Model;
+            //        foreach (SyntacticRelation eachDependency in eachPartOfSpeechBuilder.IncomingSyntacticRelations)
+            //        {
+            //            graph.AddEdge(new DependencyEdge(graph.TokenVertexFor(eachDependency.Governor), graph.TokenVertexFor(eachDependency.Dependent), eachDependency.Relation));
+            //        }
+            //    }
+            //}
         }
     }
 }

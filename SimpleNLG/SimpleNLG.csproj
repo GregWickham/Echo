@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RealizerSchema Extensions\CoordinatedPhraseElement.cs" />
+    <Compile Include="RealizerSchema Extensions\NLGSpec.cs" />
     <Compile Include="RealizerSchema Extensions\PPPhraseSpec.cs" />
     <Compile Include="RealizerSchema Extensions\AdvPhraseSpec.cs" />
     <Compile Include="RealizerSchema Extensions\AdjPhraseSpec.cs" />

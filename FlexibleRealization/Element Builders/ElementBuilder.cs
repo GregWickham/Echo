@@ -269,6 +269,7 @@ namespace FlexibleRealization
             return this;
         }
 
+        /// Return the realizable form of the subtree rooted
         /// <summary>Propagate the operation specified by <paramref name="operateOn"/> through the subtree of which this is the root, in depth-first fashion.</summary>
         /// <param name="operateOn">The operation to be applied during propagation</param>
         /// <returns>The result of performing <paramref name="operateOn"/>(this) after <paramref name="operateOn"/> has been invoked on all its descendants</returns>
@@ -353,43 +354,6 @@ namespace FlexibleRealization
 
         /// <summary>Build and return the <see cref="NLGElement"/> represented by this ElementBuilder</summary>
         public abstract NLGElement BuildElement();
-
-        public string XML
-        {
-            get
-            {
-                try
-                {
-                    NLGElement element = BuildElement();
-                    string serialized;
-                    using (var stringwriter = new System.IO.StringWriter())
-                    {
-                        var serializer = new XmlSerializer(element.GetType());
-                        serializer.Serialize(stringwriter, element);
-                        serialized = stringwriter.ToString();
-                    }
-                    // Strip out the namespace declarations to make the XML more compact, so it looks nice in the user interface
-                    XDocument document = XDocument.Parse(serialized);
-                    document.Descendants()
-                       .Attributes()
-                       .Where(x => x.IsNamespaceDeclaration)
-                       .Remove();
-                    foreach (var elem in document.Descendants())
-                        elem.Name = elem.Name.LocalName;
-                    foreach (var attr in document.Descendants().Attributes())
-                    {
-                        var elem = attr.Parent;
-                        attr.Remove();
-                        elem.Add(new XAttribute(attr.Name.LocalName, attr.Value));
-                    }
-                    return document.ToString();
-                }
-                catch (Exception)
-                {
-                    return "Can't build this element";
-                }
-            }
-        }
 
         #region Implementation of INotifyPropertyChanged
 

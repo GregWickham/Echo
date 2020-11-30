@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows;
+using System.Xml.Linq;
 using GraphX.Controls;
 using SimpleNLG;
 using FlexibleRealization.UserInterface.ViewModels;
@@ -14,7 +17,7 @@ namespace FlexibleRealization.UserInterface
     public delegate void TextRealized_EventHandler(string realizedText);
 
     /// <summary>Interaction logic for ElementBuilderGraphEditor.xaml</summary>
-    public partial class ElementBuilderGraphEditor : UserControl
+    public partial class ElementBuilderGraphEditor : UserControl, INotifyPropertyChanged
     {
         public ElementBuilderGraphEditor()
         {
@@ -35,9 +38,10 @@ namespace FlexibleRealization.UserInterface
         {
             GraphArea.VertexSelected -= GraphArea_VertexSelected;
             Loaded -= ElementBuilderGraphEditor_Loaded;
+            Window.GetWindow(this).Closing -= Window_Closing;
         }
 
-        /// <summary>Generate an editable tree from <paramref name="text"/>, try to realize the tree, and raise an event indicating the outcome</summary>
+        /// <summary>Generate an editable tree from <paramref name="text"/>, then try to realize that tree</summary>
         public void ParseText(string text)
         {
             IElementTreeNode editableTree = FlexibleRealizerFactory.EditableTreeFrom(text);
@@ -53,22 +57,68 @@ namespace FlexibleRealization.UserInterface
             GraphArea.GenerateGraph(true, true);
             ElementDescription.DataContext = GraphArea;
             Properties.DataContext = GraphArea;
+            XmlLabel.DataContext = this;
             GraphArea.SetSelectedVertex(graph.Root);
             ZoomCtrl.ZoomToFill();
         }
 
+        /// <summary>Try to transform <paramref name="editableTree"/> into realizable form and if successful, try to realize it</summary>
+        /// <remarks>Raise an event indicating whether the process succeeded or not</remarks>
         private void TryToRealize(IElementTreeNode editableTree)
         {
             try
             {
                 IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(editableTree);
                 NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
-                string realized = SimpleNLG.Client.Realize(spec);
+                XmlSpec = spec.Serialize();
+                string realized = SimpleNLG.Client.Realize(XmlSpec);
                 OnTextRealized(realized);
             }
             catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
             {
+                XmlSpec = null;
                 OnRealizationFailed(editableTree);
+            }
+        }
+
+        /// <summary>Private field for holding the XML spec of our realized element graph.  Accessed by the <see cref="XmlSpec"/> and <see cref="XmlSpecLocalized"/> properties</summary>
+        private string xmlSpec;
+
+        /// <summary>If we succeed in building an element graph that can be realized, we'll put the serialized XML form of that graph here so it can be displayed</summary>
+        private string XmlSpec 
+        {
+            get => xmlSpec;
+            set
+            {
+                xmlSpec = value;
+                OnPropertyChanged("XmlSpecLocalized");
+            }
+        }
+
+        /// <summary>Return the XML spec formatted for display in the user interface</summary>
+        public string XmlSpecLocalized
+        {
+            get
+            {
+                if (xmlSpec == null) return null;
+                else
+                {
+                    // Strip out the namespace declarations to make the XML more compact, so it looks nice in the user interface
+                    XDocument document = XDocument.Parse(xmlSpec);
+                    document.Descendants()
+                       .Attributes()
+                       .Where(x => x.IsNamespaceDeclaration)
+                       .Remove();
+                    foreach (var elem in document.Descendants())
+                        elem.Name = elem.Name.LocalName;
+                    foreach (var attr in document.Descendants().Attributes())
+                    {
+                        var elem = attr.Parent;
+                        attr.Remove();
+                        elem.Add(new XAttribute(attr.Name.LocalName, attr.Value));
+                    }
+                    return document.ToString();
+                }
             }
         }
 
@@ -103,5 +153,13 @@ namespace FlexibleRealization.UserInterface
         /// <summary>Notify listeners that this ElementBuilderGraphEditor has successfully realized some text</summary>
         public event TextRealized_EventHandler TextRealized;
         private void OnTextRealized(string realizedText) => TextRealized?.Invoke(realizedText);
+
+
+        #region Standard implementation of INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string property) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+
+        #endregion Standard implementation of INotifyPropertyChanged
     }
 }

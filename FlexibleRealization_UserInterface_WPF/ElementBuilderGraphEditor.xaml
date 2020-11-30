@@ -16,17 +16,26 @@
             <graphModels:ElementBuilderGraphArea x:Name="GraphArea" />
         </graphx:ZoomControl>
         <propertyTools:DockPanelSplitter Thickness="2"/>
-        <Grid DockPanel.Dock="Right">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" x:Name="ElementDescription" HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" Text="{Binding SelectedElementDescription}" Margin="4"/>
-            <propertyTools:PropertyGrid Grid.Row="1" x:Name="Properties" Width="Auto" Height="Auto" Background="WhiteSmoke" BorderBrush="DarkGray" BorderThickness="2"
+        <TabControl TabStripPlacement="Bottom">
+            <TabItem Header="Element Properties">
+                <Grid DockPanel.Dock="Right">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" x:Name="ElementDescription" HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" Text="{Binding SelectedElementDescription}" Margin="4"/>
+                    <propertyTools:PropertyGrid Grid.Row="1" x:Name="Properties" Width="Auto" Height="Auto" Background="WhiteSmoke" BorderBrush="DarkGray" BorderThickness="2"
                 SelectedObject="{Binding SelectedElementProperties}"
                 TabVisibility="Visible">
-            </propertyTools:PropertyGrid>
-        </Grid>
+                    </propertyTools:PropertyGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="XML">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Label x:Name="XmlLabel" Content="{Binding XmlSpecLocalized}"/>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
     </DockPanel>
 
 
