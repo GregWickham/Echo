@@ -55,9 +55,9 @@ On the right side of the Echo window is a tab control that displays detailed inf
 
 We can select a different node in the graph by clicking on it:
 
-![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedCPPSelected.jpg)
+![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedPPSelected.jpg)
 
-The tab control displays properties for the selected **Coordinated Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
+The tab control displays properties for the selected **Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
 
 Now that we've seen an example where the entire process of *Parse / Transform / Build / Realize* works perfectly, let's look at a case where it doesn't go quite so well:
 
