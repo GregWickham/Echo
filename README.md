@@ -61,9 +61,7 @@ The tab control displays properties for the selected **Prepositional Phrase**; a
 
 Now that we've seen an example where the entire process of *Parse / Transform / Build / Realize* works perfectly, let's look at a case where it doesn't go quite so well:
 
-![Image of clause that fails to realize](/docs/images/ParsedButRealizeFailed1.jpg)
-
-Now the text box at the bottom of the window does not display realized text, because we couldn't get that far.  Instead, the text box is empty and has a red background color to indicate the error.
+![Image of clause that fails to realize](/docs/images/MisplacedPP.jpg)
 
 This sentence is an interesting case because it illustrates the most fundamental problem this system can encounter:  *None of the annotations contain the information required to construct a fully correct realizer specification.*  Here's what we get from CoreNLP:
 
