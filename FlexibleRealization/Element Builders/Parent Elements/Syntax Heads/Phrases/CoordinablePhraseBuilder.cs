@@ -40,7 +40,7 @@ namespace FlexibleRealization
         private IEnumerable<IElementTreeNode> Coordinators => ChildrenWithRole(ChildRole.Coordinator);
 
         /// <summary>If a phrase is coordinated, it is expected to have at most one coordinator (usually a coordinating conjunction)</summary>
-        private ConjunctionBuilder CoordinatorBuilder => Coordinators.Count() switch
+        private protected ConjunctionBuilder CoordinatorBuilder => Coordinators.Count() switch
         {
             0 => null,
             1 => (ConjunctionBuilder)Coordinators.First(),

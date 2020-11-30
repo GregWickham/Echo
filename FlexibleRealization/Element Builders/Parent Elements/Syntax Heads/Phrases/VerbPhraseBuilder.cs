@@ -118,7 +118,12 @@ namespace FlexibleRealization
         /// <summary>Merge <paramref name="phraseToAssimilate"/> into this verb phrase</summary>
         private void Assimilate(VerbPhraseBuilder phraseToAssimilate)
         {
-            AddHeads(phraseToAssimilate.Heads);
+            AddHeads(phraseToAssimilate.Heads); 
+            if (phraseToAssimilate.CoordinatorBuilder != null)
+            {
+                if (CoordinatorBuilder == null) SetCoordinator(phraseToAssimilate.CoordinatorBuilder);
+                else throw new InvalidOperationException("Coordinators collided when trying to assimilate a noun phrase");
+            }
             if (phraseToAssimilate.ModalBuilder != null)
             {
                 if (ModalBuilder == null) SetModal(phraseToAssimilate.ModalBuilder);
