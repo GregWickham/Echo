@@ -80,7 +80,7 @@ As you can imagine, the English language contains a dizzying variety of valid sy
 * `TreeCannotBeTransformedToRealizableFormException` : The transformation of the tree from **Editable Form** to **Realizable Form** failed.
 * `SpecCannotBeBuiltException` : The transformation to **Realizable Form** succeeded, but something went wrong while trying to build the `NLGSpec` to be sent to the SimpleNLG server.
 
-The process of incrementally handling more of these cases is test-driven.  The steps are:
+The process of incrementally handling more of these syntax cases is test-driven.  The steps are:
 
 1. Identify a valid English syntactic construct that isn't handled properly;
 2. Locate the CoreNLP parse information that's capable of driving the correct transformation;
