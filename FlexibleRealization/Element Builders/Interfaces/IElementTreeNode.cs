@@ -7,10 +7,13 @@ namespace FlexibleRealization
     /// <returns>The IElementTreeNode that results from applying the operation</returns>
     public delegate IElementTreeNode ElementTreeNodeOperation(IElementTreeNode target);
 
+    public delegate void SubtreeChanged_EventHandler(IElementTreeNode newRoot);
 
     /// <summary>A node in a tree of elements</summary>
     public interface IElementTreeNode : IIndexRange, IElementBuilder, ISyntaxComponent
     {
+        event SubtreeChanged_EventHandler SubtreeChanged;
+
         ParentElementBuilder Parent { get; set; }
 
         int Depth { get; }
@@ -28,6 +31,8 @@ namespace FlexibleRealization
         IEnumerable<IElementTreeNode> WithAllDescendentBuilders { get; }
 
         IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtree { get; }
+
+        void MoveTo(ParentElementBuilder newParent);
 
         IElementTreeNode CopyLightweight();
 

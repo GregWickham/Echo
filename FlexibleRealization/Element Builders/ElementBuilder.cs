@@ -12,7 +12,14 @@ namespace FlexibleRealization
 {
     public abstract class ElementBuilder : IElementBuilder, IElementTreeNode, IIndexRange, INotifyPropertyChanged
     {
+
         #region Tree structure
+
+        /// <summary>Notify listeners that the structure of the tree rooted in this has changed</summary>
+        public event SubtreeChanged_EventHandler SubtreeChanged;
+
+        /// <summary>Can be called by an element anywhere in the subtree to raise the SubtreeChanged event for the subtree</summary>
+        internal void OnTreeStructureChanged() => Root.SubtreeChanged?.Invoke(Root);
 
         public ParentElementBuilder Parent { get; set; }
 
@@ -327,6 +334,14 @@ namespace FlexibleRealization
         {
             DetachFromParent();
             newParent.AddChildWithRole(this, newRole);
+        }
+
+        /// <summary>Detach this from its current ParentElementBuilder, and add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent</summary>
+        public void MoveTo(ParentElementBuilder newParent)
+        {
+            DetachFromParent();
+            newParent.AddChild(this);
+            OnTreeStructureChanged();
         }
 
         /// <summary>Update references from other objects so <paramref name="replacement"/> replaces this in the ElementBuilder tree</summary>

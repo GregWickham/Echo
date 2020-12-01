@@ -157,7 +157,7 @@ namespace FlexibleRealization
         }
 
         /// <summary>Replace <paramref name="existingChild"/> with <paramref name="newChild"/> using the same role.</summary>
-        internal void ReplaceChild(IElementTreeNode existingChild, IElementTreeNode newChild)
+        public void ReplaceChild(IElementTreeNode existingChild, IElementTreeNode newChild)
         {
             ChildRole role = RoleFor(existingChild);
             RemoveChild(existingChild);

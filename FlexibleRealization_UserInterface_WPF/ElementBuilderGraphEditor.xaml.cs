@@ -47,8 +47,8 @@ namespace FlexibleRealization.UserInterface
         public void ParseText(string text)
         {
             IElementTreeNode editableTree = FlexibleRealizerFactory.EditableTreeFrom(text);
+            editableTree.SubtreeChanged += ElementBuilderTree_SubtreeChanged;
             SetModel(editableTree);
-            TryToRealize(editableTree);
         }
 
         /// <summary>Assign <paramref name="elementBuilderTree"/> as the model for this editor</summary>
@@ -62,7 +62,11 @@ namespace FlexibleRealization.UserInterface
             XmlLabel.DataContext = this;
             GraphArea.SetSelectedVertex(graph.Root);
             ZoomCtrl.ZoomToFill();
+            TryToRealize(elementBuilderTree);
         }
+
+        /// <summary>The tree is notifying us that its structure has changed</summary>
+        private void ElementBuilderTree_SubtreeChanged(IElementTreeNode newRoot) => SetModel(newRoot);
 
         /// <summary>Try to transform <paramref name="editableTree"/> into realizable form and if successful, try to realize it</summary>
         /// <remarks>Raise an event indicating whether the process succeeded or not</remarks>
@@ -146,7 +150,7 @@ namespace FlexibleRealization.UserInterface
                 if (selectedBuilder != null)
                 {
                     SetDropTargetsFor(selectedBuilder);
-                    DragDrop.DoDragDrop(args.VertexControl, selectedVertex, DragDropEffects.Move);
+                    DragDrop.DoDragDrop(args.VertexControl, selectedBuilder, DragDropEffects.Move);
                 }
             }
 
@@ -179,11 +183,19 @@ namespace FlexibleRealization.UserInterface
         /// <summary>A vertex drag has ended with a drop</summary>
         private void VertexControl_PreviewDrop(object sender, DragEventArgs e)
         {
+            ClearDropTargets();
             VertexControl dropTarget = (VertexControl)sender;
             ElementVertex targetVertex = (ElementVertex)dropTarget.Vertex;
-            if (targetVertex is ParentElementVertex parentVertex)
+            string[] formats = e.Data.GetFormats();
+            string droppedBuilderFormat = formats[0];
+            if (e.Data.GetDataPresent(droppedBuilderFormat))
             {
-                ParentElementBuilder target = parentVertex.Model;
+                IElementTreeNode dropped = (IElementTreeNode)e.Data.GetData(droppedBuilderFormat);
+                if (targetVertex is ParentElementVertex parentVertex)
+                {
+                    ParentElementBuilder target = parentVertex.Model;
+                    dropped.MoveTo(target);
+                }
             }
         }
 
