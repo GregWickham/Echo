@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml.Linq;
-using GraphX.Controls;
+using GraphX.Controls;using GraphX.Controls.Models;
 using SimpleNLG;
 using FlexibleRealization.UserInterface.ViewModels;
 
@@ -23,6 +25,7 @@ namespace FlexibleRealization.UserInterface
         {
             InitializeComponent();
             ZoomControl.SetViewFinderVisibility(ZoomCtrl, Visibility.Hidden);
+            //ZoomCtrl.PreviewDrop += ZoomCtrl_PreviewDrop;
             GraphArea.VertexSelected += GraphArea_VertexSelected;
             Loaded += ElementBuilderGraphEditor_Loaded;
         }
@@ -33,7 +36,7 @@ namespace FlexibleRealization.UserInterface
             Window.GetWindow(this).Closing += Window_Closing;
         }
 
-        /// <summary>Tear down this <see cref="ElementBuilderGraphEditor"/></summary>
+        /// <summary>Tear down this ElementBuilderGraphEditor</summary>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             GraphArea.VertexSelected -= GraphArea_VertexSelected;
@@ -122,19 +125,55 @@ namespace FlexibleRealization.UserInterface
             }
         }
 
-        /// <summary>If the selected <see cref="ElementVertex"/> has an associated <see cref="ElementBuilder"/>, notify listeners of the selection</summary>
-        private void GraphArea_VertexSelected(object sender, GraphX.Controls.Models.VertexSelectedEventArgs args)
+        /// <summary>If the selected ElementVertex has an associated ElementBuilder, notify listeners of the selection</summary>
+        private void GraphArea_VertexSelected(object sender, VertexSelectedEventArgs args)
         {
             ElementVertex selectedVertex = (ElementVertex)args.VertexControl.Vertex;
+            ElementBuilder selectedBuilder = null;
             switch (selectedVertex)
             {
                 case ParentElementVertex pev:
+                    selectedBuilder = pev.Builder;
                     OnElementBuilderSelected(pev.Builder);
                     break;
                 case PartOfSpeechVertex psv:
+                    selectedBuilder = psv.Builder;
                     OnElementBuilderSelected(psv.Builder);
                     break;
                 default: break;
+            }
+            if (args.MouseArgs.RightButton == MouseButtonState.Pressed)
+            {
+                if (selectedBuilder != null)
+                {
+                    SetDropTargetsFor(selectedBuilder);
+                    DragDrop.DoDragDrop(args.VertexControl, selectedVertex, DragDropEffects.Move);
+                }
+            }
+
+            void SetDropTargetsFor(ElementBuilder builder)
+            {
+                foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in GraphArea.VertexList)
+                {
+                    eachKVP.Value.PreviewDrop -= VertexControl_PreviewDrop;
+                    if (eachKVP.Key is ParentElementVertex pev && pev.Model.CanAddChild(builder))
+                    {
+                        eachKVP.Value.AllowDrop = true;
+                        eachKVP.Value.PreviewDrop += VertexControl_PreviewDrop;
+                    }
+                    else eachKVP.Value.AllowDrop = false;
+                }
+            }
+        }
+
+        /// <summary>A vertex drag has ended with a drop</summary>
+        private void VertexControl_PreviewDrop(object sender, DragEventArgs e)
+        {
+            VertexControl dropTarget = (VertexControl)sender;
+            ElementVertex targetVertex = (ElementVertex)dropTarget.Vertex;
+            if (targetVertex is ParentElementVertex parentVertex)
+            {
+                ParentElementBuilder target = parentVertex.Model;
             }
         }
 

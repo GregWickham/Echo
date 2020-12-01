@@ -122,7 +122,7 @@ namespace FlexibleRealization
             if (phraseToAssimilate.CoordinatorBuilder != null)
             {
                 if (CoordinatorBuilder == null) SetCoordinator(phraseToAssimilate.CoordinatorBuilder);
-                else throw new InvalidOperationException("Coordinators collided when trying to assimilate a noun phrase");
+                else throw new InvalidOperationException("Coordinators collided when trying to assimilate a verb phrase");
             }
             if (phraseToAssimilate.ModalBuilder != null)
             {
