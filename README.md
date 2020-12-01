@@ -71,7 +71,15 @@ This sentence is an interesting case because it illustrates the most fundamental
 
 The problem is with the prepositional phrase "in the air," at the end of the sentence.  The constituency parse places that phrase as a child of the noun phrase "growing confidence and growing strength;" and the Enhanced++ dependency graph says that the prepositional object "the air" is a [nominal modifier](https://universaldependencies.org/u/dep/nmod.html) of "confidence."  Although Echo can apply these relations and build a SimpleNLG specification that produces the correct output text, that's not the true goal here.  The actual goal is to arrive at a builder graph that has the correct syntax **and the correct semantics**, so we can use that graph as a foundation for semantically-aware systems in the future.  The "echo" feature, *i.e.* generating realized text, is really just a tool to verify that we're on the right path to that goal.
 
-In order to be semantically correct, the phrase "in the air" should be a modifier of the verb phrase "shall fight;" and the **only** way to get this right is through human intervention.  That's why the user interface is such an essential part of this project.
+In order to be semantically correct, the phrase "in the air" should be a modifier of the verb phrase "shall fight;" and the **only** way to get this right is through human intervention.  So let's go ahead and fix it.
+
+By dragging with the left mouse button, you can adjust the position of a vertex -- for example, if you don't like the edge routing:
+
+![Image of vertex position adjustment](/docs/images/AdjustVertexPosition.gif)
+
+Dragging with the **right** mouse button starts a drag-and-drop operation, which allows us to make the necessary semantic correction to the graph:
+
+![Image of vertex drag and drop](/docs/images/DragAndDropPP.gif)
 
 ### Limitations
 
