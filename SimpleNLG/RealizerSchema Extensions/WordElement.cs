@@ -4,6 +4,15 @@ namespace SimpleNLG
 {
     public partial class WordElement
     {
+        public WordElement Copy() => (WordElement)MemberwiseClone();
+
+        public WordElement CopyWithoutSpec()
+        {
+            WordElement result = Copy();
+            result.Base = null;
+            return result;
+        }
+
         [XmlIgnore]
         public string Base
         {

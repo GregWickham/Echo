@@ -54,6 +54,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RealizerSchema Extensions\StringElement.cs" />
     <Compile Include="RealizerSchema.cs">
       <DependentUpon>RealizerSchema.xsd</DependentUpon>
     </Compile>

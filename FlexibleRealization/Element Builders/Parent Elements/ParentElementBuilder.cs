@@ -164,6 +164,15 @@ namespace FlexibleRealization
             AddChildWithRole(newChild, role);
         }
 
+        internal ParentElementBuilder LightweightCopyChildrenFrom(ParentElementBuilder anotherParent)
+        {
+            foreach (KeyValuePair<IElementTreeNode, ChildRole> eachChildKVP in anotherParent.ChildrenAndRoles)
+            {
+                AddChildWithRole(eachChildKVP.Key.CopyLightweight(), eachChildKVP.Value);
+            }
+            return this;
+        }
+
         #endregion Configuration
     }
 }

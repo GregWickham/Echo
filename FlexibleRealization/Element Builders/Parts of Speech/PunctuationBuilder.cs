@@ -8,5 +8,7 @@ namespace FlexibleRealization
         public PunctuationBuilder(ParseToken token) : base(token) { }
 
         public override NLGElement BuildElement() => throw new NotImplementedException();
+
+        public override IElementTreeNode CopyLightweight() => new PunctuationBuilder(Token.Copy());
     }
 }

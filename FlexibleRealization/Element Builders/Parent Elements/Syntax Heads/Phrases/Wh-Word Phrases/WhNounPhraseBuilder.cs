@@ -20,5 +20,7 @@
             }
         }
 
+        public override IElementTreeNode CopyLightweight() => new WhNounPhraseBuilder { HeadWord = (WordElementBuilder)HeadWord.CopyLightweight() }
+            .LightweightCopyChildrenFrom(this);
     }
 }

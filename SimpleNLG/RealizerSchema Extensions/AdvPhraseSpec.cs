@@ -6,6 +6,15 @@ namespace SimpleNLG
     {
         public AdvPhraseSpec() => Category = phraseCategory.ADVERB_PHRASE;
 
+        public AdvPhraseSpec Copy() => (AdvPhraseSpec)MemberwiseClone();
+
+        public AdvPhraseSpec CopyWithoutSpec()
+        {
+            AdvPhraseSpec result = Copy();
+            result.NullOutSpecElements();
+            return result;
+        }
+
         [XmlIgnore]
         public bool Comparative
         {

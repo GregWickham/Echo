@@ -6,5 +6,6 @@ namespace FlexibleRealization
     {
         public ParticleBuilder(ParseToken token) : base(lexicalCategory.ADVERB, token) { }
 
+        public override IElementTreeNode CopyLightweight() => new ParticleBuilder(Token.Copy());
     }
 }

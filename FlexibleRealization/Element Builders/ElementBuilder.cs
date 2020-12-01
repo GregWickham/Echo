@@ -269,7 +269,6 @@ namespace FlexibleRealization
             return this;
         }
 
-        /// Return the realizable form of the subtree rooted
         /// <summary>Propagate the operation specified by <paramref name="operateOn"/> through the subtree of which this is the root, in depth-first fashion.</summary>
         /// <param name="operateOn">The operation to be applied during propagation</param>
         /// <returns>The result of performing <paramref name="operateOn"/>(this) after <paramref name="operateOn"/> has been invoked on all its descendants</returns>
@@ -349,6 +348,18 @@ namespace FlexibleRealization
             }
             else return null;
         }
+
+        /// <summary>Return a "lighweight" copy of the subtree rooted in this ElementBuilder.</summary>
+        /// <remarks>A lightweight copy has the following properties:
+        /// <list type="bullet">
+        /// <item>The NLGElement structure of the SimpleNLG spec to build is nulled out.  The lightweight tree is still capable of recreating this structure through BuildElement().</item>
+        /// <item>Dependency relations between parts of speech are removed.  ApplyDependencies() can still be called on the lightweight tree, but it will have no effect.</item>
+        /// <item>The lightweight tree is optimized for serialization.</item>
+        /// </list>
+        /// Before calling BuildElement() on a lightweight tree, the Coordinate operation should be propagated through it.  This can be done before or after serialization.
+        /// <para>Creating a copy allows the "heavyweight" tree to be edited in the user interface -- which process causes the tree structure to change -- while the realization process
+        /// is tested on copies.</para></remarks>
+        public abstract IElementTreeNode CopyLightweight();
 
         #endregion Configuration
 

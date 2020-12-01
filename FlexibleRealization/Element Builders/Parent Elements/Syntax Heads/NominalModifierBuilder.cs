@@ -34,6 +34,9 @@ namespace FlexibleRealization
 
         #endregion Initial assignment of children
 
+        public override IElementTreeNode CopyLightweight() => new NominalModifierBuilder()
+            .LightweightCopyChildrenFrom(this);
+
         public override NLGElement BuildElement()
         {
             PartOfSpeechBuilder[] orderedPartsOfSpeech = PartsOfSpeechInSubtree.OrderBy(child => child.MinTokenIndex).ToArray();

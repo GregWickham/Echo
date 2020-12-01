@@ -6,6 +6,15 @@ namespace SimpleNLG
     {
         public VPPhraseSpec() => Category = phraseCategory.VERB_PHRASE;
 
+        public VPPhraseSpec Copy() => (VPPhraseSpec)MemberwiseClone();
+
+        public VPPhraseSpec CopyWithoutSpec()
+        {
+            VPPhraseSpec result = Copy();
+            result.NullOutSpecElements();
+            return result;
+        }
+
         [XmlIgnore]
         public bool AggregateAuxiliary
         {

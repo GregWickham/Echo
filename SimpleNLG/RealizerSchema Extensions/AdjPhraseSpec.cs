@@ -6,6 +6,15 @@ namespace SimpleNLG
     {
         public AdjPhraseSpec() => Category = phraseCategory.ADJECTIVE_PHRASE;
 
+        public AdjPhraseSpec Copy() => (AdjPhraseSpec)MemberwiseClone();
+
+        public AdjPhraseSpec CopyWithoutSpec()
+        {
+            AdjPhraseSpec result = Copy();
+            result.NullOutSpecElements();
+            return result;
+        }
+
         [XmlIgnore]
         public bool Comparative
         {

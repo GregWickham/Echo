@@ -8,6 +8,9 @@ namespace FlexibleRealization
     {
         private protected sealed override void AssignRoleFor(IElementTreeNode child) => AddUnassignedChild(child);
 
+        public override IElementTreeNode CopyLightweight() => new FragmentBuilder()
+            .LightweightCopyChildrenFrom(this);
+
         public override NLGElement BuildElement() => throw new NotImplementedException("Can't build a fragment");
     }
 }

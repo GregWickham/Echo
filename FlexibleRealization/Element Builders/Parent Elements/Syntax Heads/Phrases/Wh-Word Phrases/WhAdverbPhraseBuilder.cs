@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FlexibleRealization
+﻿namespace FlexibleRealization
 {
     public class WhAdverbPhraseBuilder : WhWordPhraseBuilder
     {
@@ -19,5 +17,7 @@ namespace FlexibleRealization
             }
         }
 
+        public override IElementTreeNode CopyLightweight() => new WhAdverbPhraseBuilder { HeadWord = (WordElementBuilder)HeadWord.CopyLightweight() }
+            .LightweightCopyChildrenFrom(this);
     }
 }

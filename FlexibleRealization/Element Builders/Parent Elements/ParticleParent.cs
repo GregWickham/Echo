@@ -23,5 +23,7 @@ namespace FlexibleRealization
         public override NLGElement BuildElement() => BuildWord();
 
         public WordElement BuildWord() => Particle;
+
+        public override IElementTreeNode CopyLightweight() => new ParticleParent { Particle = Particle.CopyWithoutSpec() };
     }
 }

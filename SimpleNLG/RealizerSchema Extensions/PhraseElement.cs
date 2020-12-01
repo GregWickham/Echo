@@ -4,6 +4,15 @@ namespace SimpleNLG
 {
     public partial class PhraseElement
     {
+        protected void NullOutSpecElements()
+        {
+            FrontModifiers = null;
+            PreModifiers = null;
+            Complements = null;
+            PostModifiers = null;
+            Head = null;
+        }
+
         [XmlIgnore]
         public NLGElement[] FrontModifiers
         {
@@ -45,24 +54,24 @@ namespace SimpleNLG
             }
         }
 
-        //[XmlIgnore]
-        //public discourseFunction DiscourseFunction
-        //{
-        //    set
-        //    {
-        //        discourseFunction = value;
-        //        discourseFunctionSpecified = true;
-        //    }
-        //}
+        [XmlIgnore]
+        public discourseFunction DiscourseFunction
+        {
+            set
+            {
+                discourseFunction = value;
+                discourseFunctionSpecified = true;
+            }
+        }
 
-        //[XmlIgnore]
-        //public bool Appositive
-        //{
-        //    set
-        //    {
-        //        appositive = value;
-        //        appositiveSpecified = true;
-        //    }
-        //}
+        [XmlIgnore]
+        public bool Appositive
+        {
+            set
+            {
+                appositive = value;
+                appositiveSpecified = true;
+            }
+        }
     }
 }

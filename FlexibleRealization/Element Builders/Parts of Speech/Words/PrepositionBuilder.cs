@@ -24,5 +24,6 @@ namespace FlexibleRealization
             return result;
         }
 
+        public override IElementTreeNode CopyLightweight() => new PrepositionBuilder(Token.Copy());
     }
 }

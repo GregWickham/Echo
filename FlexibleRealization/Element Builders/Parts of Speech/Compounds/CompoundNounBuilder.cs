@@ -17,5 +17,7 @@ namespace FlexibleRealization
             result.AddHead(this);
             return result;
         }
+
+        public override IElementTreeNode CopyLightweight() => new CompoundNounBuilder().LightweightCopyChildrenFrom(this);
     }
 }

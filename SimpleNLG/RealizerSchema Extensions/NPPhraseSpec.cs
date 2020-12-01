@@ -6,6 +6,16 @@ namespace SimpleNLG
     {
         public NPPhraseSpec() => Category = phraseCategory.NOUN_PHRASE;
 
+        public NPPhraseSpec Copy() => (NPPhraseSpec)MemberwiseClone();
+
+        public NPPhraseSpec CopyWithoutSpec()
+        {
+            NPPhraseSpec result = Copy();
+            result.NullOutSpecElements();
+            result.Specifier = null;
+            return result;
+        }
+
         #region Phrase properties
 
         [XmlIgnore]

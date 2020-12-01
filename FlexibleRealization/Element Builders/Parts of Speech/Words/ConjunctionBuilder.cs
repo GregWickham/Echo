@@ -6,5 +6,6 @@ namespace FlexibleRealization
     {
         public ConjunctionBuilder(ParseToken token) : base(lexicalCategory.CONJUNCTION, token) { }
 
+        public override IElementTreeNode CopyLightweight() => new ConjunctionBuilder(Token.Copy());
     }
 }

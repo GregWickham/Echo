@@ -67,7 +67,9 @@ namespace FlexibleRealization
         {
             try
             {
-                return editableTree.Propagate(ElementBuilder.Coordinate);
+                return editableTree
+                    .CopyLightweight()
+                    .Propagate(ElementBuilder.Coordinate);
             }
             catch (Exception transformationException)
             {

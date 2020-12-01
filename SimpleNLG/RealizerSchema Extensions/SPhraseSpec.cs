@@ -6,6 +6,17 @@ namespace SimpleNLG
     {
         public SPhraseSpec() => Category = phraseCategory.CLAUSE;
 
+        public SPhraseSpec Copy() => (SPhraseSpec)MemberwiseClone();
+
+        public SPhraseSpec CopyWithoutSpec()
+        {
+            SPhraseSpec result = Copy();
+            result.CuePhrase = null;
+            result.Subjects = null;
+            result.Predicate = null;
+            return result;
+        }
+
         [XmlIgnore]
         public NLGElement CuePhrase
         {

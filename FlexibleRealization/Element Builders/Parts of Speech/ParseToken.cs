@@ -11,5 +11,7 @@ namespace FlexibleRealization
         public string Lemma { get; set; }
         public string PartOfSpeech { get; set; }
         public string NamedEntityClass { get; set; }
+
+        internal ParseToken Copy() => (ParseToken)MemberwiseClone();
     }
 }

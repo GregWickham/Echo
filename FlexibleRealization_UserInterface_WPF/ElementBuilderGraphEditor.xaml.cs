@@ -25,7 +25,6 @@ namespace FlexibleRealization.UserInterface
         {
             InitializeComponent();
             ZoomControl.SetViewFinderVisibility(ZoomCtrl, Visibility.Hidden);
-            //ZoomCtrl.PreviewDrop += ZoomCtrl_PreviewDrop;
             GraphArea.VertexSelected += GraphArea_VertexSelected;
             Loaded += ElementBuilderGraphEditor_Loaded;
         }
@@ -151,6 +150,7 @@ namespace FlexibleRealization.UserInterface
                 }
             }
 
+            // Configure the appropriate vertexes to be drop targets for the supplied ElementBuilder
             void SetDropTargetsFor(ElementBuilder builder)
             {
                 foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in GraphArea.VertexList)
@@ -163,6 +163,16 @@ namespace FlexibleRealization.UserInterface
                     }
                     else eachKVP.Value.AllowDrop = false;
                 }
+            }
+        }
+
+        /// <summary>Configure all vertexes to NOT be drop targets</summary>
+        private void ClearDropTargets()
+        {
+            foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in GraphArea.VertexList)
+            {
+                eachKVP.Value.PreviewDrop -= VertexControl_PreviewDrop;
+                eachKVP.Value.AllowDrop = false;
             }
         }
 

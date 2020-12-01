@@ -48,6 +48,9 @@ namespace FlexibleRealization
             else return this;
         }
 
+        public override IElementTreeNode CopyLightweight() => new IndependentClauseBuilder { Clause = Clause.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         #endregion Configuration
 
         public override NLGElement BuildElement()

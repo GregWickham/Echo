@@ -7,6 +7,11 @@ namespace FlexibleRealization
 {
     public class CoordinatedPhraseBuilder : SyntaxHeadBuilder
     {
+        private CoordinatedPhraseBuilder(phraseCategory category)
+        {
+            Phrase = new CoordinatedPhraseElement(category);
+        }
+
         internal CoordinatedPhraseBuilder(phraseCategory category, IEnumerable<IElementTreeNode> coordinated, ConjunctionBuilder coordinator)
         {
             Phrase = new CoordinatedPhraseElement(category);
@@ -49,6 +54,9 @@ namespace FlexibleRealization
             1 => Coordinators.First(),
             _ => throw new InvalidOperationException("Unable to resolve Coordinator")
         };
+
+        public override IElementTreeNode CopyLightweight() => new CoordinatedPhraseBuilder(PhraseCategory)
+            .LightweightCopyChildrenFrom(this);
 
         public override NLGElement BuildElement()
         {

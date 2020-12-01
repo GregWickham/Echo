@@ -53,8 +53,10 @@ namespace EnglishParsing.Tests.Clauses.Independent.PredicateFeatures.ComplementT
                 "We shall fight with growing confidence and growing strength.",
                 SimpleNLG.Client.Realize(FlexibleRealizerFactory.SpecFrom("we shall fight with growing confidence and growing strength")));
 
+
             [TestMethod]
-            public void WeShallFightWithGrowingConfidenceAndGrowingStrengthInTheAir() => Assert.ThrowsException<SpecCannotBeBuiltException>(() =>
+            public void WeShallFightWithGrowingConfidenceAndGrowingStrengthInTheAir() => Assert.AreEqual(
+                "We shall fight with growing confidence and growing strength in the air.",
                 SimpleNLG.Client.Realize(FlexibleRealizerFactory.SpecFrom("we shall fight with growing confidence and growing strength in the air")));
 
             [TestMethod]

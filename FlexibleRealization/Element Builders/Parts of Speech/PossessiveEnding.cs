@@ -8,5 +8,7 @@ namespace FlexibleRealization
         public PossessiveEnding(ParseToken token) : base(token) { }
 
         public override NLGElement BuildElement() => throw new InvalidOperationException();
+
+        public override IElementTreeNode CopyLightweight() => new PossessiveEnding(Token.Copy());
     }
 }

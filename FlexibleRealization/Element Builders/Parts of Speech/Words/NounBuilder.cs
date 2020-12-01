@@ -1,4 +1,5 @@
-﻿using SimpleNLG;
+﻿using System;
+using SimpleNLG;
 
 namespace FlexibleRealization
 {
@@ -85,5 +86,7 @@ namespace FlexibleRealization
             result.AddComponent(this);
             return result;
         }
+
+        public override IElementTreeNode CopyLightweight() => new NounBuilder(Token.Copy());
     }
 }

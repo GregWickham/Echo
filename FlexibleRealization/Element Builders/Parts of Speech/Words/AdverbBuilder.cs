@@ -20,5 +20,7 @@ namespace FlexibleRealization
             result.AddHead(this);
             return result;
         }
+
+        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(Token.Copy());
     }
 }

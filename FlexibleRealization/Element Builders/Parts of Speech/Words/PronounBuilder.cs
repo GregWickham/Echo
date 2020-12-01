@@ -88,5 +88,12 @@ namespace FlexibleRealization
             return result;
         }
 
+        public override IElementTreeNode CopyLightweight() => new PronounBuilder(Token.Copy())
+        {
+            Case = Case,
+            Person = Person,
+            Gender = Gender,
+            Number = Number
+        };
     }
 }

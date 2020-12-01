@@ -33,6 +33,9 @@ namespace FlexibleRealization
 
         #endregion Initial assignment of children
 
+        public override IElementTreeNode CopyLightweight() => new AdverbPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         public override NLGElement BuildElement()
         {
             Phrase.preMod = PreModifiers

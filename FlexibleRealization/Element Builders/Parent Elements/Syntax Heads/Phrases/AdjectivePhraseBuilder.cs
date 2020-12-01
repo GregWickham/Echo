@@ -51,6 +51,10 @@ namespace FlexibleRealization
             .Cast<AdverbBuilder>()
             .Where(adverb => !adverb.Comparative);
 
+
+        public override IElementTreeNode CopyLightweight() => new AdjectivePhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         #endregion Configuration
 
         public override NLGElement BuildElement()

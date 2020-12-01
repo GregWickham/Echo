@@ -172,6 +172,9 @@ namespace FlexibleRealization
             return result;
         }
 
+        public override IElementTreeNode CopyLightweight() => new NounPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         #endregion Configuration
 
         public override NLGElement BuildElement()

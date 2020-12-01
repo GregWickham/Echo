@@ -44,6 +44,9 @@ namespace FlexibleRealization
             return result;
         }
 
+        public override IElementTreeNode CopyLightweight() => new PrepositionalPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         public override NLGElement BuildElement()
         {
             Phrase.head = UnaryHead.BuildWord();

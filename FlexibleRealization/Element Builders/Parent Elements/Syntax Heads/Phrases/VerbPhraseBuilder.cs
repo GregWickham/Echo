@@ -354,6 +354,9 @@ namespace FlexibleRealization
 
         #endregion Phrase features
 
+        public override IElementTreeNode CopyLightweight() => new VerbPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         public override NLGElement BuildElement()
         {
             if (ModalBuilder != null) Modal = ModalBuilder.BuildWord().Base;

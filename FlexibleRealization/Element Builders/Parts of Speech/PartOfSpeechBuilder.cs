@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FlexibleRealization.Dependencies;
 
 namespace FlexibleRealization
@@ -38,11 +37,5 @@ namespace FlexibleRealization
                 eachRelation.Apply();
             }
         }
-
-        //IEnumerable<SyntacticRelation> SelectClosestRelationsFrom(IEnumerable<SyntacticRelation> relations) => relations
-        //    .GroupBy(relation => relation.Relation)
-        //    .Select(grouping => grouping
-        //    .OrderBy(relation => relation.Dependent.DistanceFrom(relation.Governor))
-        //    .First());
     }
 }

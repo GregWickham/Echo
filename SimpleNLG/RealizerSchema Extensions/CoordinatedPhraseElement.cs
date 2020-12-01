@@ -6,6 +6,15 @@ namespace SimpleNLG
     {
         public CoordinatedPhraseElement(phraseCategory category) => Category = category;
 
+        public CoordinatedPhraseElement Copy() => (CoordinatedPhraseElement)MemberwiseClone();
+
+        public CoordinatedPhraseElement CopyWithoutSpec()
+        {
+            CoordinatedPhraseElement result = Copy();
+            result.Coordinated = null;
+            return result;
+        }
+
         [XmlIgnore]
         public NLGElement[] Coordinated
         {

@@ -29,6 +29,8 @@ namespace FlexibleRealization
 
         IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtree { get; }
 
+        IElementTreeNode CopyLightweight();
+
         IElementTreeNode AttachDependencies(List<(string Relation, string Specifier, int GovernorIndex, int DependentIndex)> dependencies);
 
         IElementTreeNode ApplyDependencies();

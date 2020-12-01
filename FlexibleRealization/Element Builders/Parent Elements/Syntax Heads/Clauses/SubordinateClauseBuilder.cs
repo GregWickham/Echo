@@ -67,6 +67,9 @@ namespace FlexibleRealization
             _ => throw new InvalidOperationException("Unable to resolve complementizer")
         };
 
+        public override IElementTreeNode CopyLightweight() => new SubordinateClauseBuilder { Clause = Clause.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
         public override NLGElement BuildElement()
         {
             // The CoreNLP constituency parser may return a clause with no predicate, or no subjects.
