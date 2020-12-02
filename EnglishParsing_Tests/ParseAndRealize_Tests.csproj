@@ -52,6 +52,7 @@
     <Compile Include="Clauses\Independent\Predicate Features\Complement Types\NounPhrase.cs" />
     <Compile Include="Clauses\Independent\Predicate Features\Complement Types\PrepositionalPhrase.cs" />
     <Compile Include="Clauses\Independent\Predicate Features\Complement Types\SubordinateClause.cs" />
+    <Compile Include="Clauses\Independent\Predicate Features\Coordinated.cs" />
     <Compile Include="Clauses\Independent\Predicate Features\Modifier Types\AdverbPhrase.cs" />
     <Compile Include="Clauses\Independent\Subject Features\ComplementTypes\PrepositionalPhrase.cs" />
     <Compile Include="Clauses\Independent\Subject Features\Coordinated.cs" />

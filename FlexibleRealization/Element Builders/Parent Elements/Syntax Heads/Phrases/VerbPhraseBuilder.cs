@@ -137,6 +137,16 @@ namespace FlexibleRealization
             if (phraseToAssimilate.PassiveSpecified) Passive = phraseToAssimilate.Passive;
         }
 
+        private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
+        {
+            CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
+            foreach (ElementBuilder eachModifier in Modifiers.ToList())
+                eachModifier.Modify(eachModifier.Nearest(result.CoordinatedElements));
+            foreach (ElementBuilder eachComplement in Complements.ToList())
+                eachComplement.Complete(eachComplement.Nearest(result.CoordinatedElements));
+            return result;
+        }
+
         #endregion Configuration
 
         #region Phrase features

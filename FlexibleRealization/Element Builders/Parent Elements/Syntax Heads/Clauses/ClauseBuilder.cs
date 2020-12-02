@@ -16,7 +16,7 @@ namespace FlexibleRealization
 
         private protected IEnumerable<IElementTreeNode> Subjects => ChildrenWithRole(ChildRole.Subject);
 
-        private protected void SetPredicate(VerbPhraseBuilder predicate)
+        private protected void SetPredicate(IElementTreeNode predicate)
         {
             if (Predicates.Count() == 0)
             {
@@ -27,10 +27,10 @@ namespace FlexibleRealization
 
         private protected IEnumerable<IElementTreeNode> Predicates => ChildrenWithRole(ChildRole.Predicate);
 
-        private protected VerbPhraseBuilder PredicateBuilder => Predicates.Count() switch
+        private protected IElementTreeNode PredicateBuilder => Predicates.Count() switch
         {
             0 => null,
-            1 => Predicates.First() as VerbPhraseBuilder,
+            1 => Predicates.First(),
             _ => throw new InvalidOperationException("Unable to resolve clause predicate")
         };
 
@@ -43,7 +43,7 @@ namespace FlexibleRealization
                 eachSubject.DetachFromParent();
                 AddSubject(eachSubject);
             }
-            VerbPhraseBuilder predicate = clause.PredicateBuilder;
+            IElementTreeNode predicate = clause.PredicateBuilder;
             if (predicate != null)
             {
                 predicate.DetachFromParent();

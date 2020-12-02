@@ -332,14 +332,18 @@ namespace FlexibleRealization
         /// <summary>Detach this from its current ParentElementBuilder, and add it as a child of <paramref name="newParent"/> with ChildRole <paramref name="newRole"/></summary>
         internal void MoveTo(ParentElementBuilder newParent, ParentElementBuilder.ChildRole newRole)
         {
+            ParentElementBuilder oldParent = Parent;
             DetachFromParent();
+            oldParent.Consolidate();
             newParent.AddChildWithRole(this, newRole);
         }
 
         /// <summary>Detach this from its current ParentElementBuilder, and add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent</summary>
         public void MoveTo(ParentElementBuilder newParent)
         {
+            ParentElementBuilder oldParent = Parent;
             DetachFromParent();
+            oldParent.Consolidate();
             newParent.AddChild(this);
             OnTreeStructureChanged();
         }
