@@ -81,6 +81,10 @@ Dragging with the **right** mouse button starts a drag-and-drop operation, which
 
 ![Image of vertex drag and drop](/docs/images/DragAndDropPP.gif)
 
+If the *Parse / Transform* process succeeds, but *Build / Realize* fails, the lower text box is displayed with a red color to indicate the error:
+
+![Image of realize failed](/docs/images/ParsedButRealizeFailed1.jpg)
+
 ### Limitations
 
 As you can imagine, the English language contains a dizzying variety of valid syntax variations, and Echo doesn't handle all of them gracefully.  The unit tests in `ParseAndRealize_Tests` demonstrate the language features that **do** work, but it's not too difficult to discover use cases that will cause the transformation process to fail.  In these cases, one of two possible exceptions should be thrown:
