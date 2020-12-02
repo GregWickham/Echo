@@ -80,6 +80,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
         /// <summary>The user has selected a vertex in the graph.</summary>
         private void ElementBuilderGraphArea_VertexSelected(object sender, VertexSelectedEventArgs args) => SetSelectedVertex((ElementVertex)args.VertexControl.Vertex);
 
+        internal void SetSelectedBuilder(ElementBuilder builder) => SetSelectedVertex(VertexForBuilder(builder));
+
         /// <summary>Update SelectedElementDescription and PropertyGrid to display the vertex selected in the graph</summary>
         internal void SetSelectedVertex(ElementVertex selectedVertex)
         {

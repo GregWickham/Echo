@@ -49,6 +49,7 @@ namespace FlexibleRealization.UserInterface
             IElementTreeNode editableTree = FlexibleRealizerFactory.EditableTreeFrom(text);
             editableTree.SubtreeChanged += ElementBuilderTree_SubtreeChanged;
             SetModel(editableTree);
+            SelectBuilder(editableTree.Root);
         }
 
         /// <summary>Assign <paramref name="elementBuilderTree"/> as the model for this editor</summary>
@@ -60,9 +61,7 @@ namespace FlexibleRealization.UserInterface
             ElementDescription.DataContext = GraphArea;
             Properties.DataContext = GraphArea;
             XmlLabel.DataContext = this;
-            GraphArea.SetSelectedVertex(graph.Root);
             ZoomCtrl.ZoomToFill();
-            TryToRealize(elementBuilderTree);
         }
 
         /// <summary>The tree is notifying us that its structure has changed</summary>
@@ -126,6 +125,13 @@ namespace FlexibleRealization.UserInterface
                     return document.ToString();
                 }
             }
+        }
+
+        /// <summary>Set <paramref name="builder"/> as the selected element</summary>
+        private void SelectBuilder(ElementBuilder builder)
+        {
+            GraphArea.SetSelectedBuilder(builder);
+            TryToRealize(builder);
         }
 
         /// <summary>If the selected ElementVertex has an associated ElementBuilder, notify listeners of the selection</summary>
@@ -195,6 +201,7 @@ namespace FlexibleRealization.UserInterface
                 {
                     ParentElementBuilder target = parentVertex.Model;
                     dropped.MoveTo(target);
+                    SelectBuilder(target);
                 }
             }
         }
