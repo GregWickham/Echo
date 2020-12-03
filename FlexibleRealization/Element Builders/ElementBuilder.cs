@@ -334,7 +334,6 @@ namespace FlexibleRealization
         {
             ParentElementBuilder oldParent = Parent;
             DetachFromParent();
-            oldParent.Consolidate();
             newParent.AddChildWithRole(this, newRole);
         }
 
@@ -343,8 +342,8 @@ namespace FlexibleRealization
         {
             ParentElementBuilder oldParent = Parent;
             DetachFromParent();
-            oldParent.Consolidate();
             newParent.AddChild(this);
+            ConsolidateTree();
             OnTreeStructureChanged();
         }
 
@@ -367,6 +366,8 @@ namespace FlexibleRealization
             }
             else return null;
         }
+
+        private void ConsolidateTree() => Root.Propagate(Consolidate);
 
         /// <summary>Return a "lighweight" copy of the subtree rooted in this ElementBuilder.</summary>
         /// <remarks>A lightweight copy has the following properties:
