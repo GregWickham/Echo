@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SimpleNLG;
 
 namespace FlexibleRealization.UserInterface.ViewModels
@@ -57,45 +58,6 @@ namespace FlexibleRealization.UserInterface.ViewModels
             CompoundNounBuilder => "Compound Noun",
 
             _ => throw new InvalidOperationException("Can't find a description for this builder type")
-        };
-
-        /// <summary>Return a short string describing the <see cref="ParentElementBuilder.ChildRole"/> <paramref name="role"/></summary>
-        internal static string LabelFor(ParentElementBuilder.ChildRole role) => role switch
-        {
-            ParentElementBuilder.ChildRole.Unassigned => "?",
-            ParentElementBuilder.ChildRole.Subject => "S",
-            ParentElementBuilder.ChildRole.Predicate => "P",
-            ParentElementBuilder.ChildRole.Head => "H",
-            ParentElementBuilder.ChildRole.Modifier => "M",
-            ParentElementBuilder.ChildRole.Complement => "C",
-            ParentElementBuilder.ChildRole.Specifier => "S",
-            ParentElementBuilder.ChildRole.Modal => "MD",
-            ParentElementBuilder.ChildRole.Coordinator => "CD",
-            ParentElementBuilder.ChildRole.Coordinated => "CE",
-            ParentElementBuilder.ChildRole.Complementizer => "CM",
-            ParentElementBuilder.ChildRole.Component => "W",
-
-            _ => throw new InvalidOperationException("Can't find a label for this child role")
-        };
-
-        /// <summary>Return a long string describing the <see cref="ParentElementBuilder.ChildRole"/> <paramref name="role"/></summary>
-        internal static string DescriptionFor(ParentElementBuilder.ChildRole role) => role switch
-        {
-            ParentElementBuilder.ChildRole.NoParent => "(No Parent)",
-            ParentElementBuilder.ChildRole.Unassigned => "Unassigned",
-            ParentElementBuilder.ChildRole.Subject => "Subject",
-            ParentElementBuilder.ChildRole.Predicate => "Predicate",
-            ParentElementBuilder.ChildRole.Head => "Head",
-            ParentElementBuilder.ChildRole.Modifier => "Modifier",
-            ParentElementBuilder.ChildRole.Complement => "Complement",
-            ParentElementBuilder.ChildRole.Specifier => "Specifier",
-            ParentElementBuilder.ChildRole.Modal => "Modal",
-            ParentElementBuilder.ChildRole.Coordinator => "Coordinator",
-            ParentElementBuilder.ChildRole.Coordinated => "Coordinated Element",
-            ParentElementBuilder.ChildRole.Complementizer => "Complementizer",
-            ParentElementBuilder.ChildRole.Component => "Component Word",
-
-            _ => throw new InvalidOperationException("Can't find a description for this child role")
         };
 
         internal static IEnumerable<string> SpecifiedFeaturesFor(ParentElementBuilder element)
@@ -175,5 +137,49 @@ namespace FlexibleRealization.UserInterface.ViewModels
             return properties;
         }
 
+        internal static class ChildRole
+        {
+            internal static string StringFormOf(ParentElementBuilder.ChildRole role) => Strings[role];
+
+            internal static IEnumerable<string> StringFormsOf(IEnumerable<ParentElementBuilder.ChildRole> roles) => roles.Select(role => Strings[role]);
+
+            internal static ParentElementBuilder.ChildRole FromString(string description) => Strings.Single(kvp => kvp.Value.Equals(description)).Key;
+
+            /// <summary>Strings describing the <see cref="ParentElementBuilder.ChildRole"/> <paramref name="role"/>s</summary>
+            internal static Dictionary<ParentElementBuilder.ChildRole, string> Strings { get; } = new Dictionary<ParentElementBuilder.ChildRole, string>
+            {
+                { ParentElementBuilder.ChildRole.NoParent, "(No Parent)" },
+                { ParentElementBuilder.ChildRole.Unassigned, "Unassigned" },
+                { ParentElementBuilder.ChildRole.Subject, "Subject" },
+                { ParentElementBuilder.ChildRole.Predicate, "Predicate" },
+                { ParentElementBuilder.ChildRole.Head, "Head" },
+                { ParentElementBuilder.ChildRole.Modifier, "Modifier" },
+                { ParentElementBuilder.ChildRole.Complement, "Complement" },
+                { ParentElementBuilder.ChildRole.Specifier, "Specifier" },
+                { ParentElementBuilder.ChildRole.Modal, "Modal" },
+                { ParentElementBuilder.ChildRole.Coordinator, "Coordinator" },
+                { ParentElementBuilder.ChildRole.Coordinated, "Coordinated Element" },
+                { ParentElementBuilder.ChildRole.Complementizer, "Complementizer" },
+                { ParentElementBuilder.ChildRole.Component, "Component Word" },
+            };
+
+            /// <summary>Labels describing the <see cref="ParentElementBuilder.ChildRole"/> <paramref name="role"/>s</summary>
+            internal static Dictionary<ParentElementBuilder.ChildRole, string> Labels { get; } = new Dictionary<ParentElementBuilder.ChildRole, string>
+            {
+                { ParentElementBuilder.ChildRole.NoParent, "(No Parent)" },
+                { ParentElementBuilder.ChildRole.Unassigned, "?" },
+                { ParentElementBuilder.ChildRole.Subject, "S" },
+                { ParentElementBuilder.ChildRole.Predicate, "P" },
+                { ParentElementBuilder.ChildRole.Head, "H" },
+                { ParentElementBuilder.ChildRole.Modifier, "M" },
+                { ParentElementBuilder.ChildRole.Complement, "C" },
+                { ParentElementBuilder.ChildRole.Specifier, "S" },
+                { ParentElementBuilder.ChildRole.Modal, "MD" },
+                { ParentElementBuilder.ChildRole.Coordinator, "CD" },
+                { ParentElementBuilder.ChildRole.Coordinated, "CE" },
+                { ParentElementBuilder.ChildRole.Complementizer, "CM" },
+                { ParentElementBuilder.ChildRole.Component, "W" },
+            };
+        }
     }
 }

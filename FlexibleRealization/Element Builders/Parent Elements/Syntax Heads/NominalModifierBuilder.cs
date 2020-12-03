@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SimpleNLG;
 
@@ -7,6 +8,13 @@ namespace FlexibleRealization
     public class NominalModifierBuilder : SyntaxHeadBuilder
     {
         private StringElement NominalModifier = new StringElement();
+
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
+            listOfRoles.Add(ChildRole.Modifier);
+        }
 
         #region Initial assignment of children
 

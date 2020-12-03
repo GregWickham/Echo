@@ -7,6 +7,15 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG AdjPhraseSpec</summary>
     public class AdjectivePhraseBuilder : CoordinablePhraseBuilder<AdjPhraseSpec>
     {
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
+            listOfRoles.Add(ChildRole.Modifier);
+            listOfRoles.Add(ChildRole.Complement);
+            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+        }
+
         #region Initial assignment of children
 
         private protected override void AssignRoleFor(IElementTreeNode child)

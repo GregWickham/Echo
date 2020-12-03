@@ -1,4 +1,5 @@
-﻿using SimpleNLG;
+﻿using System.Collections.Generic;
+using SimpleNLG;
 
 namespace FlexibleRealization
 {
@@ -18,6 +19,12 @@ namespace FlexibleRealization
                     AddUnassignedChild(child);
                     break;
             }
+        }
+
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
         }
 
         public override NLGElement BuildElement() => BuildWord();

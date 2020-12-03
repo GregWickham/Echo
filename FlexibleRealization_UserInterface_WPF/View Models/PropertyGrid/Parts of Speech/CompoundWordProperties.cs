@@ -14,6 +14,6 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         [Category("Syntax|")]
         [DisplayName("Role")]
-        public string Role => Parent.DescriptionFor(Model.AssignedRole);
+        public string Role => Parent.ChildRole.Strings[Model.AssignedRole];
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SimpleNLG;
 
 namespace FlexibleRealization
@@ -6,6 +7,14 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG PPPhraseSpec</summary>
     public class PrepositionalPhraseBuilder : CoordinablePhraseBuilder<PPPhraseSpec>
     {
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
+            listOfRoles.Add(ChildRole.Complement);
+            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+        }
+
         #region Initial assignment of children
 
         private protected override void AssignRoleFor(IElementTreeNode child)
@@ -39,7 +48,7 @@ namespace FlexibleRealization
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            Complements.ToList().ForEach(complement => complement.Complete(complement.Nearest(result.CoordinatedElements)));
+            Complements.ToList().ForEach(complement => complement.Complete(complement.NearestOf(result.CoordinatedElements)));
             return result;
         }
 

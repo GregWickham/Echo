@@ -1,4 +1,5 @@
-﻿using PropertyTools.DataAnnotations;
+﻿using System.Collections.Generic;
+using PropertyTools.DataAnnotations;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
@@ -11,13 +12,25 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         private PartOfSpeechBuilder Model;
 
-        [Browsable(false)]
         public override string Description => PartOfSpeech.DescriptionFor(Model);
+
+        #region Syntax
+
+        [Browsable(false)]
+        public IEnumerable<string> RoleValues => Parent.ChildRole.StringFormsOf(Model.ValidRolesInCurrentParent);
 
         [Category("Syntax|")]
         [DisplayName("Role")]
-        public string Role => Parent.DescriptionFor(Model.AssignedRole);
+        [ItemsSourceProperty("RoleValues")]
+        public string Role
+        {
+            get => Parent.ChildRole.StringFormOf(Model.AssignedRole);
+            set => Model.AssignedRole = Parent.ChildRole.FromString(value);
+        }
 
+        #endregion Syntax
+
+        #region Features
 
         [Category("Features|")]
         [DisplayName("POS Tag")]
@@ -34,5 +47,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
         [Category("Features|")]
         [DisplayName("Lemma")]
         public string Lemma => Model.Token.Lemma;
+
+        #endregion Features
     }
 }

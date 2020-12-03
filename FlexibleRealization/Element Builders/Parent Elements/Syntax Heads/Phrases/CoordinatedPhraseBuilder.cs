@@ -24,6 +24,13 @@ namespace FlexibleRealization
 
         public phraseCategory PhraseCategory => Phrase.Category;
 
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Coordinated);
+            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+        }
+
         /// <summary>This method should never be called because CoordinatedPhraseBuilder is not created from a constituency parse.</summary>
         /// <remarks>A CoordinatedPhraseBuilder is only created by a CoordinablePhraseBuilder and given its complete
         /// set of children at the time of its creation.  A standard set of children are assigned by the constructor; others

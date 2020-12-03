@@ -94,13 +94,26 @@ namespace FlexibleRealization
         }
 
         /// <summary>Return the one of <paramref name="elements"/> that's nearest to this, based on their part of speech index ranges</summary>
-        public IElementTreeNode Nearest(IEnumerable<IElementTreeNode> elements) => elements.OrderBy(element => DistanceFrom(element)).First();
+        public IElementTreeNode NearestOf(IEnumerable<IElementTreeNode> elements) => elements.OrderBy(element => DistanceFrom(element)).First();
 
-        /// <summary>Return the ChildRole of this relative to its parent</summary>
+        /// <summary>The list of ChildRoles an instance can have if it has no parent.  Only one option.</summary>
+        private static List<ParentElementBuilder.ChildRole> NoParentRolesList = new List<ParentElementBuilder.ChildRole> { ParentElementBuilder.ChildRole.NoParent };
+
+        /// <summary>The list of valid ChildRoles this could have relative to its current parent</summary>
+        public IEnumerable<ParentElementBuilder.ChildRole> ValidRolesInCurrentParent => Parent == null ? NoParentRolesList : Parent.ValidRolesForChild(this);
+
+        /// <summary>The ChildRole of this relative to its parent</summary>
         public ParentElementBuilder.ChildRole AssignedRole
         {
             get => Parent?.RoleFor(this) ?? ParentElementBuilder.ChildRole.NoParent;
-            set => Parent?.SetRoleOfChild(this, value);
+            set
+            {
+                if (Parent != null)
+                {
+                    Parent.SetRoleOfChild(this, value);
+                    OnTreeStructureChanged();
+                }
+            }                 
         }
 
         /// <summary>Return true if this has ChildRole <paramref name="role"/> relative to its parent</summary>

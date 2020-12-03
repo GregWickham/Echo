@@ -9,7 +9,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         private readonly ParentElementBuilder.ChildRole Role;
 
-        public override string LabelText => Parent.LabelFor(Role);
+        public override string LabelText => Parent.ChildRole.Labels[Role];
         public override EdgeDashStyle ElementDashStyle => DashStyleFor(Role);
 
         /// <summary>Return the appropriate <see cref="EdgeDashStyle"/> for <paramref name="edge"/></summary>

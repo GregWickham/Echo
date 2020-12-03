@@ -15,6 +15,6 @@ namespace FlexibleRealization
 
         int DistanceFrom(IIndexRange anotherElement);
 
-        IElementTreeNode Nearest(IEnumerable<IElementTreeNode> elements);
+        IElementTreeNode NearestOf(IEnumerable<IElementTreeNode> elements);
     }
 }

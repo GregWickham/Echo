@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SimpleNLG;
 
 namespace FlexibleRealization
@@ -6,6 +7,14 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG AdvPhraseSpec</summary>
     public class AdverbPhraseBuilder : CoordinablePhraseBuilder<AdvPhraseSpec>
     {
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
+            listOfRoles.Add(ChildRole.Modifier);
+            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+        }
+
         #region Initial assignment of children
 
         private protected override void AssignRoleFor(IElementTreeNode child)

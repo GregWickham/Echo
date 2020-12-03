@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
-    public class ParentProperties : ElementProperties
+    public abstract class ParentProperties : ElementProperties
     {
         internal static ParentProperties For(ParentElementBuilder builder) => builder switch
         {
@@ -19,7 +19,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
             NominalModifierBuilder nmb => new NominalModifierProperties(nmb),
             CompoundBuilder cwb => new CompoundWordProperties(cwb),
 
-            _ => new ParentProperties(builder)
+            _ => throw new InvalidOperationException("No properties class defined for this ParentElementBuilder type")
         };
 
         private protected ParentProperties(ParentElementBuilder peb) { Model = peb; }

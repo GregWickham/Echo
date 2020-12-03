@@ -8,6 +8,16 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG VPPhraseSpec</summary>
     public class VerbPhraseBuilder : CoordinablePhraseBuilder<VPPhraseSpec>
     {
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
+            listOfRoles.Add(ChildRole.Modifier);
+            listOfRoles.Add(ChildRole.Complement);
+            if (ModalBuilder == null) listOfRoles.Add(ChildRole.Modal);
+            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+        }
+
         #region Initial assignment of children
 
         private protected override void AssignRoleFor(IElementTreeNode child)
@@ -137,8 +147,8 @@ namespace FlexibleRealization
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.Nearest(result.CoordinatedElements)));
-            Complements.ToList().ForEach(complement => complement.Complete(complement.Nearest(result.CoordinatedElements)));
+            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.NearestOf(result.CoordinatedElements)));
+            Complements.ToList().ForEach(complement => complement.Complete(complement.NearestOf(result.CoordinatedElements)));
             return result;
         }
 

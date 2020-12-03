@@ -9,6 +9,14 @@ namespace FlexibleRealization
     {
         public SubordinateClauseBuilder() : base(clauseStatus.SUBORDINATE) { }
 
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Subject);
+            if (PredicateBuilder == null) listOfRoles.Add(ChildRole.Predicate);
+            if (ComplementizerBuilder == null) listOfRoles.Add(ChildRole.Complementizer);
+        }
+
         #region Initial assignment of children
 
         private protected override void AssignRoleFor(IElementTreeNode child)

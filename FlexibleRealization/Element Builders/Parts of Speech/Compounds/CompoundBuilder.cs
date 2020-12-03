@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SimpleNLG;
 
@@ -9,6 +10,12 @@ namespace FlexibleRealization
         public CompoundBuilder(lexicalCategory category) { Compound.PartOfSpeech = category; }
 
         private WordElement Compound = new WordElement();
+
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Component);
+        }
 
         private protected override void AssignRoleFor(IElementTreeNode child) => AddComponent(child);
 

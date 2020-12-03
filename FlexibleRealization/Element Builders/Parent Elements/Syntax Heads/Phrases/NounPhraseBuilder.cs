@@ -8,6 +8,16 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG NPPhraseSpec</summary>
     public class NounPhraseBuilder : CoordinablePhraseBuilder<NPPhraseSpec>
     {
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Head);
+            listOfRoles.Add(ChildRole.Modifier);
+            listOfRoles.Add(ChildRole.Complement);
+            if (SpecifierBuilder == null) listOfRoles.Add(ChildRole.Specifier);
+            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+        }
+
         #region Initial assignment of children
 
         private protected override void AssignRoleFor(IElementTreeNode child)
@@ -163,9 +173,9 @@ namespace FlexibleRealization
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            SpecifierBuilder?.Specify(SpecifierBuilder.Nearest(result.CoordinatedElements));
-            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.Nearest(result.CoordinatedElements)));
-            Complements.ToList().ForEach(complement => complement.Complete(complement.Nearest(result.CoordinatedElements)));
+            SpecifierBuilder?.Specify(SpecifierBuilder.NearestOf(result.CoordinatedElements));
+            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.NearestOf(result.CoordinatedElements)));
+            Complements.ToList().ForEach(complement => complement.Complete(complement.NearestOf(result.CoordinatedElements)));
             return result;
         }
 

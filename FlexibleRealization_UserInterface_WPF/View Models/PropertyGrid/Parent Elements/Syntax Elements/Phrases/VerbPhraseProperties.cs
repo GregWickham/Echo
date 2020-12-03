@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using PropertyTools.DataAnnotations;
 
 namespace FlexibleRealization.UserInterface.ViewModels
@@ -12,9 +13,17 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         #region Syntax
 
+        [Browsable(false)]
+        public IEnumerable<string> RoleValues => Parent.ChildRole.StringFormsOf(Model.ValidRolesInCurrentParent);
+
         [Category("Syntax|")]
         [DisplayName("Role")]
-        public string Role => Parent.DescriptionFor(Model.AssignedRole);
+        [ItemsSourceProperty("RoleValues")]
+        public string Role
+        {
+            get => Parent.ChildRole.StringFormOf(Model.AssignedRole);
+            set => Model.AssignedRole = Parent.ChildRole.FromString(value);
+        }
 
         #endregion Syntax
 

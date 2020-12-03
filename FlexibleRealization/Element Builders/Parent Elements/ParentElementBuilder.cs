@@ -48,6 +48,30 @@ namespace FlexibleRealization
             Component       // of a compound word
         }
 
+        /// <summary>Return a list of the valid ChildRoles for <paramref name="child"/> as a child of this</summary>
+        internal List<ChildRole> ValidRolesForChild(ElementBuilder child)
+        {
+            List<ChildRole> result = new List<ChildRole>();
+            AddValidRolesForChildTo(result, child);
+            return result;
+        }
+
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected abstract void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child);
+        //{
+        //    listOfRoles.Add(ChildRole.Complement);
+        //    listOfRoles.Add(ChildRole.Complementizer);
+        //    listOfRoles.Add(ChildRole.Component);
+        //    listOfRoles.Add(ChildRole.Coordinated);
+        //    listOfRoles.Add(ChildRole.Coordinator);
+        //    listOfRoles.Add(ChildRole.Head);
+        //    listOfRoles.Add(ChildRole.Modal);
+        //    listOfRoles.Add(ChildRole.Modifier);
+        //    listOfRoles.Add(ChildRole.Predicate);
+        //    listOfRoles.Add(ChildRole.Specifier);
+        //    listOfRoles.Add(ChildRole.Subject);
+        //}
+
         /// <summary>The central collection holding all the ElementBuilder children of a ParentElementBuilder and the roles of those children</summary>
         /// <remarks>Many properties and methods operate upon this collection</remarks>
         private Dictionary<IElementTreeNode, ChildRole> ChildrenAndRoles = new Dictionary<IElementTreeNode, ChildRole>();

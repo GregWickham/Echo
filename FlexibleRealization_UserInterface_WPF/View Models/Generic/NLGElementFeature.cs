@@ -165,5 +165,6 @@ namespace FlexibleRealization.UserInterface.ViewModels
                 { documentCategory.LIST_ITEM, "List Item" }
             };
         }
+
     }
 }

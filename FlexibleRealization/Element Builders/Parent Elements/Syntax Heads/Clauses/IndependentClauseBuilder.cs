@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SimpleNLG;
 
@@ -7,6 +8,13 @@ namespace FlexibleRealization
     public class IndependentClauseBuilder : ClauseBuilder
     {
         public IndependentClauseBuilder() : base(clauseStatus.MATRIX) { }
+
+        /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
+        private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
+        {
+            listOfRoles.Add(ChildRole.Subject);
+            if (PredicateBuilder == null) listOfRoles.Add(ChildRole.Predicate);
+        }
 
         #region Initial assignment of children
 
