@@ -80,10 +80,7 @@ namespace FlexibleRealization
         /// <summary>Set <paramref name="modal"/> as the ONLY modal for this verb phrase</summary>
         private void SetModal(ModalBuilder modal)
         {
-            if (Modals.Count() == 0)
-            {
-                AddChildWithRole(modal, ChildRole.Modal);
-            }
+            if (Modals.Count() == 0) AddChildWithRole(modal, ChildRole.Modal);
             else throw new InvalidOperationException("Can't add multiple modals to a verb phrase");
         }
 
@@ -140,10 +137,8 @@ namespace FlexibleRealization
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            foreach (ElementBuilder eachModifier in Modifiers.ToList())
-                eachModifier.Modify(eachModifier.Nearest(result.CoordinatedElements));
-            foreach (ElementBuilder eachComplement in Complements.ToList())
-                eachComplement.Complete(eachComplement.Nearest(result.CoordinatedElements));
+            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.Nearest(result.CoordinatedElements)));
+            Complements.ToList().ForEach(complement => complement.Complete(complement.Nearest(result.CoordinatedElements)));
             return result;
         }
 

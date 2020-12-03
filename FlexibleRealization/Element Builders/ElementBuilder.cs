@@ -97,7 +97,11 @@ namespace FlexibleRealization
         public IElementTreeNode Nearest(IEnumerable<IElementTreeNode> elements) => elements.OrderBy(element => DistanceFrom(element)).First();
 
         /// <summary>Return the ChildRole of this relative to its parent</summary>
-        public ParentElementBuilder.ChildRole AssignedRole => Parent?.RoleFor(this) ?? ParentElementBuilder.ChildRole.NoParent;
+        public ParentElementBuilder.ChildRole AssignedRole
+        {
+            get => Parent?.RoleFor(this) ?? ParentElementBuilder.ChildRole.NoParent;
+            set => Parent?.SetRoleOfChild(this, value);
+        }
 
         /// <summary>Return true if this has ChildRole <paramref name="role"/> relative to its parent</summary>
         private bool HasRole(ParentElementBuilder.ChildRole role) => AssignedRole == role;
@@ -177,7 +181,7 @@ namespace FlexibleRealization
             if (!Specifies(governor))
             {
                 if (HasSameParentAs(governor) && governor.IsPhraseHead)
-                    ChangeRoleTo(ParentElementBuilder.ChildRole.Specifier);
+                    AssignedRole = ParentElementBuilder.ChildRole.Specifier;
                 else
                 {
                     if (governor.IsPhraseHead)
@@ -197,7 +201,7 @@ namespace FlexibleRealization
             if (!Modifies(governor))
             {
                 if (HasSameParentAs(governor) && governor.IsPhraseHead)
-                    ChangeRoleTo(ParentElementBuilder.ChildRole.Modifier);
+                    AssignedRole = ParentElementBuilder.ChildRole.Modifier;
                 else
                 {
                     if (governor.IsPhraseHead)
@@ -217,7 +221,7 @@ namespace FlexibleRealization
             if (!Completes(governor))
             {
                 if (HasSameParentAs(governor) && governor.IsPhraseHead)
-                    ChangeRoleTo(ParentElementBuilder.ChildRole.Complement);
+                    AssignedRole = ParentElementBuilder.ChildRole.Complement;
                 else
                 {
                     if (governor.IsPhraseHead)
@@ -281,8 +285,7 @@ namespace FlexibleRealization
         /// <returns>The result of performing <paramref name="operateOn"/>(this) after <paramref name="operateOn"/> has been invoked on all its descendants</returns>
         public IElementTreeNode Propagate(ElementTreeNodeOperation operateOn)
         {
-            foreach (IElementTreeNode eachChild in Children.ToList())
-                eachChild.Propagate(operateOn);
+            Children.ToList().ForEach(child => child.Propagate(operateOn));
             return operateOn(this);
         }
 
@@ -327,7 +330,7 @@ namespace FlexibleRealization
         }
 
         /// <summary>Keep the parent of this as-is, but change the ChildRole of this to <paramref name="newRole"/></summary>
-        internal void ChangeRoleTo(ParentElementBuilder.ChildRole newRole) => Parent.ChangeRoleOfChild(this, newRole);
+        //internal void ChangeRoleTo(ParentElementBuilder.ChildRole newRole) => Parent.SetRoleOfChild(this, newRole);
 
         /// <summary>Detach this from its current ParentElementBuilder, and add it as a child of <paramref name="newParent"/> with ChildRole <paramref name="newRole"/></summary>
         internal void MoveTo(ParentElementBuilder newParent, ParentElementBuilder.ChildRole newRole)
@@ -367,6 +370,7 @@ namespace FlexibleRealization
             else return null;
         }
 
+        /// <summary>Consolidate the tree containing this</summary>
         private void ConsolidateTree() => Root.Propagate(Consolidate);
 
         /// <summary>Return a "lighweight" copy of the subtree rooted in this ElementBuilder.</summary>

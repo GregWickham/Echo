@@ -39,8 +39,7 @@ namespace FlexibleRealization
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            foreach (ElementBuilder eachComplement in Complements.ToList())
-                eachComplement.Complete(eachComplement.Nearest(result.CoordinatedElements));
+            Complements.ToList().ForEach(complement => complement.Complete(complement.Nearest(result.CoordinatedElements)));
             return result;
         }
 

@@ -123,8 +123,7 @@ namespace FlexibleRealization
         /// <summary>Set <paramref name="specifier"/> as the ONLY specifier for this noun phrase</summary>
         private void SetSpecifier(IElementTreeNode specifier)
         {
-            if (Specifiers.Count() == 0)
-                AddChildWithRole(specifier, ChildRole.Specifier);
+            if (Specifiers.Count() == 0) AddChildWithRole(specifier, ChildRole.Specifier);
             else throw new InvalidOperationException("Can't add multiple specifiers to a noun phrase");
         }
 
@@ -165,10 +164,8 @@ namespace FlexibleRealization
         {
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
             SpecifierBuilder?.Specify(SpecifierBuilder.Nearest(result.CoordinatedElements));
-            foreach (ElementBuilder eachModifier in Modifiers.ToList())
-                eachModifier.Modify(eachModifier.Nearest(result.CoordinatedElements));
-            foreach (ElementBuilder eachComplement in Complements.ToList())
-                eachComplement.Complete(eachComplement.Nearest(result.CoordinatedElements));
+            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.Nearest(result.CoordinatedElements)));
+            Complements.ToList().ForEach(complement => complement.Complete(complement.Nearest(result.CoordinatedElements)));
             return result;
         }
 

@@ -23,13 +23,7 @@ namespace FlexibleRealization
         }
 
         /// <summary>Add all the ElementBuilders in <paramref name="children"/> as children of this, with ChildRole <paramref name="role"/></summary>
-        private protected void AddChildrenWithRole(IEnumerable<IElementTreeNode> children, ChildRole role)
-        {
-            foreach (ElementBuilder eachChildToAdd in children)
-            {
-                AddChildWithRole(eachChildToAdd, role);
-            }
-        }
+        private protected void AddChildrenWithRole(IEnumerable<IElementTreeNode> newChildren, ChildRole role) => newChildren.ToList().ForEach(newChild => AddChildWithRole(newChild, role));
 
         /// <summary>Add <paramref name="newChild"/> as a child of this, with ChildRole Unassigned</summary>
         private protected void AddUnassignedChild(IElementTreeNode newChild) => AddChildWithRole(newChild, ChildRole.Unassigned);
@@ -97,10 +91,7 @@ namespace FlexibleRealization
         }
 
         /// <summary>Add all descendants of this to <paramref name="list"/></summary>
-        private protected void AddDescendantsTo(List<IElementTreeNode> list)
-        {
-            foreach (IElementTreeNode child in Children) list.AddRange(child.WithAllDescendentBuilders);
-        }
+        private protected void AddDescendantsTo(List<IElementTreeNode> list) => Children.ToList().ForEach(child => list.AddRange(child.WithAllDescendentBuilders));
 
         /// <summary>Return all the PartOfSpeechBuilders descended from this that have indexes between <paramref name="start"/> and <paramref name="end"/>, non-inclusive</summary>
         internal IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtreeBetween(PartOfSpeechBuilder start, PartOfSpeechBuilder end) => PartsOfSpeechInSubtree
@@ -113,11 +104,11 @@ namespace FlexibleRealization
         /// <summary>Override of Configure for ParentElementBuilders.  If a subclass overrides this implementation, it should call this base form after its own custom manipulations.</summary>
         public override IElementTreeNode Configure()
         {
-            foreach (ElementBuilder eachUnassignedChild in UnassignedChildren.ToList())
+            UnassignedChildren.ToList().ForEach(unassignedChild =>
             {
-                RemoveChild(eachUnassignedChild);
-                AssignRoleFor(eachUnassignedChild);
-            }
+                RemoveChild(unassignedChild);
+                AssignRoleFor(unassignedChild);
+            });
             return this;
         }
 
@@ -129,25 +120,12 @@ namespace FlexibleRealization
             _ => this
         };
 
-        /// <summary>Change the ChildRole of <paramref name="child"/> to <paramref name="newRole"/></summary>
-        internal void ChangeRoleOfChild(IElementTreeNode child, ChildRole newRole)
-        {
-            RemoveChild(child);
-            AddChildWithRole(child, newRole);
-        }
+        /// <summary>Change the role of an existing child <paramref name="child"/> to <paramref name="newRole"/></summary>
+        internal void SetRoleOfChild(IElementTreeNode child, ChildRole newRole) => ChildrenAndRoles[child] = newRole;
 
         /// <summary>Find all children with assigned role <paramref name="originalRole"/>, and change their role to <paramref name="newRole"/></summary>
-        private protected void ChangeChildRoles(ChildRole originalRole, ChildRole newRole)
-        {
-            IEnumerable<IElementTreeNode> childrenToChange = ChildrenAndRoles
-                .Where(kvp => kvp.Value == originalRole)
-                .Select(kvp => kvp.Key)
-                .ToList();
-            foreach (IElementTreeNode childToChange in childrenToChange)
-            {
-                ChildrenAndRoles[childToChange] = newRole;
-            }
-        }
+        private protected void ChangeChildRoles(ChildRole originalRole, ChildRole newRole) => ChildrenWithRole(originalRole).ToList()
+            .ForEach(childToChange => SetRoleOfChild(childToChange, newRole));
 
         /// <summary>Sever the parent-child link between this and <paramref name="childToRemove"/></summary>
         internal void RemoveChild(IElementTreeNode childToRemove)
@@ -166,10 +144,7 @@ namespace FlexibleRealization
 
         internal ParentElementBuilder LightweightCopyChildrenFrom(ParentElementBuilder anotherParent)
         {
-            foreach (KeyValuePair<IElementTreeNode, ChildRole> eachChildKVP in anotherParent.ChildrenAndRoles)
-            {
-                AddChildWithRole(eachChildKVP.Key.CopyLightweight(), eachChildKVP.Value);
-            }
+            anotherParent.ChildrenAndRoles.ToList().ForEach(kvp => AddChildWithRole(kvp.Key.CopyLightweight(), kvp.Value));
             return this;
         }
 

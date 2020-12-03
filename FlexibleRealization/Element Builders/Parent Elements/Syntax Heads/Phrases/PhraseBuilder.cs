@@ -23,22 +23,13 @@ namespace FlexibleRealization
         internal IEnumerable<IElementTreeNode> Complements => ChildrenWithRole(ChildRole.Complement);
 
         internal void AddHead(IElementTreeNode head) => AddChildWithRole(head, ChildRole.Head);
-        private protected void AddHeads(IEnumerable<IElementTreeNode> heads)
-        {
-            foreach (IElementTreeNode eachHead in heads) AddHead(eachHead);
-        }
+        private protected void AddHeads(IEnumerable<IElementTreeNode> newHeads) => newHeads.ToList().ForEach(newHead => AddHead(newHead));
 
-        internal void AddModifier(IElementTreeNode modifier) => AddChildWithRole(modifier, ChildRole.Modifier);
-        private protected void AddModifiers(IEnumerable<IElementTreeNode> modifiers)
-        {
-            foreach (IElementTreeNode eachModifier in modifiers) AddModifier(eachModifier);
-        }
+        private protected void AddModifier(IElementTreeNode modifier) => AddChildWithRole(modifier, ChildRole.Modifier);
+        private protected void AddModifiers(IEnumerable<IElementTreeNode> newModifiers) => newModifiers.ToList().ForEach(newModifier => AddModifier(newModifier));
 
-        private protected void AddComplement(IElementTreeNode complement) => AddChildWithRole(complement, ChildRole.Complement); 
-        private protected void AddComplements(IEnumerable<IElementTreeNode> complements)
-        {
-            foreach (IElementTreeNode eachComplement in complements) AddComplement(eachComplement);
-        }
+        private protected void AddComplement(IElementTreeNode complement) => AddChildWithRole(complement, ChildRole.Complement);
+        private protected void AddComplements(IEnumerable<IElementTreeNode> newComplements) => newComplements.ToList().ForEach(newComplement => AddComplement(newComplement));
 
         /// <summary>Default override of Consolidate for PhraseBuilders.</summary>
         /// <remarks>When a PhraseBuilder has exactly one child, we do NOT eliminate the PhraseBuilder and pass through that child, because this is
