@@ -20,8 +20,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
         [ItemsSourceProperty("RoleValues")]
         public string Role
         {
-            get => Parent.ChildRole.StringFormOf(Model.AssignedRole);
-            set => Model.AssignedRole = Parent.ChildRole.FromString(value);
+            get => Parent.ChildRole.DescriptionFrom(Model.AssignedRole);
+            set => Model.AssignedRole = Parent.ChildRole.FromDescription(value);
         }
 
         #endregion Syntax

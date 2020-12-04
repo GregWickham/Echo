@@ -139,11 +139,11 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         internal static class ChildRole
         {
-            internal static string StringFormOf(ParentElementBuilder.ChildRole role) => Strings[role];
+            internal static string DescriptionFrom(ParentElementBuilder.ChildRole role) => Strings[role];
 
             internal static IEnumerable<string> StringFormsOf(IEnumerable<ParentElementBuilder.ChildRole> roles) => roles.Select(role => Strings[role]);
 
-            internal static ParentElementBuilder.ChildRole FromString(string description) => Strings.Single(kvp => kvp.Value.Equals(description)).Key;
+            internal static ParentElementBuilder.ChildRole FromDescription(string description) => Strings.Single(kvp => kvp.Value.Equals(description)).Key;
 
             /// <summary>Strings describing the <see cref="ParentElementBuilder.ChildRole"/> <paramref name="role"/>s</summary>
             internal static Dictionary<ParentElementBuilder.ChildRole, string> Strings { get; } = new Dictionary<ParentElementBuilder.ChildRole, string>

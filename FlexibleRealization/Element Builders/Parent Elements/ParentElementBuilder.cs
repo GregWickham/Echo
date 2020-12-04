@@ -58,19 +58,6 @@ namespace FlexibleRealization
 
         /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
         private protected abstract void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child);
-        //{
-        //    listOfRoles.Add(ChildRole.Complement);
-        //    listOfRoles.Add(ChildRole.Complementizer);
-        //    listOfRoles.Add(ChildRole.Component);
-        //    listOfRoles.Add(ChildRole.Coordinated);
-        //    listOfRoles.Add(ChildRole.Coordinator);
-        //    listOfRoles.Add(ChildRole.Head);
-        //    listOfRoles.Add(ChildRole.Modal);
-        //    listOfRoles.Add(ChildRole.Modifier);
-        //    listOfRoles.Add(ChildRole.Predicate);
-        //    listOfRoles.Add(ChildRole.Specifier);
-        //    listOfRoles.Add(ChildRole.Subject);
-        //}
 
         /// <summary>The central collection holding all the ElementBuilder children of a ParentElementBuilder and the roles of those children</summary>
         /// <remarks>Many properties and methods operate upon this collection</remarks>
@@ -161,9 +148,9 @@ namespace FlexibleRealization
         /// <summary>Replace <paramref name="existingChild"/> with <paramref name="newChild"/> using the same role.</summary>
         public void ReplaceChild(IElementTreeNode existingChild, IElementTreeNode newChild)
         {
-            ChildRole role = RoleFor(existingChild);
+            ChildRole existingRole = RoleFor(existingChild);
             RemoveChild(existingChild);
-            AddChildWithRole(newChild, role);
+            if (newChild != null) AddChild(newChild);
         }
 
         internal ParentElementBuilder LightweightCopyChildrenFrom(ParentElementBuilder anotherParent)

@@ -28,7 +28,7 @@ namespace FlexibleRealization
         private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
         {
             listOfRoles.Add(ChildRole.Coordinated);
-            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+            if (CoordinatorBuilder == null || CoordinatorBuilder == child) listOfRoles.Add(ChildRole.Coordinator);
         }
 
         /// <summary>This method should never be called because CoordinatedPhraseBuilder is not created from a constituency parse.</summary>

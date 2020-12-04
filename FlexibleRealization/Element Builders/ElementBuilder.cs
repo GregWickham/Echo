@@ -10,7 +10,7 @@ using FlexibleRealization.Dependencies;
 
 namespace FlexibleRealization
 {
-    public abstract class ElementBuilder : IElementBuilder, IElementTreeNode, IIndexRange, INotifyPropertyChanged
+    public abstract partial class ElementBuilder : IElementBuilder, IElementTreeNode, IIndexRange, INotifyPropertyChanged
     {
 
         #region Tree structure
@@ -368,19 +368,9 @@ namespace FlexibleRealization
         /// <returns>The replacement IElementBuilder</returns>
         internal IElementTreeNode Become(IElementTreeNode replacement)
         {
-            ParentElementBuilder currentParent = Parent;
-            ParentElementBuilder.ChildRole currentRole = AssignedRole;
-            DetachFromParent();
-            if (replacement != null)
-            {
-                replacement.DetachFromParent();
-                if (currentRole == ParentElementBuilder.ChildRole.Unassigned)
-                    currentParent.AddChild(replacement);
-                else
-                    currentParent?.AddChildWithRole(replacement, currentRole);
-                return replacement;
-            }
-            else return null;
+            replacement?.DetachFromParent();
+            Parent?.ReplaceChild(this, replacement);
+            return replacement;
         }
 
         /// <summary>Consolidate the tree containing this</summary>
@@ -413,5 +403,6 @@ namespace FlexibleRealization
         }
 
         #endregion Implementation of INotifyPropertyChanged
+ 
     }
 }

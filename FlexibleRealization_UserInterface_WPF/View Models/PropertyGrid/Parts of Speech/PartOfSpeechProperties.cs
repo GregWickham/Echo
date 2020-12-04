@@ -12,6 +12,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         private PartOfSpeechBuilder Model;
 
+        [Browsable(false)]
         public override string Description => PartOfSpeech.DescriptionFor(Model);
 
         #region Syntax
@@ -24,13 +25,25 @@ namespace FlexibleRealization.UserInterface.ViewModels
         [ItemsSourceProperty("RoleValues")]
         public string Role
         {
-            get => Parent.ChildRole.StringFormOf(Model.AssignedRole);
-            set => Model.AssignedRole = Parent.ChildRole.FromString(value);
+            get => Parent.ChildRole.DescriptionFrom(Model.AssignedRole);
+            set => Model.AssignedRole = Parent.ChildRole.FromDescription(value);
         }
 
         #endregion Syntax
 
         #region Features
+
+        [Browsable(false)]
+        public IEnumerable<string> POS_DescriptionValues => PartOfSpeech.Tag.Strings.Values;
+
+        [Category("Features|")]
+        [DisplayName("Part of Speech")]
+        [ItemsSourceProperty("POS_DescriptionValues")]
+        public string PartOfSpeechDescription
+        {
+            get => PartOfSpeech.DescriptionFor(Model);
+            set => Model.PartOfSpeech = PartOfSpeech.Tag.FromDescription(value);
+        }
 
         [Category("Features|")]
         [DisplayName("POS Tag")]

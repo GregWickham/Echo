@@ -13,7 +13,7 @@ namespace FlexibleRealization
             listOfRoles.Add(ChildRole.Head);
             listOfRoles.Add(ChildRole.Modifier);
             listOfRoles.Add(ChildRole.Complement);
-            if (CoordinatorBuilder == null) listOfRoles.Add(ChildRole.Coordinator);
+            if (CoordinatorBuilder == null || CoordinatorBuilder == child) listOfRoles.Add(ChildRole.Coordinator);
         }
 
         #region Initial assignment of children

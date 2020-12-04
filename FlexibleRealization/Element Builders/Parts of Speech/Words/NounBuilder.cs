@@ -76,7 +76,7 @@ namespace FlexibleRealization
             Parent?.ReplaceChild(this, result);
             result.AddHead(this);
             return result;
-       }
+        }
 
         /// <summary>Transform this NounBuilder into a CompoundNounBuilder with this as a component</summary>
         internal CompoundNounBuilder AsCompoundNoun()

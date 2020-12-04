@@ -156,7 +156,7 @@ namespace FlexibleRealization
                 //"SINV" =>                                                 // Declarative sentence with subject - aux inversion
                 //"SQ" =>                                                   // Yes/ no questions and subconstituent of SBARQ excluding Wh- element
                 "VP" => new VerbPhraseBuilder(),                            // Verb phrase
-                //"WHADJP" => new WhAdjectivePhraseBuilder(),                 // Wh- adjective phrase
+                //"WHADJP" => new WhAdjectivePhraseBuilder(),               // Wh- adjective phrase
                 "WHADVP" => new WhAdverbPhraseBuilder(),                    // Wh- adverb phrase
                 "WHNP" => new WhNounPhraseBuilder(),                        // Wh- noun phrase
                 "WHPP" => new PrepositionalPhraseBuilder(),                 // Wh- prepositional phrase
@@ -166,91 +166,63 @@ namespace FlexibleRealization
                 //"T" =>                                                    // Trace of Wh-Constituent
 
                 // Parts of Speech
-                "CC" => Conjunction(),                                      // Coordinating conjunction
+                "CC" => PartOfSpeech(),                                     // Coordinating conjunction
                 //"CD" =>                                                   // Cardinal number
-                "DT" => Determiner(),                                       // Determiner 
+                "DT" => PartOfSpeech(),                                     // Determiner 
                 //"EX" =>                                                   // Existential there 
                 //"FW" =>                                                   // Foreign word 
-                "IN" => Preposition(),                                      // Preposition 
-                "JJ" => Adjective(),                                        // Adjective 
-                "JJR" => Adjective(),                                       // Adjective, comparative
-                "JJS" => Adjective(),                                       // Adjective, superlative 
+                "IN" => PartOfSpeech(),                                     // Preposition 
+                "JJ" => PartOfSpeech(),                                     // Adjective 
+                "JJR" => PartOfSpeech(),                                    // Adjective, comparative
+                "JJS" => PartOfSpeech(),                                    // Adjective, superlative 
                 //"LS" =>                                                   // List item marker
-                "MD" => Modal(),                                            // Modal verb
-                "NN" => Noun(),                                             // Noun, singular or mass 
-                "NNS" => Noun(),                                            // Noun, plural 
-                "NNP" => Noun(),                                            // Proper noun, singular
-                "NNPS" => Noun(),                                           // Proper noun, plural
-                "PDT" => Determiner(),                                      // Predeterminer
-                "POS" => PossessiveEnding(),                                // Possessive ending 
-                "PRP" => Pronoun(),                                         // Personal pronoun
-                "PRP$" => Pronoun(),                                        // Possessive pronoun
-                "RB" => Adverb(),                                           // Adverb
-                "RBR" => Adverb(),                                          // Adverb, comparative 
-                "RBS" => Adverb(),                                          // Adverb, superlative 
-                "RP" => Particle(),                                         // Particle 
+                "MD" => PartOfSpeech(),                                     // Modal verb
+                "NN" => PartOfSpeech(),                                     // Noun, singular or mass 
+                "NNS" => PartOfSpeech(),                                    // Noun, plural 
+                "NNP" => PartOfSpeech(),                                    // Proper noun, singular
+                "NNPS" => PartOfSpeech(),                                   // Proper noun, plural
+                "PDT" => PartOfSpeech(),                                    // Predeterminer
+                "POS" => PartOfSpeech(),                                    // Possessive ending 
+                "PRP" => PartOfSpeech(),                                    // Personal pronoun
+                "PRP$" => PartOfSpeech(),                                   // Possessive pronoun
+                "RB" => PartOfSpeech(),                                     // Adverb
+                "RBR" => PartOfSpeech(),                                    // Adverb, comparative 
+                "RBS" => PartOfSpeech(),                                    // Adverb, superlative 
+                "RP" => PartOfSpeech(),                                     // Particle 
                 //"SYM" =>                                                  // Symbol 
                 //"TO" =>                                                   // Infinitival to
                 //"UH" =>                                                   // Interjection
-                "VB" => Verb(),                                             // Verb, base form
-                "VBD" => Verb(),                                            // Verb, past tense
-                "VBG" => Verb(),                                            // Verb, gerund / present participle
-                "VBN" => Verb(),                                            // Verb, past participle
-                "VBP" => Verb(),                                            // Verb, non-3rd person singular present
-                "VBZ" => Verb(),                                            // Verb, 3rd person singular present
-                "WDT" => WhDeterminer(),                                    // Wh- determiner
-                "WP" => WhPronoun(),                                        // Wh- pronoun
-                "WP$" => Pronoun(),                                         // Possessive Wh- pronoun
-                "WRB" => WhAdverb(),                                        // Wh- adverb
+                "VB" => PartOfSpeech(),                                     // Verb, base form
+                "VBD" => PartOfSpeech(),                                    // Verb, past tense
+                "VBG" => PartOfSpeech(),                                    // Verb, gerund / present participle
+                "VBN" => PartOfSpeech(),                                    // Verb, past participle
+                "VBP" => PartOfSpeech(),                                    // Verb, non-3rd person singular present
+                "VBZ" => PartOfSpeech(),                                    // Verb, 3rd person singular present
+                "WDT" => PartOfSpeech(),                                    // Wh- determiner
+                "WP" => PartOfSpeech(),                                     // Wh- pronoun
+                "WP$" => PartOfSpeech(),                                    // Possessive Wh- pronoun
+                "WRB" => PartOfSpeech(),                                    // Wh- adverb
 
                 //Punctuation
-                "#" => Punctuation(),                                       // Pound sign
-                "$" => Punctuation(),                                       // Dollar sign
-                "." => Punctuation(),                                       // Sentence-final punctuation
-                "," => Punctuation(),                                       // Comma
-                ":" => Punctuation(),                                       // Colon, semicolon
-                "(" => Punctuation(),                                       // Left bracket character
-                ")" => Punctuation(),                                       // Right bracket character
-                "\"" => Punctuation(),                                      // Straight double quote
-                "‘" => Punctuation(),                                       // Left open single quote
-                "“" => Punctuation(),                                       // Left open double quote
-                "’" => Punctuation(),                                       // Right close single quote
-                "”" => Punctuation(),                                       // Right close double quote
+                "#" => PartOfSpeech(),                                      // Pound sign
+                "$" => PartOfSpeech(),                                      // Dollar sign
+                "." => PartOfSpeech(),                                      // Sentence-final punctuation
+                "," => PartOfSpeech(),                                      // Comma
+                ":" => PartOfSpeech(),                                      // Colon, semicolon
+                "(" => PartOfSpeech(),                                      // Left bracket character
+                ")" => PartOfSpeech(),                                      // Right bracket character
+                "\"" => PartOfSpeech(),                                     // Straight double quote
+                "‘" => PartOfSpeech(),                                      // Left open single quote
+                "“" => PartOfSpeech(),                                      // Left open double quote
+                "’" => PartOfSpeech(),                                      // Right close single quote
+                "”" => PartOfSpeech(),                                      // Right close double quote
 
                 _ => throw new NotImplementedException()
 
                 #endregion Switch on constituent tag
             };
 
-            WordElementBuilder Noun() => new NounBuilder(GetLeafToken());
-            
-            WordElementBuilder Pronoun() => new PronounBuilder(GetLeafToken());
-
-            WordElementBuilder WhPronoun() => new WhPronounBuilder(GetLeafToken());
-
-            WordElementBuilder Determiner() => new DeterminerBuilder(GetLeafToken());
-
-            WordElementBuilder WhDeterminer() => new WhDeterminerBuilder(GetLeafToken());
-
-            WordElementBuilder Verb() => new VerbBuilder(GetLeafToken());
-
-            WordElementBuilder Adjective() => new AdjectiveBuilder(GetLeafToken());
-
-            WordElementBuilder Adverb() => new AdverbBuilder(GetLeafToken());
-
-            WordElementBuilder WhAdverb() => new WhAdverbBuilder(GetLeafToken());
-
-            WordElementBuilder Preposition() => new PrepositionBuilder(GetLeafToken());
-
-            WordElementBuilder Conjunction() => new ConjunctionBuilder(GetLeafToken());
-
-            WordElementBuilder Modal() => new ModalBuilder(GetLeafToken());
-
-            WordElementBuilder Particle() => new ParticleBuilder(GetLeafToken());
-
-            PunctuationBuilder Punctuation() => new PunctuationBuilder(GetLeafToken());
-
-            PossessiveEnding PossessiveEnding() => new PossessiveEnding(GetLeafToken());
+            PartOfSpeechBuilder PartOfSpeech() => PartOfSpeechBuilder.FromToken(GetLeafToken());
 
             ParseToken GetLeafToken()
             {

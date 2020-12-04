@@ -29,10 +29,7 @@ namespace FlexibleRealization
         /// <remarks>If we already have a coordinating conjunction and try to add another one, throw an exception.</remarks>
         private protected void SetCoordinator(ConjunctionBuilder coordinator)
         {
-            if (Coordinators.Count() == 0)
-            {
-                AddChildWithRole(coordinator, ChildRole.Coordinator);
-            }
+            if (Coordinators.Count() == 0) AddChildWithRole(coordinator, ChildRole.Coordinator);
             else throw new InvalidOperationException("Can't add multiple coordinators to a coordinable phrase");
         }
 
