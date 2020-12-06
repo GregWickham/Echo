@@ -64,15 +64,15 @@ namespace FlexibleRealization
         }
 
         /// <summary>Attempt to transform <paramref name="editableTree"/> into a structure that can be serialized as XML and realized by SimpleNLG.</summary>
-        /// <remarks>The propagated "Coordinate" operation causes CoordinablePhraseBuilders to coordinate themselves.  This process may cause those phrase builders to change form.</remarks>
+        /// <remarks>The propagated "Coordinate" operation causes CoordinablePhraseBuilders to coordinate themselves.  This process may cause those phrase builders to change form.
+        /// <paramref name="editableTree"/> does NOT need to be the root of the tree in which it resides.  This allows the UI to selectively realize portions of a tree.</remarks>
         /// <returns>An IElementBuilder representing the transformed tree, if the transformation succeeds</returns>
         /// <exception cref="TreeCannotBeTransformedToRealizableFormException">If the transformation fails</exception>
         public static IElementBuilder RealizableTreeFrom(IElementTreeNode editableTree)
         {
             try
             {
-                return editableTree.Root
-                    .CopyLightweight()
+                return new RootNode(editableTree.CopyLightweight())
                     .Propagate(ElementBuilder.Coordinate)
                     .Tree;
             }

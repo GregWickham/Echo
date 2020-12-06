@@ -2,6 +2,7 @@
 
 namespace FlexibleRealization
 {
+    /// <summary>An object that can be the parent of an <see cref="IElementTreeNode"/></summary>
     public interface IParent
     {
         int Depth { get; }
