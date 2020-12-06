@@ -11,6 +11,8 @@ namespace FlexibleRealization
 
         public ParseToken Token { get; private set; }
 
+        /// <summary>The PartOfSpeech string stored in the parse token</summary>
+        /// <remarks>This property can be edited by the UI</remarks>
         public string PartOfSpeech
         {
             get => Token.PartOfSpeech;
@@ -52,6 +54,9 @@ namespace FlexibleRealization
                 eachRelation.Apply();
             }
         }
+
+        /// <summary>Since a PartOfSpeechBuilder doesn't have IElementTreeNode children, propagating <paramref name="operateOn"/> through it simply means invoking <paramref name="operateOn"/> on this</summary>
+        public override void Propagate(ElementTreeNodeOperation operateOn) => operateOn(this);
 
         /// <summary>Return a new PartOfSpeechBuilder constructed from <paramref name="token"/></summary>
         public static PartOfSpeechBuilder FromToken(ParseToken token)

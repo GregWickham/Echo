@@ -15,7 +15,7 @@ namespace FlexibleRealization.UserInterface
 
         internal IEnumerable<TokenVertex> Tokens => Vertices.Where(vertex => vertex is TokenVertex).Cast<TokenVertex>();
 
-        internal ElementBuilderVertex Root => ElementBuilders.Where(vertex => vertex.Builder.IsRoot).Single();
+        internal ElementBuilderVertex Root => ElementBuilders.Where(vertex => vertex.Builder.Parent is RootNode).Single();
 
         internal TokenVertex TokenCorrespondingTo(PartOfSpeechVertex partOfSpeech) => Tokens
             .Where(vertex => vertex.Model == partOfSpeech.Model.Token)

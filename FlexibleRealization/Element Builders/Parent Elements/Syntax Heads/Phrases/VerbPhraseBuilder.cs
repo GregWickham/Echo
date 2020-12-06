@@ -83,7 +83,21 @@ namespace FlexibleRealization
                 case phraseCategory.NOUN_PHRASE:
                     AddComplement(phrase);
                     break;
-                default: throw new InvalidOperationException("Verb phrase builder can't assign this type of coordinated phrase");
+                case phraseCategory.VERB_PHRASE:
+                    AddHead(phrase);
+                    break;
+                case phraseCategory.ADJECTIVE_PHRASE:
+                    AddComplement(phrase);
+                    break;
+                case phraseCategory.ADVERB_PHRASE:
+                    AddModifier(phrase);
+                    break;
+                case phraseCategory.PREPOSITIONAL_PHRASE:
+                    AddModifier(phrase);
+                    break;
+                default:
+                    AddUnassignedChild(phrase);
+                    break;
             }
         }
 
@@ -109,7 +123,7 @@ namespace FlexibleRealization
 
         #region Configuration
 
-        public override IElementTreeNode Configure()
+        public override void Configure()
         {
             base.Configure();
             // The CoreNLP constituency parse can have a noun phrase that contains another noun phrase as its head.  
@@ -119,7 +133,6 @@ namespace FlexibleRealization
                 RemoveChild(loneHeadPhrase);
                 Assimilate(loneHeadPhrase);
             }
-            return this;
         }
 
         /// <summary>Merge <paramref name="phraseToAssimilate"/> into this verb phrase</summary>

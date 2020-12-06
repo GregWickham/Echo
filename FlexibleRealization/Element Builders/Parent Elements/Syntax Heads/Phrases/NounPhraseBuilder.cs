@@ -85,7 +85,9 @@ namespace FlexibleRealization
                 case PronounCase.Possessive:
                     SetSpecifier(pronoun.AsNounPhrase());
                     break;
-                default: throw new InvalidOperationException("Noun phrase can't find a role for that pronoun case");
+                default:
+                    AddUnassignedChild(pronoun);
+                    break;
             }
         }
 
@@ -93,7 +95,8 @@ namespace FlexibleRealization
         {
             if (verb.IsGerundOrPresentParticiple) 
                 AddUnassignedChild(verb);    // Later on, while applying dependency relations, we'll have to decide whether it's a gerund acting as a noun, or a present participle acting as an adjective
-            else throw new InvalidOperationException("Noun phrase can't find a role for that verb form");
+            else
+                AddUnassignedChild(verb);
         }
 
         private void AssignRoleFor(NounPhraseBuilder phrase)
@@ -109,7 +112,9 @@ namespace FlexibleRealization
                 case phraseCategory.ADJECTIVE_PHRASE:
                     AddModifier(phrase);
                     break;
-                default: throw new InvalidOperationException("Noun phrase can't find a role for this type of coordinated phrase");
+                default:
+                    AddUnassignedChild(phrase);
+                    break;
             }
         }
 
@@ -117,17 +122,16 @@ namespace FlexibleRealization
 
         #region Configuration
 
-        public sealed override IElementTreeNode Configure()
+        public sealed override void Configure()
         {
             base.Configure();
             // The CoreNLP constituency parse can have a noun phrase that contains another noun phrase as its head.  
             // For SimpleNLG realization we need to flatten this configuration into a single noun phrase.
-            if (Heads.Count() == 1 && Heads.First() is NounPhraseBuilder loneHeadPhrase)
+            if (Heads.Count() == 1 && Heads.Single() is NounPhraseBuilder loneHeadPhrase)
             {
                 RemoveChild(loneHeadPhrase);
                 Assimilate(loneHeadPhrase);
             }
-            return this;
         }
 
         /// <summary>Set <paramref name="specifier"/> as the ONLY specifier for this noun phrase</summary>

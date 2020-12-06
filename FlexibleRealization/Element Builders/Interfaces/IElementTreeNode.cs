@@ -1,30 +1,26 @@
 ﻿using System.Collections.Generic;
+using FlexibleRealization.Dependencies;
 
 namespace FlexibleRealization
 {
     /// <summary>Delegate for an operation that can be applied to an IElementTreeNode</summary>
     /// <param name="target">The IElementTreeNode to which the operation will be applied</param>
     /// <returns>The IElementTreeNode that results from applying the operation</returns>
-    public delegate IElementTreeNode ElementTreeNodeOperation(IElementTreeNode target);
+    public delegate void ElementTreeNodeOperation(IElementTreeNode target);
 
-    public delegate void SubtreeChanged_EventHandler(IElementTreeNode newRoot);
 
     /// <summary>A node in a tree of elements</summary>
     public interface IElementTreeNode : IIndexRange, IElementBuilder, ISyntaxComponent
     {
-        event SubtreeChanged_EventHandler SubtreeChanged;
-
-        ParentElementBuilder Parent { get; set; }
+        IParent Parent { get; set; }
 
         int Depth { get; }
 
-        ParentElementBuilder Root { get; }
-
-        bool IsRoot { get; }
+        RootNode Root { get; }
 
         List<IElementTreeNode> Ancestors { get; }
 
-        void DetachFromParent();
+        IElementTreeNode DetachFromParent();
 
         bool IsChildOf(ParentElementBuilder prospectiveParent);
 
@@ -32,20 +28,20 @@ namespace FlexibleRealization
 
         IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtree { get; }
 
-        void MoveTo(ParentElementBuilder newParent);
+        PartOfSpeechBuilder PartOfSpeechInSubtreeWithIndex(int index);
+
+        IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree { get; }
+
+        void MoveTo(IParent newParent);
 
         IElementTreeNode CopyLightweight();
 
-        IElementTreeNode AttachDependencies(List<(string Relation, string Specifier, int GovernorIndex, int DependentIndex)> dependencies);
+        void Propagate(ElementTreeNodeOperation operateOn);
 
-        IElementTreeNode ApplyDependencies();
+        void Configure();
 
-        IElementTreeNode Propagate(ElementTreeNodeOperation operateOn);
+        void Coordinate();
 
-        IElementTreeNode Configure();
-
-        IElementTreeNode Coordinate();
-
-        IElementTreeNode Consolidate();
+        void Consolidate();
     }
 }

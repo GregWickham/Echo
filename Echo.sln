@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleRealization_UserInt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Echo_UI_WPF", "Echo_UI_WPF\Echo_UI_WPF.csproj", "{3568E07F-FC5D-44A3-A136-2512620840AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowcaseApp.WPF", "..\GraphX\Examples\ShowcaseApp.WPF\ShowcaseApp.WPF.csproj", "{C054C423-7284-46A6-9738-B82E2237E9C7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{3568E07F-FC5D-44A3-A136-2512620840AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3568E07F-FC5D-44A3-A136-2512620840AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3568E07F-FC5D-44A3-A136-2512620840AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C054C423-7284-46A6-9738-B82E2237E9C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C054C423-7284-46A6-9738-B82E2237E9C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C054C423-7284-46A6-9738-B82E2237E9C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C054C423-7284-46A6-9738-B82E2237E9C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

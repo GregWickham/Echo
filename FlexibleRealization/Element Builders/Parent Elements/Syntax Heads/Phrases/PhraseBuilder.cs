@@ -34,11 +34,10 @@ namespace FlexibleRealization
         /// <summary>Default override of Consolidate for PhraseBuilders.</summary>
         /// <remarks>When a PhraseBuilder has exactly one child, we do NOT eliminate the PhraseBuilder and pass through that child, because this is
         /// the case when a phrase is used to define inflection features of its headword.</remarks>
-        public override IElementTreeNode Consolidate() => Children.Count() switch
+        public override void Consolidate()
         {
-            0 => Become(null),
-            _ => this
-        };
+            if (Children.Count() == 0) Become(null);
+        }
 
     }
 }

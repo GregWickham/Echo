@@ -47,9 +47,9 @@ namespace FlexibleRealization.UserInterface
         public void ParseText(string text)
         {
             IElementTreeNode editableTree = FlexibleRealizerFactory.EditableTreeFrom(text);
-            editableTree.SubtreeChanged += ElementBuilderTree_SubtreeChanged;
+            editableTree.Root.TreeStructureChanged += ElementBuilderTree_TreeStructureChanged;
             SetModel(editableTree);
-            SelectBuilder(editableTree.Root);
+            SelectNode(editableTree);
         }
 
         /// <summary>Assign <paramref name="elementBuilderTree"/> as the model for this editor</summary>
@@ -65,7 +65,7 @@ namespace FlexibleRealization.UserInterface
         }
 
         /// <summary>The tree is notifying us that its structure has changed</summary>
-        private void ElementBuilderTree_SubtreeChanged(IElementTreeNode newRoot) => SetModel(newRoot);
+        private void ElementBuilderTree_TreeStructureChanged(RootNode root) => SetModel(root.Tree);
 
         /// <summary>Try to transform <paramref name="editableTree"/> into realizable form and if successful, try to realize it</summary>
         /// <remarks>Raise an event indicating whether the process succeeded or not</remarks>
@@ -127,11 +127,11 @@ namespace FlexibleRealization.UserInterface
             }
         }
 
-        /// <summary>Set <paramref name="builder"/> as the selected element</summary>
-        private void SelectBuilder(ElementBuilder builder)
+        /// <summary>Set <paramref name="node"/> as the selected element</summary>
+        private void SelectNode(IElementTreeNode node)
         {
-            GraphArea.SetSelectedBuilder(builder);
-            TryToRealize(builder);
+            GraphArea.SetSelectedNode(node);
+            TryToRealize(node);
         }
 
         /// <summary>If the selected ElementVertex has an associated ElementBuilder, notify listeners of the selection</summary>
@@ -201,7 +201,7 @@ namespace FlexibleRealization.UserInterface
                 {
                     ParentElementBuilder target = parentVertex.Model;
                     dropped.MoveTo(target);
-                    SelectBuilder(target);
+                    SelectNode(target);
                 }
             }
         }

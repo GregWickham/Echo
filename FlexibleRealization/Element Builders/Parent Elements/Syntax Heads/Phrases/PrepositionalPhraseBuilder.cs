@@ -30,11 +30,36 @@ namespace FlexibleRealization
                 case NounPhraseBuilder npb:
                     AddComplement(npb);
                     break;
+                case VerbPhraseBuilder vpb:
+                    AddComplement(vpb);
+                    break;
+                case CoordinatedPhraseBuilder cpb:
+                    AssignRoleFor(cpb);
+                    break;
                 case ConjunctionBuilder cb:
                     SetCoordinator(cb);
                     break;
                 default:
                     AddUnassignedChild(child);
+                    break;
+            }
+        }
+
+        private void AssignRoleFor(CoordinatedPhraseBuilder phrase)
+        {
+            switch (phrase.PhraseCategory)
+            {
+                case phraseCategory.PREPOSITIONAL_PHRASE:
+                    AddHead(phrase);
+                    break;
+                case phraseCategory.NOUN_PHRASE:
+                    AddComplement(phrase);
+                    break;
+                case phraseCategory.VERB_PHRASE:
+                    AddComplement(phrase);
+                    break;
+                default:
+                    AddUnassignedChild(phrase);
                     break;
             }
         }

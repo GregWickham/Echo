@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Linq;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 using SimpleNLG;
 using FlexibleRealization.Dependencies;
 
@@ -12,25 +10,19 @@ namespace FlexibleRealization
 {
     public abstract partial class ElementBuilder : IElementBuilder, IElementTreeNode, IIndexRange, INotifyPropertyChanged
     {
-
         #region Tree structure
 
-        /// <summary>Notify listeners that the structure of the tree rooted in this has changed</summary>
-        public event SubtreeChanged_EventHandler SubtreeChanged;
+        /// <summary>Can be called by an element anywhere in the subtree to raise the TreeStructureChanged event for the tree</summary>
+        internal void OnTreeStructureChanged() => Root.OnTreeStructureChanged();
 
-        /// <summary>Can be called by an element anywhere in the subtree to raise the SubtreeChanged event for the subtree</summary>
-        internal void OnTreeStructureChanged() => Root.SubtreeChanged?.Invoke(Root);
-
-        public ParentElementBuilder Parent { get; set; }
+        public IParent Parent { get; set; }
 
         /// <summary>Return the number of parent-child relations between this ElementBuilder and the root of the graph containing it</summary>
-        public int Depth => Parent == null ? 0 : Parent.Depth + 1;
+        public int Depth => Parent is RootNode ? 0 : Parent.Depth + 1;
 
-        /// <summary>Return the root ParentElementBuilder of the tree containing this</summary>
-        public ParentElementBuilder Root => (ParentElementBuilder)(IsRoot ? this : Parent.Root);
-
-        /// <summary>Return true if this ElementBuilder is the root of the graph containing it</summary>
-        public bool IsRoot => Parent == null;
+        /// <summary>Return the root ParentElementBuilder of the tree containing this.</summary>
+        /// <remarks>The implementation is recursive, terminating with RootNode.</remarks>
+        public RootNode Root => Parent.Root;
 
         /// <summary>Return true if this has the same parent as <paramref name="anotherElement"/></summary>
         internal bool HasSameParentAs(IElementTreeNode anotherElement) => Parent == anotherElement.Parent;
@@ -69,7 +61,7 @@ namespace FlexibleRealization
         private IEnumerable<CoordinablePhraseBuilder> CoordinablePhrasesInSubtree => this.WithAllDescendentBuilders.Where(element => element is CoordinablePhraseBuilder).Cast<CoordinablePhraseBuilder>();
 
         /// <summary>Return the PartOfSpeechBuilder descended from this whose Token has the supplied <paramref name="index"/>, of null if there is no such PartOfSpeechBuilder</summary>
-        private PartOfSpeechBuilder PartOfSpeechInSubtreeWithIndex(int index) => PartsOfSpeechInSubtree
+        public PartOfSpeechBuilder PartOfSpeechInSubtreeWithIndex(int index) => PartsOfSpeechInSubtree
             .Where(partOfSpeech => partOfSpeech.Token.Index == index)
             .FirstOrDefault();
 
@@ -135,7 +127,7 @@ namespace FlexibleRealization
             || (HasHeadLikeRole && Parent.ActsAsHeadOf(phrase));
             
         /// <summary>Return true if this directly or indirectly acts with ChildRole <paramref name="role"/> in <paramref name="phrase"/></summary>
-        internal bool ActsWithRoleInAncestor(ParentElementBuilder.ChildRole role, ParentElementBuilder ancestor) => (HasRole(role) && Parent == ancestor)
+        public bool ActsWithRoleInAncestor(ParentElementBuilder.ChildRole role, ParentElementBuilder ancestor) => (HasRole(role) && Parent == ancestor)
             || (HasHeadLikeRole && Parent.ActsWithRoleInAncestor(role, ancestor));
 
         /// <summary>Return true if this has ChildRole <paramref name="role"/> within the same SyntaxHeadBuilder of which <paramref name="headElement"/> is a head,
@@ -153,7 +145,7 @@ namespace FlexibleRealization
 
         /// <summary>Search for an ancestor ElementBuilder relative to which this ElementBuilder has ChildRole <paramref name="role"/>, either directly or through one or more intercedent phrase head relations.</summary>
         /// <returns>The searched for ancestor if found, or null if not found</returns>
-        internal ElementBuilder AncestorOfWhichThisIsDirectlyOrIndirectlyA(ParentElementBuilder.ChildRole role)
+        public IParent AncestorOfWhichThisIsDirectlyOrIndirectlyA(ParentElementBuilder.ChildRole role)
         {
             if (AssignedRole == role)
                 return Parent;
@@ -162,17 +154,17 @@ namespace FlexibleRealization
             else return null;
         }
 
-        /// <summary>Return the ancestors of this</summary>
+        /// <summary>Return the ancestors of this, NOT including the Root</summary>
         public List<IElementTreeNode> Ancestors
         {
             get
             {
                 List<IElementTreeNode> result = new List<IElementTreeNode>();
-                ElementBuilder current = this;
-                while (!current.IsRoot)
+                IParent current = Parent;
+                while (current is IElementTreeNode element)
                 {
-                    current = current.Parent;
-                    result.Add(current);
+                    result.Add(element);
+                    current = element.Parent;
                 }
                 return result;
             }
@@ -260,7 +252,7 @@ namespace FlexibleRealization
             && AssignedRole == ParentElementBuilder.ChildRole.Component && anotherElementBuilder.AssignedRole == ParentElementBuilder.ChildRole.Component;
 
         /// <summary>Return the syntactic relations that have at least one endpoint in the subtree of this</summary>
-        private protected IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree => PartsOfSpeechInSubtree
+        public IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree => PartsOfSpeechInSubtree
             .Aggregate(new List<SyntacticRelation>(), (relations, partOfSpeech) =>
                 {
                     relations.AddRange(partOfSpeech.IncomingSyntacticRelations);
@@ -273,43 +265,19 @@ namespace FlexibleRealization
 
         #region Configuration
 
-        /// <summary>The CoreNLP parser gave us an unstructured list of semantic <paramref name="dependencies"/> between parts of speech.  Now that we've assembled a tree structure from the constituency
-        /// parse, and all the PartOfSpeechBuilder elements are in place, we can go through the list of <paramref name="dependencies"/> and create corresponding
-        /// SyntacticRelation objects that link our PartOfSpeechBuilder objects to one another.</summary>
-        public IElementTreeNode AttachDependencies(List<(string Relation, string Specifier, int GovernorIndex, int DependentIndex)> dependencies)
-        {
-            foreach ((string Relation, string Specifier, int GovernorIndex, int DependentIndex) eachDependencyTuple in dependencies)
-            {
-                PartOfSpeechBuilder governor = PartOfSpeechInSubtreeWithIndex(eachDependencyTuple.GovernorIndex);
-                PartOfSpeechBuilder dependent = PartOfSpeechInSubtreeWithIndex(eachDependencyTuple.DependentIndex);
-                if (governor != null && dependent != null)
-                {
-                    SyntacticRelation
-                        .OfType(eachDependencyTuple.Relation, eachDependencyTuple.Specifier)
-                        .Between(governor, dependent)
-                        .Install();
-                }
-            }
-            return this;
-        }
-
         /// <summary>Propagate the operation specified by <paramref name="operateOn"/> through the subtree of which this is the root, in depth-first fashion.</summary>
         /// <param name="operateOn">The operation to be applied during propagation</param>
         /// <returns>The result of performing <paramref name="operateOn"/>(this) after <paramref name="operateOn"/> has been invoked on all its descendants</returns>
-        public IElementTreeNode Propagate(ElementTreeNodeOperation operateOn)
-        {
-            Children.ToList().ForEach(child => child.Propagate(operateOn));
-            return operateOn(this);
-        }
+        public abstract void Propagate(ElementTreeNodeOperation operateOn);
 
         /// <summary>Configure <paramref name="target"/></summary>
-        public static IElementTreeNode Configure(IElementTreeNode target) => target.Configure();
+        public static void Configure(IElementTreeNode target) => target.Configure();
 
         /// <summary>Consolidate <paramref name="target"/></summary>
-        public static IElementTreeNode Consolidate(IElementTreeNode target) => target.Consolidate();
+        public static void Consolidate(IElementTreeNode target) => target.Consolidate();
 
         /// <summary>Coordinate <paramref name="target"/></summary>
-        public static IElementTreeNode Coordinate(IElementTreeNode target) => target.Coordinate();
+        public static void Coordinate(IElementTreeNode target) => target.Coordinate();
         
         /// <summary>Apply dependencies for all the PartOfSpeechBuilders in the descendant tree</summary>
         public IElementTreeNode ApplyDependencies()
@@ -325,42 +293,47 @@ namespace FlexibleRealization
 
         /// <summary>The default implementation of Configure.  All the interesting stuff takes place in subclass overrides.</summary>
         /// <returns>The result of applying Configure to this.  May or may not be the same object as this.</returns>
-        public virtual IElementTreeNode Configure() => this;
+        public virtual void Configure() { }
 
         /// <summary>The default implementation of Coordinate.  All the interesting stuff takes place in subclass overrides.</summary>
         /// <returns>The result of applying Coordinate to this.  May or may not be the same object as this.</returns>
-        public virtual IElementTreeNode Coordinate() => this;
+        public virtual void Coordinate() { }
 
         /// <summary>The default implementation of Consolidate.  All the interesting stuff takes place in subclass overrides.</summary>
         /// <returns>The result of applying Consolidate to this.  May or may not be the same object as this.</returns>
-        public virtual IElementTreeNode Consolidate() => this;
+        public virtual void Consolidate() { }
 
         /// <summary>If this ElementBuilder has a parent, remove that parent's child relation to this</summary>
-        public void DetachFromParent()
+        public IElementTreeNode DetachFromParent()
         {
             Parent?.RemoveChild(this);
             Parent = null;
+            return this;
         }
 
-        /// <summary>Keep the parent of this as-is, but change the ChildRole of this to <paramref name="newRole"/></summary>
-        //internal void ChangeRoleTo(ParentElementBuilder.ChildRole newRole) => Parent.SetRoleOfChild(this, newRole);
-
-        /// <summary>Detach this from its current ParentElementBuilder, and add it as a child of <paramref name="newParent"/> with ChildRole <paramref name="newRole"/></summary>
-        internal void MoveTo(ParentElementBuilder newParent, ParentElementBuilder.ChildRole newRole)
+        /// <summary><list type="bullet">
+        /// <item>Detach this from its current parent</item>
+        /// <item>Add it as a child of <paramref name="newParent"/> with ChildRole <paramref name="newRole"/></item>
+        /// </list></summary>
+        public void MoveTo(IParent newParent, ParentElementBuilder.ChildRole newRole)
         {
-            ParentElementBuilder oldParent = Parent;
+            IElementTreeNode oldParent = Parent as IElementTreeNode;
             DetachFromParent();
             newParent.AddChildWithRole(this, newRole);
+            oldParent?.Consolidate();
         }
 
-        /// <summary>Detach this from its current ParentElementBuilder, and add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent</summary>
-        public void MoveTo(ParentElementBuilder newParent)
+        /// <summary><list type="bullet">
+        /// <item>Detach this from its current parent</item>
+        /// <item>Add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent</item>
+        /// <item>Notify listeners that the tree structure has changed</item>
+        /// </list></summary>
+        public void MoveTo(IParent newParent)
         {
-            ParentElementBuilder oldParent = Parent;
+            IElementTreeNode oldParent = Parent as IElementTreeNode;
             DetachFromParent();
             newParent.AddChild(this);
-            ConsolidateTree();
-            OnTreeStructureChanged();
+            oldParent?.Consolidate();
         }
 
         /// <summary>Update references from other objects so <paramref name="replacement"/> replaces this in the ElementBuilder tree</summary>
@@ -373,17 +346,13 @@ namespace FlexibleRealization
             return replacement;
         }
 
-        /// <summary>Consolidate the tree containing this</summary>
-        private void ConsolidateTree() => Root.Propagate(Consolidate);
-
         /// <summary>Return a "lighweight" copy of the subtree rooted in this ElementBuilder.</summary>
         /// <remarks>A lightweight copy has the following properties:
         /// <list type="bullet">
         /// <item>The NLGElement structure of the SimpleNLG spec to build is nulled out.  The lightweight tree is still capable of recreating this structure through BuildElement().</item>
         /// <item>Dependency relations between parts of speech are removed.  ApplyDependencies() can still be called on the lightweight tree, but it will have no effect.</item>
-        /// <item>The lightweight tree is optimized for serialization.</item>
         /// </list>
-        /// Before calling BuildElement() on a lightweight tree, the Coordinate operation should be propagated through it.  This can be done before or after serialization.
+        /// Before calling BuildElement() on a lightweight tree, the Coordinate operation should be propagated through it. 
         /// <para>Creating a copy allows the "heavyweight" tree to be edited in the user interface -- which process causes the tree structure to change -- while the realization process
         /// is tested on copies.</para></remarks>
         public abstract IElementTreeNode CopyLightweight();

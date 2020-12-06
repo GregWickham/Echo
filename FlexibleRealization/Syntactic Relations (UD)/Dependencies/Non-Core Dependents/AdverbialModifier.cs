@@ -38,7 +38,7 @@ namespace FlexibleRealization.Dependencies
             }
         }
 
-        private AdverbBuilder InterveningComparativeAdverb => Dependent.Root.PartsOfSpeechInSubtreeBetween(Dependent, Governor)
+        private AdverbBuilder InterveningComparativeAdverb => Dependent.LowestCommonAncestor<PhraseBuilder>(Governor).PartsOfSpeechInSubtreeBetween(Dependent, Governor)
             .Where(posb => posb is AdverbBuilder)
             .Cast<AdverbBuilder>()
             .Where(advb => advb.Comparative)

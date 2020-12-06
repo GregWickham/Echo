@@ -50,22 +50,41 @@ namespace FlexibleRealization
         /// <item>If this phrase has exactly one child, return that child;</item>
         /// <item>If this phrase does not require coordination, return this phrase.</item>
         /// </list></returns>
-        public override IElementTreeNode Coordinate() => IsCoordinated switch
+        public override void Coordinate() //=> IsCoordinated switch
         {
-            true => Become(this.AsCoordinatedPhrase()),
-            false => Children.Count() switch
+            if (IsCoordinated) Become(this.AsCoordinatedPhrase());
+            else switch (Children.Count())
             {
-                0 => throw new InvalidOperationException("Coordinable phrase has zero children during coordination"),
-                1 => Children.First() switch
-                {
-                    PartOfSpeechBuilder => this,               // A phrase with only one child is legit if that child is a PartOfSpeechBuilder.  The phrase is there to provide features that inflect the word.
-                    CompoundBuilder => this,                   // A phrase with only one child is also legit if that child is a CompoundBuilder. 
-                    ParentElementBuilder peb => Become(peb),   // A phrase with only one child that's a ParentElementBuilder doesn't need to be there, so become the lone child
-                    _ => throw new InvalidOperationException("Invalid lone child type")
-                },
-                _ => this
+                case 0: 
+                    Become(null);
+                    break;
+                case 1:
+                    switch (Children.Single())
+                    {
+                        case CompoundBuilder: 
+                            break;
+                        case ParentElementBuilder peb:
+                            Become(peb);
+                            break;
+                        default: break;
+                    }
+                    break;
+                default: break;
             }
-        };
+            //true => Become(this.AsCoordinatedPhrase()),
+            //false => Children.Count() switch
+            //{
+            //    0 => throw new InvalidOperationException("Coordinable phrase has zero children during coordination"),
+            //    1 => Children.First() switch
+            //    {
+            //        PartOfSpeechBuilder => this,               // A phrase with only one child is legit if that child is a PartOfSpeechBuilder.  The phrase is there to provide features that inflect the word.
+            //        CompoundBuilder => this,                   // A phrase with only one child is also legit if that child is a CompoundBuilder. 
+            //        ParentElementBuilder peb => Become(peb),   // A phrase with only one child that's a ParentElementBuilder doesn't need to be there, so become the lone child
+            //        _ => throw new InvalidOperationException("Invalid lone child type")
+            //    },
+            //    _ => this
+            //}
+        }
 
         /// <summary>Return true of this coordinable phrase actually needs to be coordinated</summary>
         internal bool IsCoordinated => (Heads.Count() > 1) && (CoordinatorBuilder != null);

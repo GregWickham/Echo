@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FlexibleRealization
 {
     /// <summary>The base class of all ParentElementBuilders</summary>
-    public abstract class ParentElementBuilder : ElementBuilder
+    public abstract class ParentElementBuilder : ElementBuilder, IParent
     {
         public virtual bool CanAddChild(ElementBuilder potentialChild) => true;
 
@@ -16,7 +16,7 @@ namespace FlexibleRealization
         private protected abstract void AssignRoleFor(IElementTreeNode child);
 
         /// <summary>Add <paramref name="child"/> as a child of this, with ChildRole <paramref name="role"/></summary>
-        internal void AddChildWithRole(IElementTreeNode child, ChildRole role)
+        public void AddChildWithRole(IElementTreeNode child, ChildRole role)
         {
             ChildrenAndRoles.Add(child, role);
             child.Parent = this;
@@ -49,7 +49,7 @@ namespace FlexibleRealization
         }
 
         /// <summary>Return a list of the valid ChildRoles for <paramref name="child"/> as a child of this</summary>
-        internal List<ChildRole> ValidRolesForChild(ElementBuilder child)
+        public List<ChildRole> ValidRolesForChild(ElementBuilder child)
         {
             List<ChildRole> result = new List<ChildRole>();
             AddValidRolesForChildTo(result, child);
@@ -112,34 +112,43 @@ namespace FlexibleRealization
 
         #region Configuration
 
-        /// <summary>Override of Configure for ParentElementBuilders.  If a subclass overrides this implementation, it should call this base form after its own custom manipulations.</summary>
-        public override IElementTreeNode Configure()
+        public override void Propagate(ElementTreeNodeOperation operateOn)
         {
-            UnassignedChildren.ToList().ForEach(unassignedChild =>
-            {
-                RemoveChild(unassignedChild);
-                AssignRoleFor(unassignedChild);
-            });
-            return this;
+            Children.ToList().ForEach(child => child.Propagate(operateOn));
+            operateOn(this);
         }
 
-        /// <summary>Default override of Consolidate for ParentElementBuilders</summary>
-        public override IElementTreeNode Consolidate() => Children.Count() switch
+        /// <summary>Override of Configure for ParentElementBuilders.  If a subclass overrides this implementation, it should call this base form after its own custom manipulations.</summary>
+        public override void Configure() => UnassignedChildren.ToList().ForEach(unassignedChild =>
         {
-            0 => Become(null),
-            1 => Become(Children.First()),
-            _ => this
-        };
+            RemoveChild(unassignedChild);
+            AssignRoleFor(unassignedChild);
+        });
+
+        /// <summary>Default override of Consolidate for ParentElementBuilders</summary>
+        public override void Consolidate() 
+        {
+            switch (Children.Count())
+            {
+                case 0:
+                    Become(null);
+                    break;
+                case 1:
+                    Become(Children.Single());
+                    break;
+                default: break;
+            }
+        }
 
         /// <summary>Change the role of an existing child <paramref name="child"/> to <paramref name="newRole"/></summary>
-        internal void SetRoleOfChild(IElementTreeNode child, ChildRole newRole) => ChildrenAndRoles[child] = newRole;
+        public void SetRoleOfChild(IElementTreeNode child, ChildRole newRole) => ChildrenAndRoles[child] = newRole;
 
         /// <summary>Find all children with assigned role <paramref name="originalRole"/>, and change their role to <paramref name="newRole"/></summary>
         private protected void ChangeChildRoles(ChildRole originalRole, ChildRole newRole) => ChildrenWithRole(originalRole).ToList()
             .ForEach(childToChange => SetRoleOfChild(childToChange, newRole));
 
         /// <summary>Sever the parent-child link between this and <paramref name="childToRemove"/></summary>
-        internal void RemoveChild(IElementTreeNode childToRemove)
+        public void RemoveChild(IElementTreeNode childToRemove)
         {
             ChildrenAndRoles.Remove(childToRemove);
             childToRemove.Parent = null;
@@ -150,7 +159,7 @@ namespace FlexibleRealization
         {
             ChildRole existingRole = RoleFor(existingChild);
             RemoveChild(existingChild);
-            if (newChild != null) AddChild(newChild);
+            if (newChild != null) AddChildWithRole(newChild, existingRole);
         }
 
         internal ParentElementBuilder LightweightCopyChildrenFrom(ParentElementBuilder anotherParent)

@@ -49,6 +49,7 @@
     <Compile Include="Element Builders\Interfaces\IElementBuilder.cs" />
     <Compile Include="Element Builders\Interfaces\IElementTreeNode.cs" />
     <Compile Include="Element Builders\Interfaces\IIndexRange.cs" />
+    <Compile Include="Element Builders\Interfaces\IParent.cs" />
     <Compile Include="Element Builders\Interfaces\IPhraseHead.cs" />
     <Compile Include="Element Builders\Interfaces\ISyntaxComponent.cs" />
     <Compile Include="Element Builders\Interfaces\ISyntaxHead.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhAdverbBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhDeterminerBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhPronounBuilder.cs" />
+    <Compile Include="RootNode.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\ClausalComplement.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\IndirectObject.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\Object.cs" />

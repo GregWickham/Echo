@@ -37,7 +37,9 @@ namespace FlexibleRealization
                 case PrepositionBuilder pb:
                     AddUnassignedChild(pb);
                     break;
-                default: throw new InvalidOperationException("Independent clause can't find a role for this element");
+                default:
+                    AddUnassignedChild(child);
+                    break;
             }
         }
 
@@ -45,15 +47,17 @@ namespace FlexibleRealization
 
         #region Configuration
 
-        public override IElementTreeNode Consolidate()
+        public override void Consolidate()
         {
-            if (PredicateBuilder == null)
+            if (Children.Count() == 0) Become(null);
+            else
             {
-                if (Subjects.Count() == 1) return Become(Subjects.First());
-                else throw new InvalidOperationException("Clause has no predicate, and multiple subjects that are not coordinated");
+                if (PredicateBuilder == null)
+                {
+                    if (Subjects.Count() == 1) Become(Subjects.Single());
+                }
+                else if (Subjects.Count() == 0) Become(PredicateBuilder);
             }
-            else if (Subjects.Count() == 0) return Become(PredicateBuilder);
-            else return this;
         }
 
         public override IElementTreeNode CopyLightweight() => new IndependentClauseBuilder { Clause = Clause.CopyWithoutSpec() }

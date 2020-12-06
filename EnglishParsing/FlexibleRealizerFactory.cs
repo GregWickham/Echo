@@ -11,11 +11,14 @@ using System;
 
 namespace FlexibleRealization
 {
+    /// <summary>Thrown we we can't transform a tree from editable form to realizable form</summary>
+    /// <remarks>Most often results from a problem with phrase coordination</remarks>
     public class TreeCannotBeTransformedToRealizableFormException : Exception
     {
         public TreeCannotBeTransformedToRealizableFormException(Exception inner) : base("Element Tree could not be transformed to realizable form", inner) { }
     }
 
+    /// <summary>Thrown when a tree ostensibly in realizable form fails to build its NLGElement</summary>
     public class SpecCannotBeBuiltException : Exception
     {
         public SpecCannotBeBuiltException(Exception inner) : base("SimpleNLG specification cannot be built from tree", inner) { }
@@ -52,11 +55,12 @@ namespace FlexibleRealization
         public static IElementTreeNode EditableTreeFrom(string text)
         {
             ParseResult parse = Stanford.CoreNLP.Client.Parse(text);
-            return ElementBuilderTreeFrom(parse, parse.Constituents)
+            return RootOfElementBuilderTreeFrom(parse, parse.Constituents)
                 .AttachDependencies(parse.Dependencies)
                 .ApplyDependencies()
                 .Propagate(ElementBuilder.Consolidate)
-                .Propagate(ElementBuilder.Configure);
+                .Propagate(ElementBuilder.Configure)
+                .Tree;
         }
 
         /// <summary>Attempt to transform <paramref name="editableTree"/> into a structure that can be serialized as XML and realized by SimpleNLG.</summary>
@@ -67,9 +71,10 @@ namespace FlexibleRealization
         {
             try
             {
-                return editableTree
+                return editableTree.Root
                     .CopyLightweight()
-                    .Propagate(ElementBuilder.Coordinate);
+                    .Propagate(ElementBuilder.Coordinate)
+                    .Tree;
             }
             catch (Exception transformationException)
             {
@@ -105,6 +110,9 @@ namespace FlexibleRealization
                 throw new SpecCannotBeBuiltException(buildException);
             }
         }
+
+        /// <summary>Return the RootNode of an element tree constructed from <paramref name="parse"/> and <paramref name="constituent"/></summary>
+        private static RootNode RootOfElementBuilderTreeFrom(ParseResult parse, Tree constituent) => new RootNode(ElementBuilderTreeFrom(parse, constituent));
 
         /// <summary>Recursively traverse <paramref name="constituent"/> depth-first, creating a parallel tree of ElementBuilders</summary>
         /// <returns>The IElementTreeNode at the root of the created tree</returns>

@@ -60,13 +60,13 @@ namespace FlexibleRealization.UserInterface.ViewModels
             ElementBuilder changedBuilder = sender as ElementBuilder;
             if (changedBuilder != null)
             {
-                ElementVertex changedVertex = VertexForBuilder(changedBuilder);
+                ElementVertex changedVertex = VertexForNode(changedBuilder);
                 changedVertex.SetToolTipFor(VertexList[changedVertex]);
             }
         }
 
-        /// <summary>Return the <see cref="ElementVertex"/> whose model is <paramref name="builder"/></summary>
-        private ElementVertex VertexForBuilder(ElementBuilder builder) => VertexList.Keys.Single(vertex => vertex is ElementBuilderVertex ebv && ebv.Builder == builder);
+        /// <summary>Return the <see cref="ElementVertex"/> whose model is <paramref name="node"/></summary>
+        private ElementVertex VertexForNode(IElementTreeNode node) => VertexList.Keys.Single(vertex => vertex is ElementBuilderVertex ebv && ebv.Builder == node);
 
         /// <summary>Assign <see cref="ToolTip"/>s for each <see cref="VertexControl"/> based on the state of its corresponding <see cref="ElementVertex"/></summary>
         private void AssignVertexToolTips() 
@@ -80,7 +80,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
         /// <summary>The user has selected a vertex in the graph.</summary>
         private void ElementBuilderGraphArea_VertexSelected(object sender, VertexSelectedEventArgs args) => SetSelectedVertex((ElementVertex)args.VertexControl.Vertex);
 
-        internal void SetSelectedBuilder(ElementBuilder builder) => SetSelectedVertex(VertexForBuilder(builder));
+        internal void SetSelectedNode(IElementTreeNode node) => SetSelectedVertex(VertexForNode(node));
 
         /// <summary>Update SelectedElementDescription and PropertyGrid to display the vertex selected in the graph</summary>
         internal void SetSelectedVertex(ElementVertex selectedVertex)

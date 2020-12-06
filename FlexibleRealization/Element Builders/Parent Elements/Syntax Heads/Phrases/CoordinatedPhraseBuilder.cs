@@ -12,6 +12,7 @@ namespace FlexibleRealization
             Phrase = new CoordinatedPhraseElement(category);
         }
 
+        /// <summary>This constructor is called when a CoordinablePhraseBuilder transforms itself into a CoordinatedPhraseBuilder during Coordinate</summary>
         internal CoordinatedPhraseBuilder(phraseCategory category, IEnumerable<IElementTreeNode> coordinated, ConjunctionBuilder coordinator)
         {
             Phrase = new CoordinatedPhraseElement(category);

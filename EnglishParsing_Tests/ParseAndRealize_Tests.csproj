@@ -65,6 +65,8 @@
     <Compile Include="Phrases\Noun Phrases\PhraseFeatures.cs" />
     <Compile Include="Phrases\Noun Phrases\SpecifierTypes.cs" />
     <Compile Include="Phrases\Prepositional Phrases\CoordinatedHead.cs" />
+    <Compile Include="Phrases\Prepositional Phrases\ObjectFeatures.cs" />
+    <Compile Include="Phrases\Prepositional Phrases\ObjectTypes.cs" />
     <Compile Include="Phrases\Prepositional Phrases\PrepositionalPhrases.cs" />
     <Compile Include="Phrases\Verb Phrases\ComplementTypes.cs" />
     <Compile Include="Phrases\Verb Phrases\HeadFeatures\Tenses.cs" />

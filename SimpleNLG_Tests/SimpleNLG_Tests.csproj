@@ -52,6 +52,7 @@
     <Compile Include="Clauses\Independent\Predicate Features\Complement types\PredicativeAdjectivePhrase.cs" />
     <Compile Include="Clauses\Independent\Predicate Features\Complement types\PrepositionalPhrase.cs" />
     <Compile Include="Clauses\Independent\Subject Features\Coordinated.cs" />
+    <Compile Include="Clauses\Subordinate\Infinitival.cs" />
     <Compile Include="Clauses\Subordinate\Wh Word\Adverbs.cs" />
     <Compile Include="Phrases\Adjective Phrases\AdjectivePhrases.cs" />
     <Compile Include="Phrases\Adjective Phrases\Comparative.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Phrases\Prepositional Phrases\ObjectFeatures.cs" />
     <Compile Include="Phrases\Verb Phrases\Auxiliary.cs" />
     <Compile Include="Phrases\Verb Phrases\Coordinated.cs" />
+    <Compile Include="Phrases\Verb Phrases\ComplementTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Phrases\Verb Phrases\HeadForms.cs" />
     <Compile Include="Phrases\Verb Phrases\Particles.cs" />
