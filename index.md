@@ -23,7 +23,7 @@ The menu bar contains drop-down items to set the hostname and port for the CoreN
 
 To run the Echo pipeline, enter some text in the upper text box and press the "Parse" button:
 
-![Image of parsed and realized sentence](/docs/images/ParsedAndRealizedRootSelected.jpg)
+![Image of parsed and realized sentence](/images/ParsedAndRealizedRootSelected.jpg)
 
 This causes the following to happen:
 
@@ -55,19 +55,19 @@ On the right side of the Echo window is a tab control that displays detailed inf
 
 We can select a different node in the graph by clicking on it:
 
-![Image of selected coordinated prepositional phrase](/docs/images/ParsedAndRealizedPPSelected.jpg)
+![Image of selected coordinated prepositional phrase](/images/ParsedAndRealizedPPSelected.jpg)
 
 The tab control displays properties for the selected **Prepositional Phrase**; and the text box at the bottom displays the realized form of *only the selected element.*
 
 Now that we've seen an example where the entire process of *Parse / Transform / Build / Realize* works perfectly, let's look at a case where it doesn't go quite so well:
 
-![Image of clause that fails to realize](/docs/images/MisplacedPP.jpg)
+![Image of clause that fails to realize](/images/MisplacedPP.jpg)
 
 Even though the realized text looks okay, something is not quite right.
 
 This sentence is an interesting case because it illustrates the most fundamental problem this system can encounter:  *None of the annotations contain the information required to construct a fully correct realizer specification.*  Here's what we get from CoreNLP:
 
-![Image of CoreNLP parse results](/docs/images/CoreNLPResult1.jpg)
+![Image of CoreNLP parse results](/images/CoreNLPResult1.jpg)
 
 The problem is with the prepositional phrase "in the air," at the end of the sentence.  The constituency parse places that phrase as a child of the noun phrase "growing confidence and growing strength;" and the Enhanced++ dependency graph says that the prepositional object "the air" is a [nominal modifier](https://universaldependencies.org/u/dep/nmod.html) of "confidence."  Although Echo can apply these relations and build a SimpleNLG specification that produces the correct output text, that's not the true goal here.  The actual goal is to arrive at a builder graph that has the correct syntax **and the correct semantics**, so we can use that graph as a foundation for semantically-aware systems in the future.  The "echo" feature, *i.e.* generating realized text, is really just a tool to verify that we're on the right path to that goal.
 
@@ -75,15 +75,15 @@ In order to be semantically correct, the phrase "in the air" should be a modifie
 
 By dragging with the left mouse button, you can adjust the position of a vertex -- for example, if you don't like the edge routing:
 
-![Image of vertex position adjustment](/docs/images/AdjustVertexPosition.gif)
+![Image of vertex position adjustment](/images/AdjustVertexPosition.gif)
 
 Dragging with the **right** mouse button starts a drag-and-drop operation, which allows us to make the necessary semantic correction to the graph:
 
-![Image of vertex drag and drop](/docs/images/DragAndDropPP.gif)
+![Image of vertex drag and drop](/images/DragAndDropPP.gif)
 
 If the *Parse / Transform* process succeeds, but *Build / Realize* fails, the lower text box is displayed with a red color to indicate the error:
 
-![Image of realize failed](/docs/images/ParsedButRealizeFailed1.jpg)
+![Image of realize failed](/images/ParsedButRealizeFailed1.jpg)
 
 ### Limitations
 
