@@ -17,7 +17,7 @@ Once the servers are running, you're ready to run Echo.  You can test the Simple
 
 The Visual Studio startup project for the user interface is `Echo_UI_WPF`:
 
-![Image of Echo WPF Window](/docs/images/EmptyWindow.jpg)
+![Image of Echo WPF Window](/images/EmptyWindow.jpg)
 
 The menu bar contains drop-down items to set the hostname and port for the CoreNLP and SimpleNLG servers.  The default values are the same as the defaults distributed with each server -- *i.e.* `localhost:9000` for CoreNLP and `localhost:50007` for SimpleNLG.
 
