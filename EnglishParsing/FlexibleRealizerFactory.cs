@@ -11,13 +11,6 @@ using System;
 
 namespace FlexibleRealization
 {
-    /// <summary>Thrown we we can't transform a tree from editable form to realizable form</summary>
-    /// <remarks>Most often results from a problem with phrase coordination</remarks>
-    public class TreeCannotBeTransformedToRealizableFormException : Exception
-    {
-        public TreeCannotBeTransformedToRealizableFormException(Exception inner) : base("Element Tree could not be transformed to realizable form", inner) { }
-    }
-
     /// <summary>Thrown when a tree ostensibly in realizable form fails to build its NLGElement</summary>
     public class SpecCannotBeBuiltException : Exception
     {
@@ -30,11 +23,10 @@ namespace FlexibleRealization
         private static readonly java.lang.Class IndexAnnotationClass = new CoreAnnotations.IndexAnnotation().getClass();
 
         public static NLGSpec SpecFrom(string text) => RealizableSpecFrom(
-            RealizableTreeFrom(
-                EditableTreeFrom(text)));
+                EditableTreeFrom(text)
+                    .AsRealizableTree());
 
-        public static NLGSpec SpecFrom(IElementTreeNode editableTree) => RealizableSpecFrom(
-            RealizableTreeFrom(editableTree));
+        public static NLGSpec SpecFrom(IElementTreeNode editableTree) => RealizableSpecFrom(editableTree.AsRealizableTree());
 
         public static NLGSpec SpecFrom(IElementBuilder realizableTree) => RealizableSpecFrom(realizableTree);
 
@@ -61,25 +53,6 @@ namespace FlexibleRealization
                 .Propagate(ElementBuilder.Consolidate)
                 .Propagate(ElementBuilder.Configure)
                 .Tree;
-        }
-
-        /// <summary>Attempt to transform <paramref name="editableTree"/> into a structure that can be serialized as XML and realized by SimpleNLG.</summary>
-        /// <remarks>The propagated "Coordinate" operation causes CoordinablePhraseBuilders to coordinate themselves.  This process may cause those phrase builders to change form.
-        /// <paramref name="editableTree"/> does NOT need to be the root of the tree in which it resides.  This allows the UI to selectively realize portions of a tree.</remarks>
-        /// <returns>An IElementBuilder representing the transformed tree, if the transformation succeeds</returns>
-        /// <exception cref="TreeCannotBeTransformedToRealizableFormException">If the transformation fails</exception>
-        public static IElementBuilder RealizableTreeFrom(IElementTreeNode editableTree)
-        {
-            try
-            {
-                return new RootNode(editableTree.CopyLightweight())
-                    .Propagate(ElementBuilder.Coordinate)
-                    .Tree;
-            }
-            catch (Exception transformationException)
-            {
-                throw new TreeCannotBeTransformedToRealizableFormException(transformationException);
-            }
         }
 
         /// <summary>Wrap <paramref name="elementBuilderTree"/> in the necessary objects to prepare it for realization.</summary>

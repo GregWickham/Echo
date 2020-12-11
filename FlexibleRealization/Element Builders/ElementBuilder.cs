@@ -265,6 +265,25 @@ namespace FlexibleRealization
 
         #region Configuration
 
+        /// <summary>Attempt to transform this into a structure that can be realized by SimpleNLG.</summary>
+        /// <remarks>The propagated "Coordinate" operation causes CoordinablePhraseBuilders to coordinate themselves.  This process may cause those phrase builders to change form.
+        /// This ElementBuilder does NOT need to be the root of the tree in which it resides.  This allows the UI to selectively realize portions of a tree.</remarks>
+        /// <returns>An IElementBuilder representing the transformed tree, if the transformation succeeds</returns>
+        /// <exception cref="TreeCannotBeTransformedToRealizableFormException">If the transformation fails</exception>
+        public IElementTreeNode AsRealizableTree()
+        {
+            try
+            {
+                return new RootNode(CopyLightweight())
+                    .Propagate(Coordinate)
+                    .Tree;
+            }
+            catch (Exception transformationException)
+            {
+                throw new TreeCannotBeTransformedToRealizableFormException(transformationException);
+            }
+        }
+
         /// <summary>Propagate the operation specified by <paramref name="operateOn"/> through the subtree of which this is the root, in depth-first fashion.</summary>
         /// <param name="operateOn">The operation to be applied during propagation</param>
         /// <returns>The result of performing <paramref name="operateOn"/>(this) after <paramref name="operateOn"/> has been invoked on all its descendants</returns>
