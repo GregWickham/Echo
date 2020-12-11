@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using SimpleNLG;
 
 namespace FlexibleRealization
@@ -63,6 +65,34 @@ namespace FlexibleRealization
         {
             Word.Base = WordSource.GetWord();
             return Word;
+        }
+
+        public override IEnumerable<IElementTreeNode> GetRealizableVariations() => new Variations(this);
+
+        public class Variations : IEnumerable<WordElementBuilder>
+        {
+            internal Variations(WordElementBuilder word) => Builder = word;
+
+            private WordElementBuilder Builder;
+
+            public IEnumerator<WordElementBuilder> GetEnumerator() => new Flexor(Builder);
+            IEnumerator IEnumerable.GetEnumerator() => new Flexor(Builder);
+        }
+
+        public class Flexor : IEnumerator<WordElementBuilder>
+        {
+            internal Flexor(WordElementBuilder word) => Builder = word;
+
+            private WordElementBuilder Builder;
+
+            public WordElementBuilder Current => Builder;
+            object IEnumerator.Current => Builder;
+
+            public void Dispose() { }
+
+            public bool MoveNext() => Builder.WordSource.MoveNext();
+
+            public void Reset() => Builder.WordSource.Reset();
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace FlexibleRealization
+﻿using System.Collections;
+
+namespace FlexibleRealization
 {
-    public interface IWordSource
+    public interface IWordSource : IEnumerator
     {
         string GetWord();
     }
