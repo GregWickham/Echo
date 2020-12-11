@@ -12,6 +12,12 @@ using FlexibleRealization.UserInterface.ViewModels;
 
 namespace FlexibleRealization.UserInterface
 {
+    public enum ElementType
+    {
+        PartOfSpeech,
+        Parent
+    }
+
     public delegate void ElementBuilderSelected_EventHandler(ElementBuilder selectedBuilder);
 
     public delegate void RealizationFailed_EventHandler(IElementTreeNode failedBuilder);
@@ -26,21 +32,25 @@ namespace FlexibleRealization.UserInterface
             InitializeComponent();
             ZoomControl.SetViewFinderVisibility(ZoomCtrl, Visibility.Hidden);
             GraphArea.VertexSelected += GraphArea_VertexSelected;
-            Loaded += ElementBuilderGraphEditor_Loaded;
+            //Loaded += ElementBuilderGraphEditor_Loaded;
         }
 
         /// <summary>Hook a handler to the containing <see cref="Window"/>'s Closing event</summary>
-        private void ElementBuilderGraphEditor_Loaded(object sender, RoutedEventArgs e)
-        {
-            Window.GetWindow(this).Closing += Window_Closing;
-        }
+        //private void ElementBuilderGraphEditor_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    //Window window = Window.GetWindow(this);
+        //    //if (window != null)
+        //    //{
+        //    //    window.Closing += Window_Closing;
+        //    //}
+        //}
 
         /// <summary>Tear down this ElementBuilderGraphEditor</summary>
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             GraphArea.VertexSelected -= GraphArea_VertexSelected;
-            Loaded -= ElementBuilderGraphEditor_Loaded;
-            Window.GetWindow(this).Closing -= Window_Closing;
+            //Loaded -= ElementBuilderGraphEditor_Loaded;
+            //Window.GetWindow(this).Closing -= Window_Closing;
         }
 
         /// <summary>Generate an editable tree from <paramref name="text"/>, then try to realize that tree</summary>

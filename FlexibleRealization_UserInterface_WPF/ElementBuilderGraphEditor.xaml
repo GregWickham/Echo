@@ -6,9 +6,49 @@
              xmlns:graphx="http://schemas.panthernet.ru/graphx/" xmlns:graphModels="clr-namespace:FlexibleRealization.UserInterface.ViewModels" 
              xmlns:propertyTools="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <graphx:ZoomControl Grid.Column="0" x:Name="ZoomCtrl">
+            <graphx:ZoomControl.Resources>
+                <ResourceDictionary Source="./Templates/ElementBuilderGraphXTemplates.xaml"/>
+            </graphx:ZoomControl.Resources>
+            <graphModels:ElementBuilderGraphArea x:Name="GraphArea" />
+        </graphx:ZoomControl>
+
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Width="4"/>
+
+        <TabControl Grid.Column="2" TabStripPlacement="Bottom">
+            <TabItem Header="Element Properties">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" x:Name="ElementDescription" HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" Text="{Binding SelectedElementDescription}" Margin="4"/>
+                    <propertyTools:PropertyGrid Grid.Row="1" x:Name="Properties" Width="Auto" Height="Auto" Background="WhiteSmoke" BorderBrush="DarkGray" BorderThickness="2"
+                SelectedObject="{Binding SelectedElementProperties}"
+                TabVisibility="Visible">
+                    </propertyTools:PropertyGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="XML">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Label x:Name="XmlLabel" Content="{Binding XmlSpecLocalized}"/>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+        
+    </Grid>
     
-    <DockPanel LastChildFill="True">
+    <!--<DockPanel LastChildFill="True">
+        
         <graphx:ZoomControl DockPanel.Dock="Left" x:Name="ZoomCtrl" Width="550">
             <graphx:ZoomControl.Resources>
                 <ResourceDictionary Source="./Templates/ElementBuilderGraphXTemplates.xaml"/>
@@ -36,7 +76,6 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
-    </DockPanel>
-
+    </DockPanel>-->
 
 </UserControl>

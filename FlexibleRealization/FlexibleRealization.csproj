@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Element Builders\Default Element Sources\SingleWordSource.cs" />
+    <Compile Include="Element Builders\Interfaces\Element Sources\IWordSource.cs" />
     <Compile Include="Element Builders\Interfaces\IElementBuilder.cs" />
     <Compile Include="Element Builders\Interfaces\IElementTreeNode.cs" />
     <Compile Include="Element Builders\Interfaces\IIndexRange.cs" />

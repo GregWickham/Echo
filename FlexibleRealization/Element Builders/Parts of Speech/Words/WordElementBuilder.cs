@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using SimpleNLG;
 
 namespace FlexibleRealization
 {
-    [DebuggerDisplay("{Word.Base}")]
+    [DebuggerDisplay("{WordSource.GetWord()}")]
     public abstract class WordElementBuilder : PartOfSpeechBuilder
     {
         public WordElementBuilder(lexicalCategory category, ParseToken token) : base(token)
         {
-            Word.cat = category;
-            Word.catSpecified = true;
-            Word.@base = category switch
-            {   
+            Word.PartOfSpeech = category;
+            WordSource = new SingleWordSource(category switch
+            {
                 lexicalCategory.VERB => token.Lemma,
                 _ => token.Word
-            };
+            });
         }
 
         private WordElement Word = new WordElement();
+
+        public IWordSource WordSource { get; set; }
+
 
         #region Word properties
 
@@ -59,6 +59,10 @@ namespace FlexibleRealization
 
         public override NLGElement BuildElement() => BuildWord();
 
-        public WordElement BuildWord() => Word;
+        public WordElement BuildWord()
+        {
+            Word.Base = WordSource.GetWord();
+            return Word;
+        }
     }
 }
