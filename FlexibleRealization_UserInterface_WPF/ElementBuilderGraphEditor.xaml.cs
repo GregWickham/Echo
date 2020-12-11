@@ -83,7 +83,7 @@ namespace FlexibleRealization.UserInterface
         {
             try
             {
-                IElementBuilder realizableTree = FlexibleRealizerFactory.RealizableTreeFrom(editableTree);
+                IElementBuilder realizableTree = editableTree.AsRealizableTree();
                 NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
                 XmlSpec = spec.Serialize();
                 string realized = SimpleNLG.Client.Realize(XmlSpec);
