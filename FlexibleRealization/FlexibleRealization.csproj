@@ -69,7 +69,9 @@
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhAdverbBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhDeterminerBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhPronounBuilder.cs" />
-    <Compile Include="Exceptions\TreeCannotBeTransformedToRealizableFormException.cs" />
+    <Compile Include="Exceptions and Results\RealizationResult.cs" />
+    <Compile Include="Exceptions and Results\SpecCannotBeBuiltException.cs" />
+    <Compile Include="Exceptions and Results\TreeCannotBeTransformedToRealizableFormException.cs" />
     <Compile Include="RootNode.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\ClausalComplement.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\IndirectObject.cs" />

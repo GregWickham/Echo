@@ -4,7 +4,11 @@ namespace FlexibleRealization
 {
     public class VerbBuilder : WordElementBuilder, IPhraseHead
     {
+        /// <summary>This constructor is using during parsing</summary>
         public VerbBuilder(ParseToken token) : base(lexicalCategory.VERB, token) { }
+
+        /// <summary>This constructor is used during LightweightCopy().</summary>
+        private VerbBuilder(ParseToken token, string word) : base(lexicalCategory.VERB, token, word) { }
 
         internal bool IsGerundOrPresentParticiple => Token.PartOfSpeech == "VBG";
 
@@ -44,6 +48,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new VerbBuilder(Token.Copy());
+        public override IElementTreeNode CopyLightweight() => new VerbBuilder(Token.Copy(), WordSource.GetWord());
     }
 }

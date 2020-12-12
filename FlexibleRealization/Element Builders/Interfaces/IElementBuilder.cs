@@ -6,5 +6,7 @@ namespace FlexibleRealization
     public interface IElementBuilder
     {
         NLGElement BuildElement();
+
+        NLGSpec ToNLGSpec();
     }
 }

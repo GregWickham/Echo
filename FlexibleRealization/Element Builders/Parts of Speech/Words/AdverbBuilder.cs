@@ -4,7 +4,11 @@ namespace FlexibleRealization
 {
     public class AdverbBuilder : WordElementBuilder, IPhraseHead
     {
+        /// <summary>This constructor is using during parsing</summary>
         public AdverbBuilder(ParseToken token) : base(lexicalCategory.ADVERB, token) { }
+
+        /// <summary>This constructor is used during LightweightCopy().</summary>
+        private protected AdverbBuilder(ParseToken token, string word) : base(lexicalCategory.ADVERB, token, word) { }
 
         /// <summary>Implementation of IPhraseHead : AsPhrase()</summary>
         public override PhraseBuilder AsPhrase() => AsAdverbPhrase();
@@ -21,6 +25,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(Token.Copy());
+        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(Token.Copy(), WordSource.GetWord());
     }
 }

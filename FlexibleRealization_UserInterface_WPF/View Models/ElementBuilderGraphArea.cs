@@ -7,7 +7,7 @@ using GraphX.Controls.Models;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
-    internal class ElementBuilderGraphArea : GraphArea<ElementVertex, ElementEdge, ElementBuilderGraph>, INotifyPropertyChanged
+    public class ElementBuilderGraphArea : GraphArea<ElementVertex, ElementEdge, ElementBuilderGraph>, INotifyPropertyChanged
     {
         public ElementBuilderGraphArea() : base()
         {

@@ -7,6 +7,7 @@ namespace FlexibleRealization
 
     public class PronounBuilder : WordElementBuilder, IPhraseHead
     {
+        /// <summary>This constructor is using during parsing</summary>
         public PronounBuilder(ParseToken token) : base(lexicalCategory.PRONOUN, token)
         {
             switch (token.PartOfSpeech)
@@ -16,6 +17,9 @@ namespace FlexibleRealization
                     break;
             }
         }
+
+        /// <summary>This constructor is used during LightweightCopy().</summary>
+        private protected PronounBuilder(ParseToken token, string word) : base(lexicalCategory.PRONOUN, token, word) { }
 
         /// <summary>Implementation of IPhraseHead : AsPhrase()</summary>
         public override PhraseBuilder AsPhrase() => AsNounPhrase();
@@ -88,7 +92,7 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new PronounBuilder(Token.Copy())
+        public override IElementTreeNode CopyLightweight() => new PronounBuilder(Token.Copy(), WordSource.GetWord())
         {
             Case = Case,
             Person = Person,

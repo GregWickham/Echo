@@ -34,6 +34,8 @@ namespace FlexibleRealization
 
         void MoveTo(IParent newParent);
 
+        RealizationResult Realize();
+
         IElementTreeNode AsRealizableTree();
 
         IElementTreeNode CopyLightweight();

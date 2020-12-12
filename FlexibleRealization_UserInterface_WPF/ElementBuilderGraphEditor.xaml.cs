@@ -12,12 +12,6 @@ using FlexibleRealization.UserInterface.ViewModels;
 
 namespace FlexibleRealization.UserInterface
 {
-    public enum ElementType
-    {
-        PartOfSpeech,
-        Parent
-    }
-
     public delegate void ElementBuilderSelected_EventHandler(ElementBuilder selectedBuilder);
 
     public delegate void RealizationFailed_EventHandler(IElementTreeNode failedBuilder);
@@ -31,26 +25,29 @@ namespace FlexibleRealization.UserInterface
         {
             InitializeComponent();
             ZoomControl.SetViewFinderVisibility(ZoomCtrl, Visibility.Hidden);
-            GraphArea.VertexSelected += GraphArea_VertexSelected;
-            //Loaded += ElementBuilderGraphEditor_Loaded;
+            ElementGraphArea.VertexSelected += GraphArea_VertexSelected;
+            Loaded += ElementBuilderGraphEditor_Loaded;
         }
 
         /// <summary>Hook a handler to the containing <see cref="Window"/>'s Closing event</summary>
-        //private void ElementBuilderGraphEditor_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    //Window window = Window.GetWindow(this);
-        //    //if (window != null)
-        //    //{
-        //    //    window.Closing += Window_Closing;
-        //    //}
-        //}
+        private void ElementBuilderGraphEditor_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                Window window = Window.GetWindow(this);
+                if (window != null)
+                {
+                    window.Closing += Window_Closing;
+                }
+            }
+        }
 
         /// <summary>Tear down this ElementBuilderGraphEditor</summary>
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            GraphArea.VertexSelected -= GraphArea_VertexSelected;
-            //Loaded -= ElementBuilderGraphEditor_Loaded;
-            //Window.GetWindow(this).Closing -= Window_Closing;
+            ElementGraphArea.VertexSelected -= GraphArea_VertexSelected;
+            Loaded -= ElementBuilderGraphEditor_Loaded;
+            Window.GetWindow(this).Closing -= Window_Closing;
         }
 
         /// <summary>Generate an editable tree from <paramref name="text"/>, then try to realize that tree</summary>
@@ -66,10 +63,10 @@ namespace FlexibleRealization.UserInterface
         private void SetModel(IElementTreeNode elementBuilderTree)
         {
             ElementBuilderGraph graph = ElementBuilderGraphFactory.GraphOf(elementBuilderTree);
-            GraphArea.LogicCore = new ElementBuilderLogicCore(graph);
-            GraphArea.GenerateGraph(true, true);
-            ElementDescription.DataContext = GraphArea;
-            Properties.DataContext = GraphArea;
+            ElementGraphArea.LogicCore = new ElementBuilderLogicCore(graph);
+            ElementGraphArea.GenerateGraph(true, true);
+            ElementDescription.DataContext = ElementGraphArea;
+            Properties.DataContext = ElementGraphArea;
             XmlLabel.DataContext = this;
             ZoomCtrl.ZoomToFill();
         }
@@ -81,18 +78,19 @@ namespace FlexibleRealization.UserInterface
         /// <remarks>Raise an event indicating whether the process succeeded or not</remarks>
         private void TryToRealize(IElementTreeNode editableTree)
         {
-            try
+            RealizationResult result = editableTree.Realize();
+            switch (result.Outcome)
             {
-                IElementBuilder realizableTree = editableTree.AsRealizableTree();
-                NLGSpec spec = FlexibleRealizerFactory.SpecFrom(realizableTree);
-                XmlSpec = spec.Serialize();
-                string realized = SimpleNLG.Client.Realize(XmlSpec);
-                OnTextRealized(realized);
-            }
-            catch (Exception ex) when (ex is TreeCannotBeTransformedToRealizableFormException || ex is SpecCannotBeBuiltException)
-            {
-                XmlSpec = null;
-                OnRealizationFailed(editableTree);
+                case RealizationOutcome.Success:
+                    XmlSpec = result.XML;
+                    OnTextRealized(result.Realized);
+                    break;
+                case RealizationOutcome.FailedToTransform:
+                case RealizationOutcome.FailedToBuildSpec:
+                    XmlSpec = null;
+                    OnRealizationFailed(editableTree);
+                    break;
+                default: break;
             }
         }
 
@@ -140,40 +138,42 @@ namespace FlexibleRealization.UserInterface
         /// <summary>Set <paramref name="node"/> as the selected element</summary>
         private void SelectNode(IElementTreeNode node)
         {
-            GraphArea.SetSelectedNode(node);
+            ElementGraphArea.SetSelectedNode(node);
             TryToRealize(node);
         }
+
+        public ElementBuilder SelectedBuilder { get; private set; }
 
         /// <summary>If the selected ElementVertex has an associated ElementBuilder, notify listeners of the selection</summary>
         private void GraphArea_VertexSelected(object sender, VertexSelectedEventArgs args)
         {
             ElementVertex selectedVertex = (ElementVertex)args.VertexControl.Vertex;
-            ElementBuilder selectedBuilder = null;
+            //ElementBuilder selectedBuilder = null;
             switch (selectedVertex)
             {
                 case ParentElementVertex pev:
-                    selectedBuilder = pev.Builder;
+                    SelectedBuilder = pev.Builder;
                     OnElementBuilderSelected(pev.Builder);
                     break;
                 case PartOfSpeechVertex psv:
-                    selectedBuilder = psv.Builder;
+                    SelectedBuilder = psv.Builder;
                     OnElementBuilderSelected(psv.Builder);
                     break;
                 default: break;
             }
             if (args.MouseArgs.RightButton == MouseButtonState.Pressed)
             {
-                if (selectedBuilder != null)
+                if (SelectedBuilder != null)
                 {
-                    SetDropTargetsFor(selectedBuilder);
-                    DragDrop.DoDragDrop(args.VertexControl, selectedBuilder, DragDropEffects.Move);
+                    SetDropTargetsFor(SelectedBuilder);
+                    DragDrop.DoDragDrop(args.VertexControl, SelectedBuilder, DragDropEffects.Move);
                 }
             }
 
             // Configure the appropriate vertexes to be drop targets for the supplied ElementBuilder
             void SetDropTargetsFor(ElementBuilder builder)
             {
-                foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in GraphArea.VertexList)
+                foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in ElementGraphArea.VertexList)
                 {
                     eachKVP.Value.PreviewDrop -= VertexControl_PreviewDrop;
                     if (eachKVP.Key is ParentElementVertex pev && pev.Model.CanAddChild(builder))
@@ -189,7 +189,7 @@ namespace FlexibleRealization.UserInterface
         /// <summary>Configure all vertexes to NOT be drop targets</summary>
         private void ClearDropTargets()
         {
-            foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in GraphArea.VertexList)
+            foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in ElementGraphArea.VertexList)
             {
                 eachKVP.Value.PreviewDrop -= VertexControl_PreviewDrop;
                 eachKVP.Value.AllowDrop = false;

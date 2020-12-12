@@ -4,7 +4,11 @@ namespace FlexibleRealization
 {
     public class PrepositionBuilder : WordElementBuilder, IPhraseHead
     {
+        /// <summary>This constructor is using during parsing</summary>
         public PrepositionBuilder(ParseToken token) : base(lexicalCategory.PREPOSITION, token) { }
+
+        /// <summary>This constructor is used during LightweightCopy().</summary>
+        private PrepositionBuilder(ParseToken token, string word) : base(lexicalCategory.PREPOSITION, token, word) { }
 
         /// <summary>Return true if this PrepositionBuilder is a head of a PrepositionalPhraseBuilder</summary>
         public override bool IsPhraseHead => Parent is PrepositionalPhraseBuilder && AssignedRole == ParentElementBuilder.ChildRole.Head;
@@ -24,6 +28,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new PrepositionBuilder(Token.Copy());
+        public override IElementTreeNode CopyLightweight() => new PrepositionBuilder(Token.Copy(), WordSource.GetWord());
     }
 }

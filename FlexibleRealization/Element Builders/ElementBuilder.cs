@@ -372,16 +372,72 @@ namespace FlexibleRealization
         /// <list type="bullet">
         /// <item>The NLGElement structure of the SimpleNLG spec to build is nulled out.  The lightweight tree is still capable of recreating this structure through BuildElement().</item>
         /// <item>Dependency relations between parts of speech are removed.  ApplyDependencies() can still be called on the lightweight tree, but it will have no effect.</item>
+        /// <item>Elements that are capable of generating variations are resolved to one specific form.</item>
         /// </list>
         /// Before calling BuildElement() on a lightweight tree, the Coordinate operation should be propagated through it. 
         /// <para>Creating a copy allows the "heavyweight" tree to be edited in the user interface -- which process causes the tree structure to change -- while the realization process
-        /// is tested on copies.</para></remarks>
+        /// is carried out on lightweight copies.</para></remarks>
         public abstract IElementTreeNode CopyLightweight();
 
         #endregion Configuration
 
         /// <summary>Build and return the <see cref="NLGElement"/> represented by this ElementBuilder</summary>
         public abstract NLGElement BuildElement();
+
+        /// <summary>Build the NLGElement and wrap it in an NLGSpec</summary>
+        /// <returns><see cref="NLGSpec"/></returns>
+        NLGSpec IElementBuilder.ToNLGSpec()
+        {
+            try
+            {
+                return new NLGSpec
+                {
+                    Item = new RequestType
+                    {
+                        Document = new DocumentElement
+                        {
+                            cat = documentCategory.DOCUMENT,
+                            catSpecified = true,
+                            child = new NLGElement[]
+                            {
+                                BuildElement()
+                            }
+                        }
+                    }
+                };
+            }
+            catch (Exception buildException)
+            {
+                throw new SpecCannotBeBuiltException(buildException);
+            }
+        }
+
+        /// <summary>Try to transform this IElementTreeNode into realizable form and if successful, try to realize it.</summary>
+        /// <returns>A <see cref="RealizationResult"/> containing:
+        /// <list type="bullet"><item>The <see cref="RealizationOutcome"/></item>
+        /// <item>The serialized XML if Transform / BuildElement / Serialize succeeded</item>
+        /// <item>The realized text if realization succeeded</item></list></returns>
+        RealizationResult IElementTreeNode.Realize()
+        {
+            RealizationResult result = new RealizationResult();
+            try
+            {
+                IElementBuilder realizableTree = this.AsRealizableTree();
+                NLGSpec spec = realizableTree.ToNLGSpec();
+                result.XML = spec.Serialize();
+                result.Realized = SimpleNLG.Client.Realize(result.XML);
+                result.Outcome = RealizationOutcome.Success;
+            }
+            catch (TreeCannotBeTransformedToRealizableFormException)
+            {
+                result.Outcome = RealizationOutcome.FailedToTransform;
+            }
+            catch (SpecCannotBeBuiltException)
+            {
+                result.Outcome = RealizationOutcome.FailedToBuildSpec;
+            }
+            return result;
+        }
 
         #region Implementation of INotifyPropertyChanged
 

@@ -4,7 +4,11 @@ namespace FlexibleRealization
 {
     public class AdjectiveBuilder : WordElementBuilder, IPhraseHead
     {
+        /// <summary>This constructor is using during parsing</summary>
         public AdjectiveBuilder(ParseToken token) : base(lexicalCategory.ADJECTIVE, token) { }
+
+        /// <summary>This constructor is used during LightweightCopy().</summary>
+        private AdjectiveBuilder(ParseToken token, string word) : base(lexicalCategory.ADJECTIVE, token, word) { }
 
         /// <summary>Return true if this AdjectiveBuilder is a head of an AdjectivePhraseBuilder</summary>
         public override bool IsPhraseHead => Parent is AdjectivePhraseBuilder && AssignedRole == ParentElementBuilder.ChildRole.Head;
@@ -58,6 +62,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(Token.Copy());
+        public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(Token.Copy(), WordSource.GetWord());
     }
 }
