@@ -28,6 +28,8 @@ namespace FlexibleRealization
 
         IEnumerable<TElement> GetElementsOfTypeInSubtree<TElement>() where TElement : ElementBuilder;
 
+        TElementBuilder LowestAncestorOfType<TElementBuilder>() where TElementBuilder : ElementBuilder;
+
         IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree { get; }
 
         void MoveTo(IParent newParent);

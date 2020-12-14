@@ -6,6 +6,21 @@
     {
         public override void Apply()
         {
+            switch (Dependent)
+            {
+                case VerbBuilder verbDependent:
+                    switch (Governor)
+                    {
+                        case VerbBuilder verbGovernor:
+                            SubordinateClauseBuilder clauseContainingDependent = Dependent.LowestAncestorOfType<SubordinateClauseBuilder>();
+                            if (clauseContainingDependent != null)
+                                clauseContainingDependent.Complete(verbGovernor);
+                            break;
+                        default: break;
+                    }
+                    break;
+                default: break;
+            }
         }
     }
 }

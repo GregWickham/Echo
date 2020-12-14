@@ -62,7 +62,8 @@
     <Compile Include="Phrases\Noun Phrases\ComplementTypes.cs" />
     <Compile Include="Phrases\Noun Phrases\Head features\Coordinated.cs" />
     <Compile Include="Phrases\Noun Phrases\ModifierTypes.cs" />
-    <Compile Include="Phrases\Noun Phrases\SpecifierTypes.cs" />
+    <Compile Include="Phrases\Noun Phrases\Specifier Types\PossessivePronoun.cs" />
+    <Compile Include="Phrases\Noun Phrases\Specifier Types\Article.cs" />
     <Compile Include="Phrases\Noun Phrases\HeadOnly.cs" />
     <Compile Include="Phrases\Prepositional Phrases\Coordinated.cs" />
     <Compile Include="Phrases\Prepositional Phrases\ObjectFeatures.cs" />

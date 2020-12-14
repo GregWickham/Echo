@@ -162,6 +162,12 @@ namespace FlexibleRealization
             }
         }
 
+        /// <summary>Return the Ancestors of this which are of type TElementBuilder</summary>
+        IEnumerable<TElementBuilder> GetAncestorsOfType<TElementBuilder>() where TElementBuilder : ElementBuilder => Ancestors.Where(ancestor => ancestor is TElementBuilder).Cast<TElementBuilder>();
+
+        /// <summary>Return the lowest Ancestor of this which is of type TElementBuilder, or null if no such Ancestor exists</summary>
+        public TElementBuilder LowestAncestorOfType<TElementBuilder>() where TElementBuilder : ElementBuilder => GetAncestorsOfType<TElementBuilder>().OrderBy(ancestor => ancestor.Depth).LastOrDefault();
+
         /// <summary>Return the lowest common ancestor of this and <paramref name="anElementTreeNode"/> which is of type <typeparamref name="TElementBuilder"/>, or null if no such common ancestor exists</summary>
         internal TElementBuilder LowestCommonAncestor<TElementBuilder>(IElementTreeNode anElementTreeNode) where TElementBuilder: ElementBuilder => Ancestors.Intersect(anElementTreeNode.Ancestors)
             .Where(ancestor => ancestor is TElementBuilder)

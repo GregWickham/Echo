@@ -45,6 +45,9 @@ namespace FlexibleRealization
                 case NounPhraseBuilder npb:
                     AssignRoleFor(npb);
                     break;
+                case VerbPhraseBuilder vpb:
+                    AddComplement(vpb);
+                    break;
                 case AdjectivePhraseBuilder apb:
                     AddModifier(apb);
                     break;

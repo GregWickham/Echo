@@ -6,6 +6,14 @@
     {
         public override void Apply()
         {
+            switch (Dependent)
+            {
+                case PrepositionBuilder prepositionDependent:
+                    if (prepositionDependent.Parent is SubordinateClauseBuilder)    // It's a subordinating conjunction, not a preposition
+                        prepositionDependent.Parent.SetRoleOfChild(prepositionDependent, ParentElementBuilder.ChildRole.Complementizer);
+                    break;
+                default: break;
+            }
         }
     }
 }
