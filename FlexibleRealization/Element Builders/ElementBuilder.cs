@@ -42,34 +42,26 @@ namespace FlexibleRealization
         /// <summary>Return all the IElementBuilders in the subtree of which this is the root</summary>
         public virtual IEnumerable<IElementTreeNode> DescendentBuilders => new List<IElementTreeNode>();
 
-        /// <summary>Return all the ParentElementBuilders descended from this, NOT including this</summary>
-        private protected IEnumerable<ParentElementBuilder> ChildParents => Children.Where(element => element is ParentElementBuilder).Cast<ParentElementBuilder>();
-
-        /// <summary>Return all the ParentElementBuilders descended from this, NOT including this</summary>
-        private IEnumerable<ParentElementBuilder> DescendentParents => DescendentBuilders.Where(element => element is ParentElementBuilder).Cast<ParentElementBuilder>();
-
         /// <summary>Return all the IElementBuilders in the subtree of which this is the root</summary>
         public virtual IEnumerable<IElementTreeNode> WithAllDescendentBuilders => new List<IElementTreeNode> { this };
 
-        /// <summary>Return all the PartOfSpeechBuilders in the subtree of which this is the root</summary>
-        public IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtree => this.WithAllDescendentBuilders.Where(element => element is PartOfSpeechBuilder).Cast<PartOfSpeechBuilder>();
+        /// <summary>Return all the descendants of this of type TElement, NOT including this</summary>
+        public IEnumerable<TElement> GetDescendentElementsOfType<TElement>() where TElement : ElementBuilder => DescendentBuilders.Where(element => element is TElement).Cast<TElement>();
 
-        /// <summary>Return all the ParentElementBuilders in the subtree of which this is the root</summary>
-        private IEnumerable<ParentElementBuilder> ParentsInSubtree => this.WithAllDescendentBuilders.Where(element => element is ParentElementBuilder).Cast<ParentElementBuilder>();
+        ///// <summary>Return all elements in the subtree of which this is the root, which are of type TElement</summary>
+        public IEnumerable<TElement> GetElementsOfTypeInSubtree<TElement>() where TElement : ElementBuilder => this.WithAllDescendentBuilders.Where(element => element is TElement).Cast<TElement>();
 
-        /// <summary>Return all the PartOfSpeechBuilders in the subtree of which this is the root</summary>
-        private IEnumerable<CoordinablePhraseBuilder> CoordinablePhrasesInSubtree => this.WithAllDescendentBuilders.Where(element => element is CoordinablePhraseBuilder).Cast<CoordinablePhraseBuilder>();
-
-        /// <summary>Return the PartOfSpeechBuilder descended from this whose Token has the supplied <paramref name="index"/>, of null if there is no such PartOfSpeechBuilder</summary>
-        public PartOfSpeechBuilder PartOfSpeechInSubtreeWithIndex(int index) => PartsOfSpeechInSubtree
-            .Where(partOfSpeech => partOfSpeech.Token.Index == index)
+        /// <summary>Return the WordElementBuilder descended from this which most immediately follows <paramref name="node"/>, of null if there is no such WordElementBuilder</summary>
+        public WordElementBuilder WordFollowing(IElementTreeNode node) => Root.Tree.GetElementsOfTypeInSubtree<WordElementBuilder>()
+            .Where(word => word.Token.Index > node.MaxTokenIndex)
+            .OrderBy(word => word.Token.Index)
             .FirstOrDefault();
 
         /// <summary>Return the smallest token index of the PartOfSpeechBuilders spanned by this</summary>
-        public int MinTokenIndex => PartsOfSpeechInSubtree.Min(partOfSpeech => partOfSpeech.Token.Index);
+        public int MinTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Min(partOfSpeech => partOfSpeech.Token.Index);
 
         /// <summary>Return the largest token index of the PartOfSpeechBuilders spanned by this</summary>
-        public int MaxTokenIndex => PartsOfSpeechInSubtree.Max(partOfSpeech => partOfSpeech.Token.Index);
+        public int MaxTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Max(partOfSpeech => partOfSpeech.Token.Index);
 
         /// <summary>Return true if all PartOfSpeechBuilders spanned by this ElementBuilder precede all PartOfSpeechBuilders spanned by <paramref name="theOtherElement"/></summary>
         public bool ComesBefore(IIndexRange theOtherElement) => MaxTokenIndex < theOtherElement.MinTokenIndex;
@@ -89,7 +81,7 @@ namespace FlexibleRealization
         public IElementTreeNode NearestOf(IEnumerable<IElementTreeNode> elements) => elements.OrderBy(element => DistanceFrom(element)).First();
 
         /// <summary>The list of ChildRoles an instance can have if it has no parent.  Only one option.</summary>
-        private static List<ParentElementBuilder.ChildRole> NoParentRolesList = new List<ParentElementBuilder.ChildRole> { ParentElementBuilder.ChildRole.NoParent };
+        private static readonly List<ParentElementBuilder.ChildRole> NoParentRolesList = new List<ParentElementBuilder.ChildRole> { ParentElementBuilder.ChildRole.NoParent };
 
         /// <summary>The list of valid ChildRoles this could have relative to its current parent</summary>
         public IEnumerable<ParentElementBuilder.ChildRole> ValidRolesInCurrentParent => Parent == null ? NoParentRolesList : Parent.ValidRolesForChild(this);
@@ -112,7 +104,7 @@ namespace FlexibleRealization
         private bool HasRole(ParentElementBuilder.ChildRole role) => AssignedRole == role;
 
         /// <summary>The element roles that are "head-like"</summary>
-        private static List<ParentElementBuilder.ChildRole> HeadLikeRoles = new List<ParentElementBuilder.ChildRole>
+        private static readonly List<ParentElementBuilder.ChildRole> HeadLikeRoles = new List<ParentElementBuilder.ChildRole>
         {
             ParentElementBuilder.ChildRole.Head,
             ParentElementBuilder.ChildRole.Coordinated,
@@ -252,7 +244,7 @@ namespace FlexibleRealization
             && AssignedRole == ParentElementBuilder.ChildRole.Component && anotherElementBuilder.AssignedRole == ParentElementBuilder.ChildRole.Component;
 
         /// <summary>Return the syntactic relations that have at least one endpoint in the subtree of this</summary>
-        public IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree => PartsOfSpeechInSubtree
+        public IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
             .Aggregate(new List<SyntacticRelation>(), (relations, partOfSpeech) =>
                 {
                     relations.AddRange(partOfSpeech.IncomingSyntacticRelations);
@@ -284,6 +276,10 @@ namespace FlexibleRealization
             }
         }
 
+        ///Return an IEnumerator for the variations of this
+        public virtual IEnumerator<IElementTreeNode> GetVariationsEnumerator() => new List<IElementTreeNode> { this }.GetEnumerator();
+
+        /// <summary>Return the realizable variations of this</summary>
         public virtual IEnumerable<IElementTreeNode> GetRealizableVariations() => new List<IElementTreeNode> { this.AsRealizableTree() };
 
         /// <summary>Propagate the operation specified by <paramref name="operateOn"/> through the subtree of which this is the root, in depth-first fashion.</summary>
@@ -381,6 +377,8 @@ namespace FlexibleRealization
 
         #endregion Configuration
 
+        #region Build and Realize
+
         /// <summary>Build and return the <see cref="NLGElement"/> represented by this ElementBuilder</summary>
         public abstract NLGElement BuildElement();
 
@@ -438,6 +436,8 @@ namespace FlexibleRealization
             }
             return result;
         }
+
+        #endregion Build and Realize
 
         #region Implementation of INotifyPropertyChanged
 

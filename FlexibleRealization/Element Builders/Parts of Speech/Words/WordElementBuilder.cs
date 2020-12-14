@@ -74,45 +74,49 @@ namespace FlexibleRealization
 
         public WordElement BuildWord()
         {
-            Word.Base = WordSource.GetWord();
+            Word.Base = SelectWord();
             return Word;
         }
 
+        /// <summary>Return the word to be used during element building</summary>
+        internal virtual string SelectWord() => WordSource.GetWord();
+
+        ///Return an IEnumerator for the variations of this
+        public override IEnumerator<IElementTreeNode> GetVariationsEnumerator() => new Variations.Enumerator(this);
+
+        /// <summary>Return the realizable variations of this</summary>
         public override IEnumerable<IElementTreeNode> GetRealizableVariations() => new Variations(this).Select(variation => variation.AsRealizableTree());
 
-        //public static class Realizable
-        //{
-            public class Variations : IEnumerable<IElementTreeNode>
+        public class Variations : IEnumerable<IElementTreeNode>
+        {
+            internal Variations(WordElementBuilder word) => Builder = word;
+
+            private WordElementBuilder Builder;
+
+            public IEnumerator<IElementTreeNode> GetEnumerator() => new Enumerator(Builder);
+            IEnumerator IEnumerable.GetEnumerator() => new Enumerator(Builder);
+
+            public class Enumerator : IEnumerator<IElementTreeNode>
             {
-                internal Variations(WordElementBuilder word) => Builder = word;
+                internal Enumerator(WordElementBuilder word)
+                {
+                    Builder = word;
+                    WordVariations = Builder.WordSource.EnumerateVariations();
+                }
 
                 private WordElementBuilder Builder;
 
-                public IEnumerator<IElementTreeNode> GetEnumerator() => new Enumerator(Builder);
-                IEnumerator IEnumerable.GetEnumerator() => new Enumerator(Builder);
+                private IEnumerator<string> WordVariations;
 
-                public class Enumerator : IEnumerator<IElementTreeNode>
-                {
-                    internal Enumerator(WordElementBuilder word)
-                    {
-                        Builder = word;
-                        WordVariations = Builder.WordSource.EnumerateVariations();
-                    }
+                public IElementTreeNode Current => Builder;
+                object IEnumerator.Current => Current;
 
-                    private WordElementBuilder Builder;
+                public void Dispose() { }
 
-                    private IEnumerator<string> WordVariations;
+                public bool MoveNext() => WordVariations.MoveNext();
 
-                    public IElementTreeNode Current => Builder.AsRealizableTree();
-                    object IEnumerator.Current => Current;
-
-                    public void Dispose() { }
-
-                    public bool MoveNext() => WordVariations.MoveNext();
-
-                    public void Reset() => WordVariations.Reset();
-                }
+                public void Reset() => WordVariations.Reset();
             }
-        //}
+        }
     }
 }

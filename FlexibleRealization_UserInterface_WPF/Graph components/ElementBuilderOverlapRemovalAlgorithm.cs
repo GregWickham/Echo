@@ -52,7 +52,7 @@ namespace FlexibleRealization.UserInterface
 
         private IEnumerable<PartOfSpeechVertex> PartsOfSpeechSpannedBy(ParentElementBuilder parentElement)
         {
-            IEnumerable<PartOfSpeechBuilder> partsOfSpeechInSubtree = parentElement.PartsOfSpeechInSubtree;
+            IEnumerable<PartOfSpeechBuilder> partsOfSpeechInSubtree = parentElement.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>();
             return PartsOfSpeech.Where(partOfSpeechVertex => partsOfSpeechInSubtree.Contains(partOfSpeechVertex.Model));
         }
 

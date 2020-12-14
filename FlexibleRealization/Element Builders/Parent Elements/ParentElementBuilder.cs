@@ -1,5 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FlexibleRealization
 {
@@ -105,7 +106,7 @@ namespace FlexibleRealization
         private protected void AddDescendantsTo(List<IElementTreeNode> list) => Children.ToList().ForEach(child => list.AddRange(child.WithAllDescendentBuilders));
 
         /// <summary>Return all the PartOfSpeechBuilders descended from this that have indexes between <paramref name="start"/> and <paramref name="end"/>, non-inclusive</summary>
-        internal IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtreeBetween(PartOfSpeechBuilder start, PartOfSpeechBuilder end) => PartsOfSpeechInSubtree
+        internal IEnumerable<PartOfSpeechBuilder> PartsOfSpeechInSubtreeBetween(PartOfSpeechBuilder start, PartOfSpeechBuilder end) => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
             .Where(posb => posb.Token.Index > start.Token.Index && posb.Token.Index < end.Token.Index);
 
         #endregion Tree structure
@@ -169,5 +170,74 @@ namespace FlexibleRealization
         }
 
         #endregion Configuration
+
+        ///Return an IEnumerator for the variations of this
+        public override IEnumerator<IElementTreeNode> GetVariationsEnumerator() => new Variations.Enumerator(this);
+
+        /// <summary>Return the realizable variations of this</summary>
+        public override IEnumerable<IElementTreeNode> GetRealizableVariations() => new Variations(this).Select(variation => variation.AsRealizableTree());
+
+        public class Variations : IEnumerable<IElementTreeNode>
+        {
+            internal Variations(ParentElementBuilder parent) => Builder = parent;
+
+            private ParentElementBuilder Builder;
+
+            public IEnumerator<IElementTreeNode> GetEnumerator() => new Enumerator(Builder);
+            IEnumerator IEnumerable.GetEnumerator() => new Enumerator(Builder);
+
+            /// <summary>For a ParentElementBuilder, enumerating variations involves enumerating all combinations of the variations for each child.</summary>
+            /// <remarks><para>To accomplish this, we get an IEnumerator for each child, and chain those enumerators together in a mechanism that works like the
+            /// counter chain mechanism in a mechanical clock.</para>
+            /// <para>Pulses of MoveNext() come into the mechanism from this Enumerator's consumer.  Those pulses are fed into the IEnumerator for the first
+            /// child.  When that first child has cycled through all its variations, its IEnumerator is Reset() and the next IEnumerator in the chain is
+            /// pulsed.  And so on.  The process terminates when the IEnumerator at the end of the chain can no longer be pulsed.  At this point we have
+            /// enumerated all combinations of child variations.</para></remarks>
+            public class Enumerator : IEnumerator<IElementTreeNode>
+            {
+                internal Enumerator(ParentElementBuilder parent)
+                {
+                    Builder = parent;
+                    Components = Builder.Children.Select(child => child.GetVariationsEnumerator()).ToList();
+                    // The external consumer will send the required MoveNext() to the IEnumerator at the beginning of the chain; but it will not do that for the other IEnumerators in the chain.
+                    // Therefore we need to initialize the chain by sending MoveNext() to each of them, so their Current value becomes defined and we can begin enumerating combinations. 
+                    Components
+                        .Where(component => component != Components[0]) // All the IEnumerators except the first one
+                        .ToList()
+                        .ForEach(childOtherThanTheFirstOne => childOtherThanTheFirstOne.MoveNext());
+                }
+
+                private ParentElementBuilder Builder;
+
+                private List<IEnumerator<IElementTreeNode>> Components;
+
+                public IElementTreeNode Current => Builder;
+                object IEnumerator.Current => Current;
+
+                public void Dispose() { }
+
+                public bool MoveNext() => MoveNext(0);
+
+                public void Reset() => Components.ForEach(child => child.Reset());
+
+                /// <summary>Try to pulse the <paramref name="componentIndex"/>'th IEnumerator in the chain</summary>
+                private bool MoveNext(int componentIndex)
+                {
+                    if (!Components[componentIndex].MoveNext())
+                    {
+                        // If we're trying to pulse the last IEnumerator and we can't do it, then we're all done
+                        if (componentIndex == Components.Count - 1) return false;
+                        else
+                        {
+                            Components[componentIndex].Reset();
+                            Components[componentIndex].MoveNext();
+                            return MoveNext(componentIndex + 1);
+                        }
+                    }
+                    else return true;
+                }
+            }
+        }
+
     }
 }

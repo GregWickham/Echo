@@ -38,8 +38,12 @@ namespace FlexibleRealization
         {
             foreach ((string Relation, string Specifier, int GovernorIndex, int DependentIndex) eachDependencyTuple in dependencies)
             {
-                PartOfSpeechBuilder governor = Tree.PartOfSpeechInSubtreeWithIndex(eachDependencyTuple.GovernorIndex);
-                PartOfSpeechBuilder dependent = Tree.PartOfSpeechInSubtreeWithIndex(eachDependencyTuple.DependentIndex);
+                PartOfSpeechBuilder governor = Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                    .Where(partOfSpeech => partOfSpeech.Token.Index == eachDependencyTuple.GovernorIndex)
+                    .FirstOrDefault();
+                PartOfSpeechBuilder dependent = Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                    .Where(partOfSpeech => partOfSpeech.Token.Index == eachDependencyTuple.DependentIndex)
+                    .FirstOrDefault();
                 if (governor != null && dependent != null)
                 {
                     SyntacticRelation
