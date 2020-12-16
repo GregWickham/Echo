@@ -1,7 +1,5 @@
 ![Echo logo](/images/Echo.png)
 
-# Echo - A bridge from CoreNLP to SimpleNLG
-
 Echo does two things:
 
 1.  Transform output from the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) annotation [pipeline](https://stanfordnlp.github.io/CoreNLP/pipeline.html) into a specification that can be realized by [SimpleNLG](https://github.com/simplenlg/simplenlg); and
