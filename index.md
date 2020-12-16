@@ -5,9 +5,11 @@ Echo does two things:
 1.  Transform output from the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) annotation [pipeline](https://stanfordnlp.github.io/CoreNLP/pipeline.html) into a specification that can be realized by [SimpleNLG](https://github.com/simplenlg/simplenlg); and
 2.  Provide a user interface that can inspect the transformed specification as a directed graph.
 
-Echo connects to both CoreNLP and SimpleNLG in their server forms.  This provides relatively loose coupling to both systems, allowing CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server APIs change).
+Here's the [Echo repository on GitHub.](https://github.com/GregWickham/Echo)
 
 ### Prerequisites
+
+Echo connects to both CoreNLP and SimpleNLG in their server forms.  This provides relatively loose coupling to both systems, allowing CoreNLP and SimpleNLG version updates without changing the .NET client code (unless the server APIs change).
 
 To use Echo, the first step is to install and run the servers for CoreNLP and SimpleNLG.  The folder called `Server BAT files` contains two Windows batch files that I use to start the servers.  These batch files refer to specific locations in my file system, so you'll need to modify them to reflect the actual locations where you install the distribution `.jar` files.  The SimpleNLG server requires two `.jar` files that are not included in the SimpleNLG distribution -- `hsqldb_6148.jar` and `lexAccess2013dist.jar`.
 
