@@ -199,12 +199,7 @@ namespace FlexibleRealization
                 {
                     Builder = parent;
                     Components = Builder.Children.Select(child => child.GetVariationsEnumerator()).ToList();
-                    // The external consumer will send the required MoveNext() to the IEnumerator at the beginning of the chain; but it will not do that for the other IEnumerators in the chain.
-                    // Therefore we need to initialize the chain by sending MoveNext() to each of them, so their Current value becomes defined and we can begin enumerating combinations. 
-                    Components
-                        .Where(component => component != Components[0]) // All the IEnumerators except the first one
-                        .ToList()
-                        .ForEach(childOtherThanTheFirstOne => childOtherThanTheFirstOne.MoveNext());
+                    Reset();
                 }
 
                 private ParentElementBuilder Builder;
@@ -218,7 +213,19 @@ namespace FlexibleRealization
 
                 public bool MoveNext() => MoveNext(0);
 
-                public void Reset() => Components.ForEach(child => child.Reset());
+                /// <summary>Reset needs to:<list type="number">
+                /// <item>leave the Builder in its Default state, AND</item>
+                /// <item>leave the Enumerator ready to start enumerating.</item></list></summary>
+                public void Reset()
+                {
+                    // This satisifes the first condition by leaving the builder in its default state
+                    Components.ForEach(child => child.Reset());
+                    // The external consumer will send the required MoveNext() to the IEnumerator at the beginning of the chain; but it will not do that for the other IEnumerators in the chain.
+                    // Therefore we need to initialize the chain by sending MoveNext() to each of them, so their Current value becomes defined and we can begin enumerating combinations. 
+                    Components.Where(component => component != Components[0]) // All the IEnumerators except the first one
+                        .ToList()
+                        .ForEach(childOtherThanTheFirstOne => childOtherThanTheFirstOne.MoveNext());
+                }
 
                 /// <summary>Try to pulse the <paramref name="componentIndex"/>'th IEnumerator in the chain</summary>
                 private bool MoveNext(int componentIndex)
@@ -226,7 +233,11 @@ namespace FlexibleRealization
                     if (!Components[componentIndex].MoveNext())
                     {
                         // If we're trying to pulse the last IEnumerator and we can't do it, then we're all done
-                        if (componentIndex == Components.Count - 1) return false;
+                        if (componentIndex == Components.Count - 1)
+                        {
+                            Reset();
+                            return false;
+                        }
                         else
                         {
                             Components[componentIndex].Reset();

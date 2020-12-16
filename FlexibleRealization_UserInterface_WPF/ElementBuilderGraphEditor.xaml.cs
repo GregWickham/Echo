@@ -68,7 +68,9 @@ namespace FlexibleRealization.UserInterface
             ElementDescription.DataContext = ElementGraphArea;
             Properties.DataContext = ElementGraphArea;
             XmlLabel.DataContext = this;
+            ZoomCtrl.IsAnimationEnabled = true;
             ZoomCtrl.ZoomToFill();
+            ZoomCtrl.IsAnimationEnabled = false;
         }
 
         /// <summary>The tree is notifying us that its structure has changed</summary>

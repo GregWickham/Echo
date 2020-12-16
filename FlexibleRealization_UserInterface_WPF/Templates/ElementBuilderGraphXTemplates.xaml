@@ -65,32 +65,6 @@
             </Setter.Value>
         </Setter>
 
-        <!--<Setter Property="ToolTip">
-            <Setter.Value>
-                <Border BorderBrush="Black" BorderThickness="2" CornerRadius="8" Background="{StaticResource SyntaxElementBrush}" UseLayoutRounding="True">
-                    <StackPanel Orientation="Vertical" >
-                        --><!--<TextBlock Text="Additional person info:" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold"/>--><!--
-                        <StackPanel Orientation="Horizontal" Margin="3">
-                            <TextBlock MinWidth="70" Text="Text: " VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="Bold" Text="{Binding Text}" Margin="3" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        --><!--<StackPanel Orientation="Horizontal" Margin="3">
-                            <TextBlock MinWidth="70" Text="Occupation: " VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="Bold" Text="{Binding Profession}" Margin="3" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="3">
-                            <TextBlock MinWidth="70" Text="Age: " VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="Bold" Text="{Binding Age}" Margin="3" VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="3">
-                            <TextBlock MinWidth="70" Text="Gender: " VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="Bold" Text="{Binding Gender}" Margin="3" VerticalAlignment="Center"/>
-                        </StackPanel>--><!--
-                    </StackPanel>
-                </Border>
-            </Setter.Value>
-        </Setter>-->
-
         <!-- VERTEX DRAGGING -->
         <Setter Property="controls:DragBehaviour.IsDragEnabled"
                 Value="True" />

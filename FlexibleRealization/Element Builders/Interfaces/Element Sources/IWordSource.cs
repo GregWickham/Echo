@@ -6,6 +6,6 @@ namespace FlexibleRealization
     {
         string GetWord();
 
-        IEnumerator<string> EnumerateVariations();
+        IEnumerator<string> GetVariationsEnumerator();
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 using GraphX.Controls;
+using GraphX.Controls.Animations;
 using GraphX.Controls.Models;
 
 namespace FlexibleRealization.UserInterface.ViewModels

@@ -101,7 +101,7 @@ namespace FlexibleRealization
                 internal Enumerator(WordElementBuilder word)
                 {
                     Builder = word;
-                    WordVariations = Builder.WordSource.EnumerateVariations();
+                    WordVariations = Builder.WordSource.GetVariationsEnumerator();
                 }
 
                 private WordElementBuilder Builder;
