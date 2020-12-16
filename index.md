@@ -1,3 +1,5 @@
+![Echo logo](/images/Echo.png)
+
 # Echo - A bridge from CoreNLP to SimpleNLG
 
 Echo does two things:
