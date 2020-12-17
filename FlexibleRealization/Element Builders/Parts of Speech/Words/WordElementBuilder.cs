@@ -113,7 +113,15 @@ namespace FlexibleRealization
 
                 public void Dispose() { }
 
-                public bool MoveNext() => WordVariations.MoveNext();
+                public bool MoveNext()
+                {
+                    if (WordVariations.MoveNext()) return true;
+                    else
+                    {
+                        Reset();
+                        return false;
+                    }
+                }
 
                 public void Reset() => WordVariations.Reset();
             }
