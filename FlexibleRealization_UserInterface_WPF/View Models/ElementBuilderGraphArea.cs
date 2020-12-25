@@ -35,11 +35,11 @@ namespace FlexibleRealization.UserInterface.ViewModels
         private void RemoveEdgeLabelsFromPartsOfSpeech()
         {
             IEnumerable<EdgeControl> partOfSpeechToTokenEdges = EdgesList
-                .Where(kvp => kvp.Key is PartOfSpeechToTokenEdge)
+                .Where(kvp => kvp.Key is PartOfSpeechToContentEdge)
                 .Select(kvp => kvp.Value);
-            foreach (EdgeControl eachPartOfSpeechToTokenEdge in partOfSpeechToTokenEdges)
+            foreach (EdgeControl eachPartOfSpeechToContentEdge in partOfSpeechToTokenEdges)
             {
-                eachPartOfSpeechToTokenEdge.GetLabelControls().First().ShowLabel = false;
+                eachPartOfSpeechToContentEdge.GetLabelControls().First().ShowLabel = false;
             }
         }
 
@@ -91,8 +91,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
             TagAndHighlight(selectedControl, true);
             switch (selectedVertex)
             {
-                case PartOfSpeechVertex posv:
-                    SetSelectedElementProperties(PartOfSpeechProperties.For(posv.Model));
+                case WordPartOfSpeechVertex wposv:
+                    SetSelectedElementProperties(WordPartOfSpeechProperties.For(wposv.Model));
                     break;
                 case ParentElementVertex pev:
                     SetSelectedElementProperties(ParentProperties.For(pev.Model));

@@ -8,7 +8,10 @@ namespace FlexibleRealization
         public AdverbBuilder(ParseToken token) : base(lexicalCategory.ADVERB, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private protected AdverbBuilder(ParseToken token, string word) : base(lexicalCategory.ADVERB, token, word) { }
+        private protected AdverbBuilder(int index, string word) : base(lexicalCategory.ADVERB, index, word) { }
+
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public AdverbBuilder() : base(lexicalCategory.ADVERB) { }
 
         /// <summary>Implementation of IPhraseHead : AsPhrase()</summary>
         public override PhraseBuilder AsPhrase() => AsAdverbPhrase();
@@ -25,6 +28,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(Token.Copy(), WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(Index, WordSource.GetWord());
     }
 }

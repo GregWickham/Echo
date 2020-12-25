@@ -9,7 +9,10 @@ namespace FlexibleRealization
         public NounBuilder(ParseToken token) : base(lexicalCategory.NOUN, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private NounBuilder(ParseToken token, string word) : base(lexicalCategory.NOUN, token, word) { }
+        private NounBuilder(int index, string word) : base(lexicalCategory.NOUN, index, word) { }
+
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public NounBuilder() : base(lexicalCategory.NOUN) { }
 
         /// <summary>Return true if this NounBuilder is a head of a NounPhraseBuilder</summary>
         public override bool IsPhraseHead => Parent is NounPhraseBuilder && AssignedRole == ParentElementBuilder.ChildRole.Head;
@@ -91,6 +94,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new NounBuilder(Token.Copy(), WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new NounBuilder(Index, WordSource.GetWord());
     }
 }

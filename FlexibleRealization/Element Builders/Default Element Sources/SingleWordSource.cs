@@ -13,7 +13,9 @@ namespace FlexibleRealization
 
         public string GetWord() => Word;
 
-        IEnumerator<string> IWordSource.GetVariationsEnumerator() => new Variations.Enumerator(this);
+        public string DefaultWord => Word;
+
+        IEnumerator<string> IWordSource.GetStringVariationsEnumerator() => new Variations.Enumerator(this);
 
         public class Variations : IEnumerable<string>
         {

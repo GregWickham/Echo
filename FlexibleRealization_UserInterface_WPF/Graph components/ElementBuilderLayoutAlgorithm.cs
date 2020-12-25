@@ -34,37 +34,39 @@ namespace FlexibleRealization.UserInterface
         {
             IEnumerable<IGrouping<int, ElementBuilderVertex>> ParentElementLayers = Graph.ParentElements
                 .GroupBy(parentVertex => parentVertex.Builder.Depth);
-            double tokensY = (ParentElementLayers.Count() * VerticalGapBetweenElements) + VerticalGapBetweenPartsOfSpeechAndTokens;
-            SetTokenPositions(tokensY);
-            double partsOfSpeechY = tokensY - VerticalGapBetweenPartsOfSpeechAndTokens;
+            double partsOfSpeechY = ParentElementLayers.Count() * VerticalGapBetweenElements;
             SetPartOfSpeechPositions(partsOfSpeechY);
+            double contentY = partsOfSpeechY + VerticalGapBetweenPartsOfSpeechAndTokens;
+            SetWordContentPositions(contentY);
             foreach (IGrouping<int, ElementBuilderVertex> eachParentElementLayer in ParentElementLayers)
             {
                 SetPositionsForParentElementLayer(eachParentElementLayer);
             }
         }
 
-        private void SetTokenPositions(double centerY)
+        /// <summary>Set the positions of the vertices in the layer for word parts of speech</summary>
+        private void SetPartOfSpeechPositions(double centerY)
         {
-            IEnumerable<TokenVertex> tokensLayer = Graph.Tokens
-                .OrderBy(tokenVertex => tokenVertex.Model.Index);
+            IEnumerable<WordPartOfSpeechVertex> partsOfSpeechLayer = Graph.PartsOfSpeech
+                .OrderBy(partOfSpeechVertex => partOfSpeechVertex.Model.Index);
 
             double nextLeftEdge = 0;
-            foreach (TokenVertex eachTokenVertex in tokensLayer)
+            foreach (WordPartOfSpeechVertex eachPartOfSpeechVertex in partsOfSpeechLayer)
             {
-                double tokenX = nextLeftEdge + (VertexSizes[eachTokenVertex].Width / 2);
-                VertexPositions.Add(eachTokenVertex, new Point(tokenX, centerY));
-                nextLeftEdge = tokenX + (VertexSizes[eachTokenVertex].Width / 2) + HorizontalGap;
+                double partOfSpeechX = nextLeftEdge + (VertexSizes[eachPartOfSpeechVertex].Width / 2);
+                VertexPositions.Add(eachPartOfSpeechVertex, new Point(partOfSpeechX, centerY));
+                nextLeftEdge = partOfSpeechX + (VertexSizes[eachPartOfSpeechVertex].Width / 2) + HorizontalGap;
             }
         }
 
-        private void SetPartOfSpeechPositions(double centerY)
+        /// <summary>Set the positions of the vertices in the layer for word contents.  This is the lowest layer in the graph.</summary>
+        private void SetWordContentPositions(double centerY)
         {
-            foreach (TokenVertex eachTokenVertex in Graph.Tokens)
+            foreach (WordPartOfSpeechVertex eachPartOfSpeechVertex in Graph.PartsOfSpeech)
             {
-                PartOfSpeechVertex correspondingPartOfSpeechVertex = Graph.PartOfSpeechCorrespondingTo(eachTokenVertex);
-                Point tokenPosition = VertexPositions[eachTokenVertex];
-                VertexPositions.Add(correspondingPartOfSpeechVertex, new Point(tokenPosition.X, centerY));
+                WordContentVertex correspondingWordContentVertex = Graph.WordContentsCorrespondingTo(eachPartOfSpeechVertex);
+                Point partOfSpeechPosition = VertexPositions[eachPartOfSpeechVertex];
+                VertexPositions.Add(correspondingWordContentVertex, new Point(partOfSpeechPosition.X, centerY));
             }
         }
 

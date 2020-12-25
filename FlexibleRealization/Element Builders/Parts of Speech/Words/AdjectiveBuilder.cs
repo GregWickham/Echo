@@ -8,7 +8,10 @@ namespace FlexibleRealization
         public AdjectiveBuilder(ParseToken token) : base(lexicalCategory.ADJECTIVE, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private AdjectiveBuilder(ParseToken token, string word) : base(lexicalCategory.ADJECTIVE, token, word) { }
+        private AdjectiveBuilder(int index, string word) : base(lexicalCategory.ADJECTIVE, index, word) { }
+
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public AdjectiveBuilder() : base(lexicalCategory.ADJECTIVE) { }
 
         /// <summary>Return true if this AdjectiveBuilder is a head of an AdjectivePhraseBuilder</summary>
         public override bool IsPhraseHead => Parent is AdjectivePhraseBuilder && AssignedRole == ParentElementBuilder.ChildRole.Head;
@@ -62,6 +65,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(Token.Copy(), WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(Index, WordSource.GetWord());
     }
 }

@@ -8,8 +8,11 @@ namespace FlexibleRealization
         public ConjunctionBuilder(ParseToken token) : base(lexicalCategory.CONJUNCTION, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private ConjunctionBuilder(ParseToken token, string word) : base(lexicalCategory.CONJUNCTION, token, word) { }
+        private ConjunctionBuilder(int index, string word) : base(lexicalCategory.CONJUNCTION, index, word) { }
 
-        public override IElementTreeNode CopyLightweight() => new ConjunctionBuilder(Token.Copy(), WordSource.GetWord());
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public ConjunctionBuilder() : base(lexicalCategory.CONJUNCTION) { }
+
+        public override IElementTreeNode CopyLightweight() => new ConjunctionBuilder(Index, WordSource.GetWord());
     }
 }

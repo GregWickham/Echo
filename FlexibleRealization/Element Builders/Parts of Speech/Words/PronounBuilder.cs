@@ -19,7 +19,10 @@ namespace FlexibleRealization
         }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private protected PronounBuilder(ParseToken token, string word) : base(lexicalCategory.PRONOUN, token, word) { }
+        private protected PronounBuilder(int index, string word) : base(lexicalCategory.PRONOUN, index, word) { }
+
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public PronounBuilder() : base(lexicalCategory.PRONOUN) { }
 
         /// <summary>Implementation of IPhraseHead : AsPhrase()</summary>
         public override PhraseBuilder AsPhrase() => AsNounPhrase();
@@ -92,7 +95,7 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new PronounBuilder(Token.Copy(), WordSource.GetWord())
+        public override IElementTreeNode CopyLightweight() => new PronounBuilder(Index, WordSource.GetWord())
         {
             Case = Case,
             Person = Person,

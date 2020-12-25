@@ -8,8 +8,11 @@ namespace FlexibleRealization
         public WhPronounBuilder(ParseToken token) : base(token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private WhPronounBuilder(ParseToken token, string word) : base(token, word) { }
+        private WhPronounBuilder(int index, string word) : base(index, word) { }
 
-        public override IElementTreeNode CopyLightweight() => new WhPronounBuilder(Token.Copy(), WordSource.GetWord());
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public WhPronounBuilder() : base() { }
+
+        public override IElementTreeNode CopyLightweight() => new WhPronounBuilder(Index, WordSource.GetWord());
     }
 }

@@ -67,6 +67,19 @@ namespace FlexibleRealization
             return this;
         }
 
+        /// <summary>Transfer any necessary information from ParseTokens to PartOfSpeechBuilders, and strip the ParseTokens out of the tree</summary>
+        /// <remarks>From this point forward, we might make changes in the UI that render the ParseTokens incorrect, and we also don't want to mess with them
+        /// when saving elements to the database.</remarks>
+        public RootNode RemoveParseTokens()
+        {
+            Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().ToList().ForEach(partOfSpeech =>
+            {
+                partOfSpeech.Index = partOfSpeech.Token.Index;
+                partOfSpeech.Token = null;
+            });
+            return this;
+        }
+
         /// <summary>Propagate <paramref name="operateOn"/> through the <see cref="Tree"/></summary>
         public RootNode Propagate(ElementTreeNodeOperation operateOn)
         {

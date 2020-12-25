@@ -8,7 +8,10 @@ namespace FlexibleRealization
         public VerbBuilder(ParseToken token) : base(lexicalCategory.VERB, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private VerbBuilder(ParseToken token, string word) : base(lexicalCategory.VERB, token, word) { }
+        private VerbBuilder(int index, string word) : base(lexicalCategory.VERB, index, word) { }
+
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public VerbBuilder() : base(lexicalCategory.VERB) { }
 
         internal bool IsGerundOrPresentParticiple => Token.PartOfSpeech == "VBG";
 
@@ -48,6 +51,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new VerbBuilder(Token.Copy(), WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new VerbBuilder(Index, WordSource.GetWord());
     }
 }

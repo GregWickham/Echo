@@ -21,18 +21,33 @@ namespace FlexibleRealization
         }
 
         /// <summary>This constructor is used during LightweightCopy().  WordSource is constrained to a specific word.</summary>
-        private protected WordElementBuilder(lexicalCategory category, ParseToken token, string word) : base(token)
+        private protected WordElementBuilder(lexicalCategory category, int index, string word) : base(index)
         {
             Word.PartOfSpeech = category;
             WordSource = new SingleWordSource(word);
         }
 
+        /// <summary>This constructor is used by the UI when the user is changing a part-of-speech to a different part-of-speech. WordSource will be added by the UI later in the process.</summary>
+        private protected WordElementBuilder(lexicalCategory category)
+        {
+            Word.PartOfSpeech = category;
+        }
+
         /// <summary>The WordElement that this will build</summary>
         private WordElement Word = new WordElement();
 
-        /// <summary>A IWordSource that will supply the word we use during building</summary>
+        /// <summary>An IWordSource that will supply the word we use during building</summary>
         public IWordSource WordSource { get; set; }
 
+        /// <summary>Replace this with <paramref name="replacement"/> in the ElementBuilder tree</summary>
+        /// <remarks>The constructor just created a bare-bones version of the <paramref name="replacement"/>, so we need to fill in whatever content the <paramref name="replacement"/> will need.</remarks>
+        public void ReplaceWith(WordElementBuilder replacement)
+        {
+            replacement.Index = Index;
+            replacement.WordSource = WordSource;
+            Become(replacement);
+            replacement.OnTreeStructureChanged();
+        }
 
         #region Word properties
 
@@ -101,7 +116,7 @@ namespace FlexibleRealization
                 internal Enumerator(WordElementBuilder word)
                 {
                     Builder = word;
-                    WordVariations = Builder.WordSource.GetVariationsEnumerator();
+                    WordVariations = Builder.WordSource.GetStringVariationsEnumerator();
                 }
 
                 private WordElementBuilder Builder;

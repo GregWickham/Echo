@@ -8,8 +8,11 @@ namespace FlexibleRealization
         public ModalBuilder(ParseToken token) : base(lexicalCategory.MODAL, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private ModalBuilder(ParseToken token, string word) : base(lexicalCategory.MODAL, token, word) { }
+        private ModalBuilder(int index, string word) : base(lexicalCategory.MODAL, index, word) { }
 
-        public override IElementTreeNode CopyLightweight() => new ModalBuilder(Token.Copy(), WordSource.GetWord());
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public ModalBuilder() : base(lexicalCategory.MODAL) { }
+
+        public override IElementTreeNode CopyLightweight() => new ModalBuilder(Index, WordSource.GetWord());
     }
 }

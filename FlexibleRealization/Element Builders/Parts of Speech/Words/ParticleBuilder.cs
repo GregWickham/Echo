@@ -8,8 +8,11 @@ namespace FlexibleRealization
         public ParticleBuilder(ParseToken token) : base(lexicalCategory.ADVERB, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private ParticleBuilder(ParseToken token, string word) : base(lexicalCategory.ADVERB, token, word) { }
+        private ParticleBuilder(int index, string word) : base(lexicalCategory.ADVERB, index, word) { }
 
-        public override IElementTreeNode CopyLightweight() => new ParticleBuilder(Token.Copy(), WordSource.GetWord());
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public ParticleBuilder() : base(lexicalCategory.ADVERB) { }
+
+        public override IElementTreeNode CopyLightweight() => new ParticleBuilder(Index, WordSource.GetWord());
     }
 }

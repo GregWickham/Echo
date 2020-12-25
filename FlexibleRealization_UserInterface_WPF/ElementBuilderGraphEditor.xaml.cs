@@ -150,16 +150,15 @@ namespace FlexibleRealization.UserInterface
         private void GraphArea_VertexSelected(object sender, VertexSelectedEventArgs args)
         {
             ElementVertex selectedVertex = (ElementVertex)args.VertexControl.Vertex;
-            //ElementBuilder selectedBuilder = null;
             switch (selectedVertex)
             {
                 case ParentElementVertex pev:
                     SelectedBuilder = pev.Builder;
                     OnElementBuilderSelected(pev.Builder);
                     break;
-                case PartOfSpeechVertex psv:
-                    SelectedBuilder = psv.Builder;
-                    OnElementBuilderSelected(psv.Builder);
+                case WordPartOfSpeechVertex wpsv:
+                    SelectedBuilder = wpsv.Builder;
+                    OnElementBuilderSelected(wpsv.Builder);
                     break;
                 default: break;
             }

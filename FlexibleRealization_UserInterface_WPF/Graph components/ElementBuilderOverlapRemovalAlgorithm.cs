@@ -36,21 +36,21 @@ namespace FlexibleRealization.UserInterface
             .Select(kvp => kvp.Key)
             .Cast<ParentElementVertex>();
 
-        private IEnumerable<PartOfSpeechVertex> PartsOfSpeech => Rectangles
-            .Where(kvp => kvp.Key is PartOfSpeechVertex)
+        private IEnumerable<WordPartOfSpeechVertex> PartsOfSpeech => Rectangles
+            .Where(kvp => kvp.Key is WordPartOfSpeechVertex)
             .Select(kvp => kvp.Key)
-            .Cast<PartOfSpeechVertex>();
+            .Cast<WordPartOfSpeechVertex>();
 
-        private IEnumerable<TokenVertex> Tokens => Rectangles
-            .Where(kvp => kvp.Key is TokenVertex)
+        private IEnumerable<WordContentVertex> WordContents => Rectangles
+            .Where(kvp => kvp.Key is WordContentVertex)
             .Select(kvp => kvp.Key)
-            .Cast<TokenVertex>();
+            .Cast<WordContentVertex>();
 
-        private PartOfSpeechVertex PartOfSpeechCorrespondingTo(TokenVertex tokenVertex) => PartsOfSpeech
-            .Where(partOfSpeechVertex => partOfSpeechVertex.Model.Token == tokenVertex.Model)
+        private WordPartOfSpeechVertex PartOfSpeechCorrespondingTo(WordContentVertex contentVertex) => PartsOfSpeech
+            .Where(partOfSpeechVertex => partOfSpeechVertex.Model.WordSource == contentVertex.Model)
             .First();
 
-        private IEnumerable<PartOfSpeechVertex> PartsOfSpeechSpannedBy(ParentElementBuilder parentElement)
+        private IEnumerable<WordPartOfSpeechVertex> PartsOfSpeechSpannedBy(ParentElementBuilder parentElement)
         {
             IEnumerable<PartOfSpeechBuilder> partsOfSpeechInSubtree = parentElement.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>();
             return PartsOfSpeech.Where(partOfSpeechVertex => partsOfSpeechInSubtree.Contains(partOfSpeechVertex.Model));
@@ -63,10 +63,10 @@ namespace FlexibleRealization.UserInterface
             {
                 newRectangles.Add(eachElementVertex, Rectangles[eachElementVertex]);
             }
-            foreach (TokenVertex eachTokenVertex in Tokens)
+            foreach (WordContentVertex eachContentVertex in WordContents)
             {
-                Rect tokenRectangle = Rectangles[eachTokenVertex];
-                PartOfSpeechVertex correspondingPartOfSpeech = PartOfSpeechCorrespondingTo(eachTokenVertex);
+                Rect tokenRectangle = Rectangles[eachContentVertex];
+                WordPartOfSpeechVertex correspondingPartOfSpeech = PartOfSpeechCorrespondingTo(eachContentVertex);
                 Rect oldPartOfSpeechRectangle = Rectangles[correspondingPartOfSpeech];
                 double newPartOfSpeechX = tokenRectangle.X + ((tokenRectangle.Width - oldPartOfSpeechRectangle.Width) / 2);
                 newRectangles[correspondingPartOfSpeech] = new Rect(new Point(newPartOfSpeechX, oldPartOfSpeechRectangle.Y), oldPartOfSpeechRectangle.Size);

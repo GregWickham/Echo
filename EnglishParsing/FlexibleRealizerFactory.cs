@@ -45,6 +45,7 @@ namespace FlexibleRealization
                 .ApplyDependencies()
                 .Propagate(ElementBuilder.Consolidate)
                 .Propagate(ElementBuilder.Configure)
+                .RemoveParseTokens()
                 .Tree;
         }
 

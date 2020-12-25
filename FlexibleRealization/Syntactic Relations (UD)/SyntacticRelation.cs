@@ -94,6 +94,7 @@ namespace FlexibleRealization.Dependencies
             return this;
         }
 
+        /// <summary>Hook this syntactic relation to its governor and dependent parts of speech</summary>
         public void Install()
         {
             Console.WriteLine($"Installing {Governor.Token.Word} <- ({Relation}) <- {Dependent.Token.Word}");

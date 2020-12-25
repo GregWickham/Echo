@@ -79,6 +79,7 @@
     <Compile Include="View Models\Generic\NLGElementFeature.cs" />
     <Compile Include="View Models\Generic\Parent.cs" />
     <Compile Include="View Models\Generic\PartOfSpeech.cs" />
+    <Compile Include="View Models\Generic\WordBuilder.cs" />
     <Compile Include="View Models\GraphX\Edge types\DependencyEdge.cs" />
     <Compile Include="View Models\GraphX\Edge types\ParentElementToChildEdge.cs" />
     <Compile Include="View Models\GraphX\Edge types\ElementEdge.cs" />
@@ -86,13 +87,15 @@
     <Compile Include="View Models\ElementBuilderGraphArea.cs" />
     <Compile Include="Graph components\ElementBuilderLayoutAlgorithm.cs" />
     <Compile Include="Graph components\ElementBuilderLogicCore.cs" />
-    <Compile Include="View Models\GraphX\Edge types\PartOfSpeechToTokenEdge.cs" />
+    <Compile Include="View Models\GraphX\Edge types\PartOfSpeechToContentEdge.cs" />
     <Compile Include="View Models\GraphX\Vertex types\ElementBuilderVertex.cs" />
     <Compile Include="View Models\GraphX\Vertex types\ElementVertex.cs" />
     <Compile Include="View Models\GraphX\Vertex types\ParentElementVertex.cs" />
     <Compile Include="View Models\GraphX\Vertex types\PartOfSpeechVertex.cs" />
     <Compile Include="View Models\GraphX\Vertex types\TokenVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View Models\GraphX\Vertex types\WordContentVertex.cs" />
+    <Compile Include="View Models\GraphX\Vertex types\WordPartOfSpeechVertex.cs" />
     <Compile Include="View Models\PropertyGrid\ElementProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\ParentProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Clauses\IndependentClauseProperties.cs" />
@@ -106,6 +109,7 @@
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\VerbPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parts of Speech\CompoundWordProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parts of Speech\PartOfSpeechProperties.cs" />
+    <Compile Include="View Models\PropertyGrid\Parts of Speech\WordPartOfSpeechProperties.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="ElementBuilderGraphEditor.xaml">

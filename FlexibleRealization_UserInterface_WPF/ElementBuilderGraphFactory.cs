@@ -19,8 +19,8 @@ namespace FlexibleRealization.UserInterface
                 {
                     case ParentElementBuilder peb:
                         return AddSubtree(peb);
-                    case PartOfSpeechBuilder posb:
-                        return AddLeafVertexFor(posb);
+                    case WordElementBuilder web:
+                        return AddLeafVertexFor(web);
                     default: throw new InvalidOperationException("ElementGraphBuilder doesn't handle this ElementBuilder type");
                 }
 
@@ -38,15 +38,15 @@ namespace FlexibleRealization.UserInterface
                     return parentElementVertex;
                 }
 
-                PartOfSpeechVertex AddLeafVertexFor(PartOfSpeechBuilder partOfSpeechBuilder)
+                WordPartOfSpeechVertex AddLeafVertexFor(WordElementBuilder wordElementBuilder)
                 {
-                    PartOfSpeechVertex partOfSpeechVertex = new PartOfSpeechVertex(partOfSpeechBuilder);
+                    WordPartOfSpeechVertex partOfSpeechVertex = new WordPartOfSpeechVertex(wordElementBuilder);
                     graph.AddVertex(partOfSpeechVertex);
                     // The token node is the one actually containing the word
-                    TokenVertex tokenVertex = new TokenVertex(partOfSpeechBuilder.Token);
-                    graph.AddVertex(tokenVertex);
-                    PartOfSpeechToTokenEdge tokenEdge = new PartOfSpeechToTokenEdge(partOfSpeechVertex, tokenVertex);
-                    graph.AddEdge(tokenEdge);
+                    WordContentVertex contentVertex = new WordContentVertex(wordElementBuilder.WordSource);
+                    graph.AddVertex(contentVertex);
+                    PartOfSpeechToContentEdge contentEdge = new PartOfSpeechToContentEdge(partOfSpeechVertex, contentVertex);
+                    graph.AddEdge(contentEdge);
                     return partOfSpeechVertex;
                 }
             }

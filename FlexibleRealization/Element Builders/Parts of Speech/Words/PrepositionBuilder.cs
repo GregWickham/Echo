@@ -8,7 +8,10 @@ namespace FlexibleRealization
         public PrepositionBuilder(ParseToken token) : base(lexicalCategory.PREPOSITION, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private PrepositionBuilder(ParseToken token, string word) : base(lexicalCategory.PREPOSITION, token, word) { }
+        private PrepositionBuilder(int index, string word) : base(lexicalCategory.PREPOSITION, index, word) { }
+
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        public PrepositionBuilder() : base(lexicalCategory.PREPOSITION) { }
 
         /// <summary>Return true if this PrepositionBuilder is a head of a PrepositionalPhraseBuilder</summary>
         public override bool IsPhraseHead => Parent is PrepositionalPhraseBuilder && AssignedRole == ParentElementBuilder.ChildRole.Head;
@@ -28,6 +31,6 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new PrepositionBuilder(Token.Copy(), WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new PrepositionBuilder(Index, WordSource.GetWord());
     }
 }

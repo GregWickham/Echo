@@ -53,15 +53,15 @@ namespace FlexibleRealization
 
         /// <summary>Return the WordElementBuilder descended from this which most immediately follows <paramref name="node"/>, of null if there is no such WordElementBuilder</summary>
         public WordElementBuilder WordFollowing(IElementTreeNode node) => Root.Tree.GetElementsOfTypeInSubtree<WordElementBuilder>()
-            .Where(word => word.Token.Index > node.MaxTokenIndex)
-            .OrderBy(word => word.Token.Index)
+            .Where(word => word.Index > node.MaxTokenIndex)
+            .OrderBy(word => word.Index)
             .FirstOrDefault();
 
         /// <summary>Return the smallest token index of the PartOfSpeechBuilders spanned by this</summary>
-        public int MinTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Min(partOfSpeech => partOfSpeech.Token.Index);
+        public int MinTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Min(partOfSpeech => partOfSpeech.Index);
 
         /// <summary>Return the largest token index of the PartOfSpeechBuilders spanned by this</summary>
-        public int MaxTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Max(partOfSpeech => partOfSpeech.Token.Index);
+        public int MaxTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Max(partOfSpeech => partOfSpeech.Index);
 
         /// <summary>Return true if all PartOfSpeechBuilders spanned by this ElementBuilder precede all PartOfSpeechBuilders spanned by <paramref name="theOtherElement"/></summary>
         public bool ComesBefore(IIndexRange theOtherElement) => MaxTokenIndex < theOtherElement.MinTokenIndex;
@@ -382,6 +382,12 @@ namespace FlexibleRealization
         public abstract IElementTreeNode CopyLightweight();
 
         #endregion Configuration
+
+        #region Database
+
+        public int FlexDB_ID { get; set; } = 0;
+
+        #endregion Database
 
         #region Build and Realize
 

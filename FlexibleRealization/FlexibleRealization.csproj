@@ -58,8 +58,8 @@
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhAdverbPhraseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhNounPhraseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhWordPhraseBuilder.cs" />
-    <Compile Include="Element Builders\Parts of Speech\Compounds\CompoundBuilder.cs" />
-    <Compile Include="Element Builders\Parts of Speech\Compounds\CompoundNounBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Compounds\CompoundBuilder.cs" />
+    <Compile Include="Element Builders\Parent Elements\Compounds\CompoundNounBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\IndependentClauseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\SubordinateClauseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\NominalModifierBuilder.cs" />
