@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,23 +9,27 @@ using GraphX.Controls;
 namespace FlexibleRealization.UserInterface.ViewModels
 {
     /// <summary>View Model base class for presenting a graph element in a GraphX GraphArea</summary>
-    /// <remarks>Notice that this vertext type does not have a model, because there is no common base class of <see cref="ParseToken"/> and <see cref="ElementBuilder"/>.
-    /// An <see cref="ElementVertex"/> can represent a <see cref="ParseToken"/>, a <see cref="PartOfSpeechBuilder"/>, or a <see cref="ParentElementBuilder"/></remarks>
-    public abstract class ElementVertex : VertexBase
+    /// <remarks>An ElementVertex can represent the "content" part of a WordElementBuilder, the "part of speech" part of a WordElementBuilder, or a ParentElementBuilder</remarks>
+    public abstract class ElementVertex : VertexBase, INotifyPropertyChanged
     {
         public ElementVertex() { }
 
         public override string ToString() => LabelText;
         public abstract string LabelText { get; }
 
-        /// <summary>The IsToken property is used by XAML style triggers</summary>
-        public abstract bool IsToken { get; }
+        /// <summary>The IsWordContents property is used by XAML style triggers</summary>
+        public abstract bool IsWordContents { get; }
+
+        internal abstract bool CanAcceptDropOf(IElementTreeNode node);
+
+        /// <summary>Respond as appropriate to <paramref name="node"/> being dropped on this, and return true if successful.</summary>
+        internal abstract bool AcceptDropOf(IElementTreeNode node);
 
         private protected static readonly Thickness ToolTipBorderThickness = new Thickness(2);
         private protected static readonly CornerRadius ToolTipCornerRadius = new CornerRadius(8);
         private protected static readonly Thickness ToolTipMargin = new Thickness(4);
 
-        /// <summary>Assign a <see cref="ToolTip"/> to <paramref name="control"/>, with content appropriate for <paramref name="control"/>'s model</summary>
+        /// <summary>Assign a ToolTip to <paramref name="control"/>, with content appropriate for <paramref name="control"/>'s model</summary>
         internal void SetToolTipFor(VertexControl control) 
         {
             control.ToolTip = new ToolTip
@@ -68,5 +73,13 @@ namespace FlexibleRealization.UserInterface.ViewModels
             FontSize = 10,
             FontWeight = FontWeights.Normal
         };
+
+
+        #region Standard implementation of INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string property) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+
+        #endregion Standard implementation of INotifyPropertyChanged
     }
 }

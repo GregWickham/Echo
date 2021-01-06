@@ -13,13 +13,6 @@
         <GradientStop Color="#FFBCC5D5" Offset="0.507"/>
         <GradientStop Color="#FFE3E4E6" Offset="1"/>
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="BorderBrush" EndPoint="0.5,0" StartPoint="0.5,1" po:Freeze="true">
-        <GradientStop Color="#FF8B8B8B"/>
-        <GradientStop Color="#FFADADAD" Offset="1"/>
-    </LinearGradientBrush>
-    <SolidColorBrush x:Key="GhostWhiteBrush" Color="GhostWhite"/>
-    <SolidColorBrush x:Key="EdgeBrush" Color="#FF000000"/>
-    <SolidColorBrush x:Key="EdgeArrowBrush" Color="Black" po:Freeze="true" />
     <LinearGradientBrush x:Key="LightGradientBrush" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
         <GradientStop Color="#FFFFFFFF" Offset="0"/>
         <GradientStop Color="#FFC1C7D1" Offset="0.521"/>
@@ -28,7 +21,30 @@
         <GradientStop Color="#FFDBE0E9" Offset="0.507"/>
         <GradientStop Color="#FFFEFEFE" Offset="1"/>
     </LinearGradientBrush>
-
+    <LinearGradientBrush x:Key="GradientBrushYes" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+        <GradientStop Color="#FFE1F9E0" Offset="0"/>
+        <GradientStop Color="#FFB6E8B4" Offset="0.521"/>
+        <GradientStop Color="#FFD6F4E4" Offset="0.194"/>
+        <GradientStop Color="#FFACEDAA" Offset="0.811"/>
+        <GradientStop Color="#FFB9F4B7" Offset="0.507"/>
+        <GradientStop Color="#FFE1F9E0" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradientBrushNo" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+        <GradientStop Color="#FFFFD8D8" Offset="0"/>
+        <GradientStop Color="#FFFCABAB" Offset="0.521"/>
+        <GradientStop Color="#FFFFBCBC" Offset="0.194"/>
+        <GradientStop Color="#FFFFAAAA" Offset="0.811"/>
+        <GradientStop Color="#FFFFBFBF" Offset="0.507"/>
+        <GradientStop Color="#FFFFE0E0" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="BorderBrush" EndPoint="0.5,0" StartPoint="0.5,1" po:Freeze="true">
+        <GradientStop Color="#FF8B8B8B"/>
+        <GradientStop Color="#FFADADAD" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="GhostWhiteBrush" Color="GhostWhite"/>
+    <SolidColorBrush x:Key="EdgeBrush" Color="#FF000000"/>
+    <SolidColorBrush x:Key="EdgeArrowBrush" Color="Black" po:Freeze="true" />
+    
     <!-- VERTEX CONTROL -->
     <Style TargetType="{x:Type controls:VertexControl}">
         <Setter Property="Padding" Value="10,5,10,5"/>
@@ -48,11 +64,11 @@
                                 <Style TargetType="TextBlock">
                                     <!-- VERTEX LABEL FONT -->
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsToken}" Value="True">
+                                        <DataTrigger Binding="{Binding IsWordContents}" Value="True">
                                             <Setter Property="FontWeight" Value="Normal"/>
                                             <Setter Property="FontSize" Value="10"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsToken}" Value="False">
+                                        <DataTrigger Binding="{Binding IsWordContents}" Value="False">
                                             <Setter Property="FontWeight" Value="Bold"/>
                                             <Setter Property="FontSize" Value="12"/>
                                         </DataTrigger>
@@ -69,15 +85,15 @@
         <Setter Property="controls:DragBehaviour.IsDragEnabled"
                 Value="True" />
         <Setter Property="controls:DragBehaviour.UpdateEdgesOnMove"
-                Value="False" />
-        
+                Value="True" />
+
         <Style.Triggers>
             
-            <!-- VERTEX BACKGROUND -->
-            <DataTrigger Binding="{Binding IsToken}" Value="True">
+            <!-- VERTEX BACKGROUND -->            
+            <DataTrigger Binding="{Binding IsWordContents}" Value="True">
                 <Setter Property="Background" Value="{StaticResource GhostWhiteBrush}"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding IsToken}" Value="False">
+            <DataTrigger Binding="{Binding IsWordContents}" Value="False">
                 <Setter Property="Background" Value="{StaticResource DarkGradientBrush}"/>
             </DataTrigger>
 
@@ -86,7 +102,7 @@
                 <Setter Property="BorderBrush" Value="IndianRed"/>
                 <Setter Property="BorderThickness" Value="3"/>
             </Trigger>
-
+            
         </Style.Triggers>
 
     </Style>

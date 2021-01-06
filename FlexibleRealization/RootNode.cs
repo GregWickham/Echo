@@ -80,6 +80,30 @@ namespace FlexibleRealization
             return this;
         }
 
+        /// <summary>Re-index the parts of speech in the tree that contains <paramref name="insertPoint"/> to accommodate <paramref name="toBeInserted"/> before <paramref name="insertPoint"/> </summary>
+        internal void InsertBefore(ElementBuilder insertPoint, ElementBuilder toBeInserted)
+        {
+            List<PartOfSpeechBuilder> partsOfSpeechToBeInserted = toBeInserted.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                .OrderBy(partOfSpeech => partOfSpeech.Index)
+                .ToList();
+            List<PartOfSpeechBuilder> partsOfSpeechAfterInsertPoint = Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                .Where(partOfSpeech => partOfSpeech.Index >= insertPoint.MaximumIndex)
+                .OrderBy(partOfSpeech => partOfSpeech.Index)
+                .ToList();
+            int movedIndex = insertPoint.MinimumIndex + partsOfSpeechToBeInserted.Count;
+            int insertedIndex = insertPoint.MinimumIndex;
+            foreach (PartOfSpeechBuilder eachMovedPartOfSpeech in partsOfSpeechAfterInsertPoint)
+            {
+                eachMovedPartOfSpeech.Index = movedIndex;
+                movedIndex++;
+            }
+            foreach (PartOfSpeechBuilder eachInsertedPartOfSpeech in partsOfSpeechToBeInserted)
+            {
+                eachInsertedPartOfSpeech.Index = insertedIndex;
+                insertedIndex++;
+            }
+        }
+
         /// <summary>Propagate <paramref name="operateOn"/> through the <see cref="Tree"/></summary>
         public RootNode Propagate(ElementTreeNodeOperation operateOn)
         {

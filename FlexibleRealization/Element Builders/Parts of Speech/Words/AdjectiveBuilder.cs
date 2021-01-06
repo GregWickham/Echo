@@ -65,6 +65,30 @@ namespace FlexibleRealization
             return result;
         }
 
+        /// <summary>Return true if this AdjectiveBuilder knows how to "add" <paramref name="node"/> to the tree in which it exists</summary>
+        public override bool CanAdd(IElementTreeNode node) => node switch
+        {
+            AdverbBuilder => true,
+            _ => false
+        };
+
+        /// <summary>Add <paramref name="node"/> to the tree in which this exists</summary>
+        public override bool Add(IElementTreeNode node)
+        {
+            switch (node)
+            {
+                case AdverbBuilder advb:
+                    if (IsPhraseHead)
+                        ParentAdjectivePhrase.AddChild(advb);
+                    else
+                        this.AsAdjectivePhrase().AddChild(advb);
+                    advb.InsertBefore(this);
+                    OnTreeStructureChanged();
+                    return true;
+                default: return false;
+            }
+        }
+
         public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(Index, WordSource.GetWord());
     }
 }

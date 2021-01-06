@@ -5,7 +5,7 @@ namespace FlexibleRealization
 {
     public class SingleWordSource : IWordSource
     {
-        internal SingleWordSource(string anchor) { Word = anchor; }
+        public SingleWordSource(string singleWord) { Word = singleWord; }
 
         public object Current => Word;
 

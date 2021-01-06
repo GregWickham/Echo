@@ -7,7 +7,9 @@ namespace FlexibleRealization
     /// <summary>The base class of all ParentElementBuilders</summary>
     public abstract class ParentElementBuilder : ElementBuilder, IParent
     {
-        public virtual bool CanAddChild(ElementBuilder potentialChild) => true;
+        /// <summary>Return true if this ParentElementBuilder can add <paramref name="potentialChild"/> as a child</summary>
+        // TODO: Make this method abstract by overriding in all subclasses
+        public virtual bool CanAddChild(IElementTreeNode potentialChild) => false;
 
         /// <summary>This method is used during initial construction of an ElementBuilder tree from a constituency parse.  It can also be used during the Configuration
         /// process when a ParentElementBuilder needs another chance to define the proper role for a child.</summary>

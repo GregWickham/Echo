@@ -47,7 +47,7 @@ namespace FlexibleRealization
 
         public override NLGElement BuildElement()
         {
-            PartOfSpeechBuilder[] orderedPartsOfSpeech = GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().OrderBy(child => child.MinTokenIndex).ToArray();
+            PartOfSpeechBuilder[] orderedPartsOfSpeech = GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().OrderBy(child => child.MinimumIndex).ToArray();
             StringBuilder stringValue = new StringBuilder();
             for (int childIndex = 0; childIndex < orderedPartsOfSpeech.Length - 1; childIndex++)
             {

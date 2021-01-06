@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -28,16 +29,26 @@ namespace FlexibleRealization
         }
 
         /// <summary>This constructor is used by the UI when the user is changing a part-of-speech to a different part-of-speech. WordSource will be added by the UI later in the process.</summary>
-        private protected WordElementBuilder(lexicalCategory category)
-        {
-            Word.PartOfSpeech = category;
-        }
+        private protected WordElementBuilder(lexicalCategory category) => Word.PartOfSpeech = category;
 
         /// <summary>The WordElement that this will build</summary>
         private WordElement Word = new WordElement();
 
         /// <summary>An IWordSource that will supply the word we use during building</summary>
         public IWordSource WordSource { get; set; }
+
+        /// <summary>Return true if this WordElementBuilder knows how to "add" <paramref name="node"/> to the tree in which it exists</summary>
+        // TODO: Make this method abstract by overriding in all subclasses
+        public virtual bool CanAdd(IElementTreeNode node) => false;
+
+        /// <summary>Add <paramref name="node"/> to the tree in which this exists</summary>
+        // TODO: Make this method abstract by overriding in all subclasses
+        public virtual bool Add(IElementTreeNode node) => false;
+
+        internal void InsertBefore(ElementBuilder insertPoint)
+        {
+            Root.InsertBefore(insertPoint, this);
+        }
 
         /// <summary>Replace this with <paramref name="replacement"/> in the ElementBuilder tree</summary>
         /// <remarks>The constructor just created a bare-bones version of the <paramref name="replacement"/>, so we need to fill in whatever content the <paramref name="replacement"/> will need.</remarks>
@@ -48,6 +59,22 @@ namespace FlexibleRealization
             Become(replacement);
             replacement.OnTreeStructureChanged();
         }
+
+        /// <summary>Return a new WordElementBuilder of the lexical category specified by <paramref name="category"/></summary>
+        public static WordElementBuilder OfCategory(lexicalCategory category) => category switch
+        {
+            lexicalCategory.ADJECTIVE => new AdjectiveBuilder(),
+            lexicalCategory.ADVERB => new AdverbBuilder(),
+            lexicalCategory.CONJUNCTION => new ConjunctionBuilder(),
+            lexicalCategory.DETERMINER => new DeterminerBuilder(),
+            lexicalCategory.MODAL => new ModalBuilder(),
+            lexicalCategory.NOUN => new NounBuilder(),
+            lexicalCategory.PREPOSITION => new PrepositionBuilder(),
+            lexicalCategory.PRONOUN => new PronounBuilder(),
+            lexicalCategory.VERB => new VerbBuilder(),
+
+            _ => throw new InvalidOperationException($"Can't make a WordElementBuilder for category {category}")
+        };
 
         #region Word properties
 

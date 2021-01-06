@@ -17,7 +17,13 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         public override string LabelText => WordBuilder.LabelFor(Model);
 
-        /// <summary>Construct and return a <see cref="UIElement"/> with content based on the <see cref="Model"/> of this view model.</summary>
+        private string Description => WordBuilder.DescriptionFor(Model);
+
+        internal override bool CanAcceptDropOf(IElementTreeNode draggedNode) => Model.CanAdd(draggedNode);
+
+        internal override bool AcceptDropOf(IElementTreeNode draggedNode) => Model.Add(draggedNode);
+
+        /// <summary>Construct and return a UIElement with content based on the Model of this view model.</summary>
         public override UIElement ToolTipContent
         {
             get
@@ -27,7 +33,5 @@ namespace FlexibleRealization.UserInterface.ViewModels
                 return stackPanel;
             }
         }
-
-        private string Description => WordBuilder.DescriptionFor(Model);
     }
 }

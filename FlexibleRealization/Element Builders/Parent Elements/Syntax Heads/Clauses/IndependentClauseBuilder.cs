@@ -13,7 +13,7 @@ namespace FlexibleRealization
         private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
         {
             listOfRoles.Add(ChildRole.Subject);
-            if (PredicateBuilder == null) listOfRoles.Add(ChildRole.Predicate);
+            listOfRoles.Add(ChildRole.Predicate);
         }
 
         #region Initial assignment of children

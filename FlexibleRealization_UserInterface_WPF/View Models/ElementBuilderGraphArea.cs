@@ -1,20 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using GraphX.Controls;
 using GraphX.Controls.Animations;
 using GraphX.Controls.Models;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
-    public class ElementBuilderGraphArea : GraphArea<ElementVertex, ElementEdge, ElementBuilderGraph>, INotifyPropertyChanged
+    public delegate void SelectedBuilderChanged_EventHandler();
+
+    public class ElementBuilderGraphArea : GraphArea<ElementVertex, ElementEdge, ElementBuilderGraph>
     {
         public ElementBuilderGraphArea() : base()
         {
             ControlFactory = new ElementBuilderControlFactory(this);
             SetVerticesDrag(true);
             VertexSelected += ElementBuilderGraphArea_VertexSelected;
+            VertexClicked += ElementBuilderGraphArea_VertexClicked;
         }
 
         public override void GenerateGraph(bool generateAllEdges = true, bool dataContextToDataItem = true)
@@ -24,12 +31,6 @@ namespace FlexibleRealization.UserInterface.ViewModels
             RegisterForVertexModelChangeNotifications();
             AssignVertexToolTips();
         }
-
-        /// <summary>Monitored by the ElementDescription <see cref="TextBlock"/> to display the description of the selected vertex's element</summary>
-        public string SelectedElementDescription => SelectedElementProperties?.Description ?? "";
-
-        /// <summary>Monitored by the PropertyGrid control to decide which element's properties to display</summary>
-        public ElementProperties SelectedElementProperties { get; private set; }
 
         /// <summary>Labels are not needed on edges that connect a part of speech to its token</summary>
         private void RemoveEdgeLabelsFromPartsOfSpeech()
@@ -43,7 +44,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
             }
         }
 
-        /// <summary>Register to receive change notifications from each <see cref="ElementBuilderVertex"/> in this graph area</summary>
+        /// <summary>Register to receive change notifications from each ElementBuilderVertex in this graph area</summary>
         private void RegisterForVertexModelChangeNotifications()
         {
             foreach (KeyValuePair<ElementVertex, VertexControl> kvp in VertexList)
@@ -55,7 +56,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
             }
         }
 
-        /// <summary>One of the <see cref="ElementBuilder"/>s represented in this graph raised an event to inform us that it changed</summary>
+        /// <summary>One of the ElementBuilders represented in this graph raised an event to inform us that it changed</summary>
         private void Builder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             ElementBuilder changedBuilder = sender as ElementBuilder;
@@ -66,10 +67,10 @@ namespace FlexibleRealization.UserInterface.ViewModels
             }
         }
 
-        /// <summary>Return the <see cref="ElementVertex"/> whose model is <paramref name="node"/></summary>
+        /// <summary>Return the ElementVertex whose model is <paramref name="node"/></summary>
         private ElementVertex VertexForNode(IElementTreeNode node) => VertexList.Keys.Single(vertex => vertex is ElementBuilderVertex ebv && ebv.Builder == node);
 
-        /// <summary>Assign <see cref="ToolTip"/>s for each <see cref="VertexControl"/> based on the state of its corresponding <see cref="ElementVertex"/></summary>
+        /// <summary>Assign ToolTips for each VertexControl based on the state of its corresponding ElementVertex</summary>
         private void AssignVertexToolTips() 
         { 
             foreach (KeyValuePair<ElementVertex, VertexControl> kvp in VertexList) 
@@ -78,57 +79,152 @@ namespace FlexibleRealization.UserInterface.ViewModels
             } 
         }
 
+        internal ElementBuilder SelectedBuilder { get; private set; }
+
         /// <summary>The user has selected a vertex in the graph.</summary>
         private void ElementBuilderGraphArea_VertexSelected(object sender, VertexSelectedEventArgs args) => SetSelectedVertex((ElementVertex)args.VertexControl.Vertex);
 
         internal void SetSelectedNode(IElementTreeNode node) => SetSelectedVertex(VertexForNode(node));
 
-        /// <summary>Update SelectedElementDescription and PropertyGrid to display the vertex selected in the graph</summary>
-        internal void SetSelectedVertex(ElementVertex selectedVertex)
+        /// <summary>Set <paramref name="selectedVertex"/> as the selection in the graph</summary>
+        private void SetSelectedVertex(ElementVertex selectedVertex)
         {
-            ClearAllTaggedVertices();
-            VertexControl selectedControl = VertexList[selectedVertex];
-            TagAndHighlight(selectedControl, true);
-            switch (selectedVertex)
+            // Clear any previously selected vertices
+            foreach (VertexControl eachVertexControl in VertexList.Values)
             {
-                case WordPartOfSpeechVertex wposv:
-                    SetSelectedElementProperties(WordPartOfSpeechProperties.For(wposv.Model));
-                    break;
-                case ParentElementVertex pev:
-                    SetSelectedElementProperties(ParentProperties.For(pev.Model));
-                    break;
-                default: break;
+                HighlightBehaviour.SetHighlighted(eachVertexControl, false);
+                DragBehaviour.SetIsTagged(eachVertexControl, false);
+            }
+            TagAndHighlight(selectedVertex);
+            if (selectedVertex is WordPartOfSpeechVertex partOfSpeechVertex)
+                TagAndHighlight(WordContentsCorrespondingTo(partOfSpeechVertex));
+            SelectedBuilder = selectedVertex switch
+            {
+                WordPartOfSpeechVertex wposv => wposv.Model,
+                ParentElementVertex pev => pev.Model,
+                _ => null
+            };
+            OnSelectedBuilderChanged();
+
+            void TagAndHighlight(ElementVertex vertex)
+            {
+                VertexControl correspondingControl = VertexList[vertex];
+                HighlightBehaviour.SetHighlighted(correspondingControl, true);
+                DragBehaviour.SetIsTagged(correspondingControl, true);
+                DragBehaviour.SetUpdateEdgesOnMove(correspondingControl, false);
             }
 
-            /// <summary>Un-tag and un-highlight all vertices</summary>
-            void ClearAllTaggedVertices() 
-            { 
-                foreach (VertexControl eachVertex in VertexList.Values) 
-                { 
-                    TagAndHighlight(eachVertex, false); 
-                } 
-            }
+            WordContentVertex WordContentsCorrespondingTo(WordPartOfSpeechVertex partOfSpeechVertex) => VertexList.Keys
+                .Where(vertex => vertex is WordContentVertex wcv && wcv.Model == partOfSpeechVertex.Model.WordSource)
+                .Cast<WordContentVertex>()
+                .Single();
+        }
 
-            /// <summary>Set the <see cref="DragBehavior.IsTaggedProperty"/> and <see cref="HighlightBehavior.HighlightedProperty"/> of <paramref name="vertex"/> to <paramref name="newState"/></summary>
-            void TagAndHighlight(VertexControl vertex, bool newState)
-            {
-                HighlightBehaviour.SetHighlighted(vertex, newState);
-                DragBehaviour.SetIsTagged(vertex, newState);
-            }
+        internal event SelectedBuilderChanged_EventHandler SelectedBuilderChanged;
+        private void OnSelectedBuilderChanged() => SelectedBuilderChanged?.Invoke();
 
-            void SetSelectedElementProperties(ElementProperties properties)
+        /// <summary>We set vertexClickPosition when a vertex is first clicked, then use it during mouse move to decide whether to start a drag operation</summary>
+        private Point vertexClickPosition;
+        private void ElementBuilderGraphArea_VertexClicked(object sender, VertexClickedEventArgs args) => vertexClickPosition = args.MouseArgs.GetPosition(this);
+
+        /// <summary>Figure out whether to start a drag operation</summary>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            Point currentMousePosition = e.GetPosition(this);
+            Vector mouseDownDistanceMoved = vertexClickPosition - currentMousePosition;
+
+            if (e.LeftButton == MouseButtonState.Pressed &&
+                (Math.Abs(mouseDownDistanceMoved.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(mouseDownDistanceMoved.Y) > SystemParameters.MinimumVerticalDragDistance) &&
+                (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
-                SelectedElementProperties = properties;
-                OnPropertyChanged("SelectedElementProperties");
-                OnPropertyChanged("SelectedElementDescription");
+                if (SelectedBuilder != null)
+                {
+                    SetDropTargetsFor(SelectedBuilder);
+                    DragDrop.DoDragDrop(this, SelectedBuilder, DragDropEffects.Move | DragDropEffects.None);
+                }
             }
         }
 
-        #region Standard implementation of INotifyPropertyChanged
+        public void OnElementDragStarted(ElementBuilder dragged) => SetDropTargetsFor(dragged);
+        public void OnElementDragCancelled(ElementBuilder dragged) => ClearDropTargets();
+        public void OnElementDropCompleted(ElementBuilder dragged) => ClearDropTargets();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string property) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        /// <summary>Configure the appropriate vertexes to be drop targets for the supplied ElementBuilder</summary>
+        internal void SetDropTargetsFor(ElementBuilder builder)
+        {
+            foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in VertexList)
+            {
+                if (eachKVP.Key.CanAcceptDropOf(builder))
+                {
+                    eachKVP.Value.AllowDrop = true;
+                    eachKVP.Value.DragEnter += VertexDropTarget_DragEnter;
+                    eachKVP.Value.DragLeave += VertexDropTarget_DragLeave;
+                    eachKVP.Value.Drop += VertexDropTarget_Drop;
+                    eachKVP.Value.Background = (Brush)FindResource("GradientBrushYes");
+                }
+                else
+                {
+                    eachKVP.Value.Background = eachKVP.Key.IsWordContents ? (Brush)FindResource("GhostWhiteBrush") : (Brush)FindResource("GradientBrushNo");
+                }
+            }
+        }
 
-        #endregion Standard implementation of INotifyPropertyChanged
+        /// <summary>Configure all vertexes to NOT be drop targets.</summary>
+        internal void ClearDropTargets()
+        {
+            foreach (KeyValuePair<ElementVertex, VertexControl> eachKVP in VertexList)
+            {
+                eachKVP.Value.AllowDrop = false;
+                eachKVP.Value.DragEnter -= VertexDropTarget_DragEnter;
+                eachKVP.Value.DragLeave -= VertexDropTarget_DragLeave;
+                eachKVP.Value.Drop -= VertexDropTarget_Drop;
+                eachKVP.Value.Background = eachKVP.Key.IsWordContents ? (Brush)FindResource("GhostWhiteBrush") : (Brush)FindResource("DarkGradientBrush");
+            }
+        }
+
+        /// <summary>A drag has entered a vertex that is an active drop target</summary>
+        private void VertexDropTarget_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Move;
+            e.Handled = true;
+        }
+
+        /// <summary>A drag has left a vertex that is an active drop target</summary>
+        private void VertexDropTarget_DragLeave(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        /// <summary>A drag has ended with a drop onto a vertex that is an active drop target</summary>
+        /// <remarks>There are some non-obvious things about this method.  A successful drop will cause the underlying ElementBuilder tree to change form, which
+        /// causes the ElementBuilderGraph to be regenerated and the ElementBuilderGraphArea to be redrawn.  Then we set the graph selection to the drop target.
+        /// All of this means that the identity of all the user interface objects will change during the process.  The only thing we can count on to remain constant
+        /// is the underlying model -- and even it changes form.</remarks>
+        private void VertexDropTarget_Drop(object sender, DragEventArgs e)
+        {
+            VertexControl dropTarget = (VertexControl)sender;
+            ElementVertex targetVertex = (ElementVertex)dropTarget.Vertex;
+            if (targetVertex != null && VertexList.ContainsKey(targetVertex))
+            {
+                string[] formats = e.Data.GetFormats();
+                string droppedBuilderFormat = formats[0];
+                if (e.Data.GetDataPresent(droppedBuilderFormat))
+                {
+                    IElementTreeNode droppedNode = (IElementTreeNode)e.Data.GetData(droppedBuilderFormat);
+                    if (targetVertex.AcceptDropOf(droppedNode))
+                    {
+                        ElementBuilder targetBuilder = targetVertex switch
+                        {
+                            ElementBuilderVertex ebv => ebv.Builder,
+                            _ => null
+                        };
+                        if (targetBuilder != null)
+                        SetSelectedNode(targetBuilder);
+                    }
+                }
+            }
+        }
     }
 }

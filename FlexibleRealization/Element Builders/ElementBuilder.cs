@@ -13,7 +13,9 @@ namespace FlexibleRealization
         #region Tree structure
 
         /// <summary>Can be called by an element anywhere in the subtree to raise the TreeStructureChanged event for the tree</summary>
-        internal void OnTreeStructureChanged() => Root.OnTreeStructureChanged();
+        /// <remarks>This can happen when the tree is not fully constructed, and there's no intact chain of Ancestors leading to the Root.
+        /// In that case the null checks will fail and the event will not be raised.</remarks>
+        internal void OnTreeStructureChanged() => Root?.OnTreeStructureChanged();
 
         public IParent Parent { get; set; }
 
@@ -22,7 +24,7 @@ namespace FlexibleRealization
 
         /// <summary>Return the root ParentElementBuilder of the tree containing this.</summary>
         /// <remarks>The implementation is recursive, terminating with RootNode.</remarks>
-        public RootNode Root => Parent.Root;
+        public RootNode Root => Parent?.Root;
 
         /// <summary>Return true if this has the same parent as <paramref name="anotherElement"/></summary>
         internal bool HasSameParentAs(IElementTreeNode anotherElement) => Parent == anotherElement.Parent;
@@ -53,27 +55,27 @@ namespace FlexibleRealization
 
         /// <summary>Return the WordElementBuilder descended from this which most immediately follows <paramref name="node"/>, of null if there is no such WordElementBuilder</summary>
         public WordElementBuilder WordFollowing(IElementTreeNode node) => Root.Tree.GetElementsOfTypeInSubtree<WordElementBuilder>()
-            .Where(word => word.Index > node.MaxTokenIndex)
+            .Where(word => word.Index > node.MaximumIndex)
             .OrderBy(word => word.Index)
             .FirstOrDefault();
 
         /// <summary>Return the smallest token index of the PartOfSpeechBuilders spanned by this</summary>
-        public int MinTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Min(partOfSpeech => partOfSpeech.Index);
+        public int MinimumIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Min(partOfSpeech => partOfSpeech.Index);
 
         /// <summary>Return the largest token index of the PartOfSpeechBuilders spanned by this</summary>
-        public int MaxTokenIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Max(partOfSpeech => partOfSpeech.Index);
+        public int MaximumIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Max(partOfSpeech => partOfSpeech.Index);
 
         /// <summary>Return true if all PartOfSpeechBuilders spanned by this ElementBuilder precede all PartOfSpeechBuilders spanned by <paramref name="theOtherElement"/></summary>
-        public bool ComesBefore(IIndexRange theOtherElement) => MaxTokenIndex < theOtherElement.MinTokenIndex;
+        public bool ComesBefore(IIndexRange theOtherElement) => MaximumIndex < theOtherElement.MinimumIndex;
 
         /// <summary>Return true if all PartOfSpeechBuilders spanned by <paramref name="theOtherElement"/> precede all PartOfSpeechBuilders spanned by this ElementBuilder</summary>
-        public bool ComesAfter(IIndexRange theOtherElement) => MinTokenIndex > theOtherElement.MaxTokenIndex;
+        public bool ComesAfter(IIndexRange theOtherElement) => MinimumIndex > theOtherElement.MinimumIndex;
 
         /// <summary>Return the <see cref="int"/> distance between the index ranges of this and <paramref name="anotherElement"/>, or zero if their index ranges intersect</summary>
         public int DistanceFrom(IIndexRange anotherElement)
         {
-            if (MinTokenIndex > anotherElement.MaxTokenIndex) return MinTokenIndex - anotherElement.MaxTokenIndex;
-            else if (anotherElement.MinTokenIndex > MaxTokenIndex) return anotherElement.MinTokenIndex - MaxTokenIndex;
+            if (MinimumIndex > anotherElement.MaximumIndex) return MinimumIndex - anotherElement.MaximumIndex;
+            else if (anotherElement.MinimumIndex > MaximumIndex) return anotherElement.MinimumIndex - MaximumIndex;
             else return 0;
         }
 
@@ -350,13 +352,16 @@ namespace FlexibleRealization
         /// <item>Detach this from its current parent</item>
         /// <item>Add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent</item>
         /// <item>Notify listeners that the tree structure has changed</item>
+        /// <item>Return true to indicate success</item>
         /// </list></summary>
-        public void MoveTo(IParent newParent)
+        public bool MoveTo(IParent newParent)
         {
             IElementTreeNode oldParent = Parent as IElementTreeNode;
             DetachFromParent();
             newParent.AddChild(this);
             oldParent?.Consolidate();
+            OnTreeStructureChanged();
+            return true;
         }
 
         /// <summary>Update references from other objects so <paramref name="replacement"/> replaces this in the ElementBuilder tree</summary>

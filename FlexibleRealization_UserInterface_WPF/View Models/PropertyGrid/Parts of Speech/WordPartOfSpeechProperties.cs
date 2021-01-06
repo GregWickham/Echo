@@ -9,7 +9,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
         /// <summary>Return a new view model object for <paramref name="builder"/></summary>
         internal static WordPartOfSpeechProperties For(WordElementBuilder builder) => new WordPartOfSpeechProperties(builder);
 
-        private protected WordPartOfSpeechProperties(WordElementBuilder web)
+        private WordPartOfSpeechProperties(WordElementBuilder web)
         {
             Model = web;
             partOfSpeechDescription = WordBuilder.DescriptionFor(Model);

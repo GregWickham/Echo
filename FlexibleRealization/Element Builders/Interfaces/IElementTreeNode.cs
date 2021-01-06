@@ -32,7 +32,7 @@ namespace FlexibleRealization
 
         IEnumerable<SyntacticRelation> SyntacticRelationsWithAtLeastOneEndpointInSubtree { get; }
 
-        void MoveTo(IParent newParent);
+        bool MoveTo(IParent newParent);
 
         RealizationResult Realize();
 

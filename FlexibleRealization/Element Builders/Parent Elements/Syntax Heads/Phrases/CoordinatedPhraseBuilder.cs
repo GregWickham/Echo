@@ -39,7 +39,7 @@ namespace FlexibleRealization
         private protected override void AssignRoleFor(IElementTreeNode child) => throw new NotImplementedException();
 
         /// <summary>Return the IElementBuilders coordinated by this CoordinatedPhraseBuilder</summary>
-        internal IEnumerable<IElementTreeNode> CoordinatedElements => ChildrenWithRole(ChildRole.Coordinated).OrderBy(element => element.MinTokenIndex);
+        internal IEnumerable<IElementTreeNode> CoordinatedElements => ChildrenWithRole(ChildRole.Coordinated).OrderBy(element => element.MinimumIndex);
 
         /// <summary>Assign the IElementBuilders to be <paramref name="coordinated"/> by this CoordinatedPhraseBuilder</summary>
         private void SetCoordinatedElements(IEnumerable<IElementTreeNode> coordinated) => AddChildrenWithRole(coordinated, ChildRole.Coordinated);

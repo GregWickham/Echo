@@ -9,9 +9,9 @@ namespace FlexibleRealization
 
         bool ComesAfter(IIndexRange theOtherElement);
 
-        int MinTokenIndex { get; }
+        int MinimumIndex { get; }
 
-        int MaxTokenIndex { get; }
+        int MaximumIndex { get; }
 
         int DistanceFrom(IIndexRange anotherElement);
 
