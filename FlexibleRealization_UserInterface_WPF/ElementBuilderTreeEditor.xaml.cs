@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml.Linq;
 using GraphX.Controls;
 using FlexibleRealization.UserInterface.ViewModels;
@@ -55,7 +54,7 @@ namespace FlexibleRealization.UserInterface
         /// <summary>Assign <paramref name="elementBuilderTree"/> as the model for this editor</summary>
         private void SetModel(IElementTreeNode elementBuilderTree)
         {
-            ElementBuilderGraph graph = ElementBuilderGraphFactory.GraphOf(elementBuilderTree);
+            ElementBuilderGraph graph = ElementBuilderGraph.Of(elementBuilderTree);
             ElementGraphArea.LogicCore = new ElementBuilderLogicCore(graph);
             ElementGraphArea.GenerateGraph(true, true);
             ElementDescription.DataContext = this;
@@ -68,25 +67,30 @@ namespace FlexibleRealization.UserInterface
             ZoomCtrl.IsAnimationEnabled = false;
         }
 
+        public void ClearModel() => ElementGraphArea.ClearLayout(true, true, true);
+
+        /// <summary>Because SelectedBuilder is always a valid reference, we can use it as our reference to the entire tree model</summary>
+        public IElementTreeNode Model => SelectedBuilder.Root.Tree;
+
         /// <summary>Monitored by the ElementDescription TextBlock to display the description of the selected vertex's element</summary>
         public string SelectedElementDescription => SelectedElementProperties?.Description ?? "";
 
         /// <summary>Monitored by the PropertyGrid control to decide which element's properties to display</summary>
         public ElementProperties SelectedElementProperties { get; private set; }
 
-        /// <summary>The tree is notifying us that its structure has changed</summary>
+        /// <summary>The tree is notifying us that its structure has changed.  We respond by setting the tree in its new form as our model.</summary>
         private void ElementBuilderTree_TreeStructureChanged(RootNode root) => SetModel(root.Tree);
 
         /// <summary>Try to transform <paramref name="editableTree"/> into realizable form and if successful, try to realize it</summary>
         /// <remarks>Raise an event indicating whether the process succeeded or not</remarks>
-        private void TryToRealize(IElementTreeNode editableTree)
+        private RealizationResult TryToRealize(IElementTreeNode editableTree)
         {
             RealizationResult result = editableTree.Realize();
             switch (result.Outcome)
             {
                 case RealizationOutcome.Success:
                     XmlSpec = result.XML;
-                    OnTextRealized(result.Realized);
+                    OnTextRealized(result.Text);
                     break;
                 case RealizationOutcome.FailedToTransform:
                 case RealizationOutcome.FailedToBuildSpec:
@@ -95,6 +99,7 @@ namespace FlexibleRealization.UserInterface
                     break;
                 default: break;
             }
+            return result;
         }
 
         /// <summary>Private field for holding the XML spec of our realized element graph.  Accessed by the <see cref="XmlSpec"/> and <see cref="XmlSpecLocalized"/> properties</summary>
@@ -145,7 +150,7 @@ namespace FlexibleRealization.UserInterface
             TryToRealize(node);
         }
 
-        /// <summary>SelectedBuilder is controlled by the ElementGraphArea</summary>
+        /// <summary>SelectedBuilder is controlled by the ElementGraphArea and it should never be null</summary>
         public ElementBuilder SelectedBuilder => ElementGraphArea.SelectedBuilder;
 
         private void GraphArea_SelectedBuilderChanged()
@@ -172,6 +177,65 @@ namespace FlexibleRealization.UserInterface
         /// <summary>Notify listeners that this ElementBuilderGraphEditor has successfully realized some text</summary>
         public event TextRealized_EventHandler TextRealized;
         private void OnTextRealized(string realizedText) => TextRealized?.Invoke(realizedText);
+
+        public void OnElementDragStarted(ElementBuilder dragged)
+        {
+            if (ElementGraphArea.VertexList.Count == 0)
+            {
+                ZoomCtrl.AllowDrop = true;
+                ZoomCtrl.DragEnter += ZoomCtrl_DragEnter;
+                ZoomCtrl.DragLeave += ZoomCtrl_DragLeave;
+                ZoomCtrl.Drop += ZoomCtrl_Drop;
+            }
+            else
+            {
+                ElementGraphArea.SetDropTargetsFor(dragged);
+            }
+        }
+
+        public void OnElementDragCancelled(ElementBuilder dragged)
+        {
+            ZoomCtrl.AllowDrop = false;
+            ZoomCtrl.DragEnter -= ZoomCtrl_DragEnter;
+            ZoomCtrl.DragLeave -= ZoomCtrl_DragLeave;
+            ZoomCtrl.Drop -= ZoomCtrl_Drop;
+            ElementGraphArea.ClearDropTargets();
+        }
+
+        public void OnElementDropCompleted(ElementBuilder dragged)
+        {
+            ZoomCtrl.AllowDrop = false;
+            ZoomCtrl.DragEnter -= ZoomCtrl_DragEnter;
+            ZoomCtrl.DragLeave -= ZoomCtrl_DragLeave;
+            ZoomCtrl.Drop -= ZoomCtrl_Drop;
+            ElementGraphArea.ClearDropTargets();
+        }
+
+        private void ZoomCtrl_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+            e.Handled = true;
+        }
+
+        private void ZoomCtrl_DragLeave(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void ZoomCtrl_Drop(object sender, DragEventArgs e)
+        {
+            string[] formats = e.Data.GetFormats();
+            string droppedBuilderFormat = formats[0];
+            if (e.Data.GetDataPresent(droppedBuilderFormat))
+            {
+                IElementTreeNode droppedNode = (IElementTreeNode)e.Data.GetData(droppedBuilderFormat);
+                // When a parent element comes from a database browser it has no root, so we need to create one
+                new RootNode(droppedNode);
+                SetModel(droppedNode);
+                SelectNode(droppedNode);
+            }
+        }
 
         #region Standard implementation of INotifyPropertyChanged
 

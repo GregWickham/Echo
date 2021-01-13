@@ -12,6 +12,8 @@ namespace FlexibleRealization
     /// <summary>A node in a tree of elements</summary>
     public interface IElementTreeNode : IIndexRange, IElementBuilder, ISyntaxComponent
     {
+        int FlexDB_ID { get; }
+
         IParent Parent { get; set; }
 
         int Depth { get; }

@@ -71,19 +71,6 @@ namespace FlexibleRealization
                     break;
                 default: break;
             }
-            //true => Become(this.AsCoordinatedPhrase()),
-            //false => Children.Count() switch
-            //{
-            //    0 => throw new InvalidOperationException("Coordinable phrase has zero children during coordination"),
-            //    1 => Children.First() switch
-            //    {
-            //        PartOfSpeechBuilder => this,               // A phrase with only one child is legit if that child is a PartOfSpeechBuilder.  The phrase is there to provide features that inflect the word.
-            //        CompoundBuilder => this,                   // A phrase with only one child is also legit if that child is a CompoundBuilder. 
-            //        ParentElementBuilder peb => Become(peb),   // A phrase with only one child that's a ParentElementBuilder doesn't need to be there, so become the lone child
-            //        _ => throw new InvalidOperationException("Invalid lone child type")
-            //    },
-            //    _ => this
-            //}
         }
 
         /// <summary>Return true of this coordinable phrase actually needs to be coordinated</summary>
@@ -92,6 +79,7 @@ namespace FlexibleRealization
         /// <summary>Convert this CoordinablePhraseBuilder to a CoordinatedPhraseBuilder, and return that CoordinatedPhraseBuilder</summary>
         /// <remarks>Can be override by subclasses that require custom coordination behavior</remarks>
         private protected virtual CoordinatedPhraseBuilder AsCoordinatedPhrase() => new CoordinatedPhraseBuilder(PhraseCategory, Heads, CoordinatorBuilder);
+
     }
 
     /// <summary>This subclass of CoordinablePhraseBuilder adds the parameterized type of the PhraseElement that this PhraseBuilder can build.</summary>
@@ -106,7 +94,7 @@ namespace FlexibleRealization
 
         public override phraseCategory PhraseCategory => Phrase.Category;
 
-        public bool DiscourseFunctionSpecified
+        public override bool DiscourseFunctionSpecified
         {
             get => Phrase.discourseFunctionSpecified;
             set
@@ -115,7 +103,7 @@ namespace FlexibleRealization
                 OnPropertyChanged();
             }
         }
-        public discourseFunction DiscourseFunction
+        public override discourseFunction DiscourseFunction
         {
             get => Phrase.discourseFunction;
             set
@@ -126,7 +114,7 @@ namespace FlexibleRealization
             }
         }
 
-        public bool AppositiveSpecified
+        public override bool AppositiveSpecified
         {
             get => Phrase.appositiveSpecified;
             set
@@ -135,7 +123,7 @@ namespace FlexibleRealization
                 OnPropertyChanged();
             }
         }
-        public bool Appositive
+        public override bool Appositive
         {
             get => Phrase.appositive;
             set

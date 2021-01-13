@@ -39,5 +39,13 @@ namespace FlexibleRealization
             if (Children.Count() == 0) Become(null);
         }
 
+        #region Phrase features
+
+        public abstract bool DiscourseFunctionSpecified { get; set; }
+        public abstract discourseFunction DiscourseFunction { get; set; }
+        public abstract bool AppositiveSpecified { get; set; }
+        public abstract bool Appositive { get; set; }
+
+        #endregion Phrase features
     }
 }

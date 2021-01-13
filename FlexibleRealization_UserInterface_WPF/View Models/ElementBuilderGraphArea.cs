@@ -12,6 +12,8 @@ using GraphX.Controls.Models;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
+    public delegate void GraphRootAdded(IElementTreeNode root);
+
     public delegate void SelectedBuilderChanged_EventHandler();
 
     public class ElementBuilderGraphArea : GraphArea<ElementVertex, ElementEdge, ElementBuilderGraph>
@@ -120,6 +122,9 @@ namespace FlexibleRealization.UserInterface.ViewModels
                 .Single();
         }
 
+        internal event GraphRootAdded GraphRootAdded;
+        private void OnGraphRootAdded(IElementTreeNode root) => GraphRootAdded?.Invoke(root);
+
         internal event SelectedBuilderChanged_EventHandler SelectedBuilderChanged;
         private void OnSelectedBuilderChanged() => SelectedBuilderChanged?.Invoke();
 
@@ -146,10 +151,6 @@ namespace FlexibleRealization.UserInterface.ViewModels
             }
         }
 
-        public void OnElementDragStarted(ElementBuilder dragged) => SetDropTargetsFor(dragged);
-        public void OnElementDragCancelled(ElementBuilder dragged) => ClearDropTargets();
-        public void OnElementDropCompleted(ElementBuilder dragged) => ClearDropTargets();
-
         /// <summary>Configure the appropriate vertexes to be drop targets for the supplied ElementBuilder</summary>
         internal void SetDropTargetsFor(ElementBuilder builder)
         {
@@ -170,6 +171,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
             }
         }
 
+
         /// <summary>Configure all vertexes to NOT be drop targets.</summary>
         internal void ClearDropTargets()
         {
@@ -186,7 +188,10 @@ namespace FlexibleRealization.UserInterface.ViewModels
         /// <summary>A drag has entered a vertex that is an active drop target</summary>
         private void VertexDropTarget_DragEnter(object sender, DragEventArgs e)
         {
-            e.Effects = DragDropEffects.Move;
+            if (sender == this)
+                e.Effects = DragDropEffects.Move;
+            else
+                e.Effects = DragDropEffects.Copy;
             e.Handled = true;
         }
 

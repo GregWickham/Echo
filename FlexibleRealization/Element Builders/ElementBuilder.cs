@@ -440,7 +440,7 @@ namespace FlexibleRealization
                 IElementBuilder realizableTree = this.AsRealizableTree();
                 NLGSpec spec = realizableTree.ToNLGSpec();
                 result.XML = spec.Serialize();
-                result.Realized = SimpleNLG.Client.Realize(result.XML);
+                result.Text = SimpleNLG.Client.Realize(result.XML);
                 result.Outcome = RealizationOutcome.Success;
             }
             catch (TreeCannotBeTransformedToRealizableFormException)

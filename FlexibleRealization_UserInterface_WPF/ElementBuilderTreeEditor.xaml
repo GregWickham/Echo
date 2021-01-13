@@ -17,11 +17,12 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <graphx:ZoomControl Grid.Column="0" x:Name="ZoomCtrl">
+        <graphx:ZoomControl Grid.Column="0" x:Name="ZoomCtrl" Background="White">
             <graphx:ZoomControl.Resources>
                 <ResourceDictionary Source="./Templates/ElementBuilderGraphXTemplates.xaml"/>
             </graphx:ZoomControl.Resources>
-            <graphModels:ElementBuilderGraphArea x:Name="ElementGraphArea" x:FieldModifier="public" SelectedBuilderChanged="GraphArea_SelectedBuilderChanged"/>
+            <graphModels:ElementBuilderGraphArea x:Name="ElementGraphArea" x:FieldModifier="internal" Background="White" 
+                SelectedBuilderChanged="GraphArea_SelectedBuilderChanged" />
         </graphx:ZoomControl>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Width="2"/>

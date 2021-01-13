@@ -15,6 +15,6 @@ namespace FlexibleRealization
 
         public string XML { get; internal set; }
 
-        public string Realized { get; internal set; }
+        public string Text { get; internal set; }
     }
 }

@@ -72,7 +72,6 @@
     <Compile Include="ElementBuilderTreeEditor.xaml.cs">
       <DependentUpon>ElementBuilderTreeEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ElementBuilderGraphFactory.cs" />
     <Compile Include="ElementDragDropEventHandlers.cs" />
     <Compile Include="Graph components\ElementBuilderControlFactory.cs" />
     <Compile Include="Graph components\ElementBuilderEdgeRoutingAlgorithm.cs" />
