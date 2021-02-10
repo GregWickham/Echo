@@ -25,6 +25,14 @@ namespace FlexibleRealization.UserInterface.ViewModels
             set => Model.AssignedRole = Parent.ChildRole.FromDescription(value);
         }
 
+        [Category("Syntax|")]
+        [DisplayName("Start Index")]
+        public int MinimumIndex => Model.MinimumIndex;
+
+        [Category("Syntax|")]
+        [DisplayName("End Index")]
+        public int MaximumIndex => Model.MaximumIndex;
+
         #endregion Syntax
 
         #region Features
@@ -76,14 +84,6 @@ namespace FlexibleRealization.UserInterface.ViewModels
         {
             get => NLGElementFeature.ClauseStatus.Strings[Model.ClauseStatus];
             set => Model.ClauseStatus = NLGElementFeature.ClauseStatus.Strings.Single(kvp => kvp.Value.Equals(value)).Key;
-        }
-
-        [Category("Features|Complementiser")]
-        [DisplayName("Word")]
-        public string Complementiser
-        {
-            get => Model.Complementiser;
-            set => Model.Complementiser = value;
         }
 
         [Category("Features|Discourse Function")]

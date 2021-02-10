@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,9 +21,32 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         private string Description => Parent.DescriptionFor(Model);
 
-        internal override bool CanAcceptDropOf(IElementTreeNode node) => node != Model && Model.CanAddChild(node);
+        internal override bool CanAcceptDropOf(Type nodeType) => Model.CanAddChildOfType(nodeType);
 
-        internal override bool AcceptDropOf(IElementTreeNode node) => node.MoveTo(Model);
+        internal override bool AcceptDropOf(IElementTreeNode node, DragDropEffects effects, int insertPoint)
+        {
+            List<IElementTreeNode> sortedChildrenBeforeDrop = Model.Children
+               .OrderBy(node => node)
+               .ToList();
+            switch (effects)
+            {
+                case DragDropEffects.Move:
+                    node.MoveTo(Model);
+                    break;
+                case DragDropEffects.Copy:
+                    Model.AddChild(node);
+                    break;
+                default: break;
+            }
+            if (insertPoint == 0)
+                Model.SetChildOrdering(node, null, NodeRelation.First);
+            else if (insertPoint == sortedChildrenBeforeDrop.Count)
+                Model.SetChildOrdering(node, null, NodeRelation.Last);
+            else
+                Model.SetChildOrdering(node, sortedChildrenBeforeDrop[insertPoint - 1], NodeRelation.After);
+            Model.Root.OnTreeStructureChanged();
+            return true;
+        }
 
         /// <summary>Construct and return a <see cref="UIElement"/> with content based on the <see cref="Model"/> of this view model.</summary>
         public override UIElement ToolTipContent

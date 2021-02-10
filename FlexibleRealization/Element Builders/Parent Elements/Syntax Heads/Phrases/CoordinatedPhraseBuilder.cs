@@ -7,20 +7,34 @@ namespace FlexibleRealization
 {
     public class CoordinatedPhraseBuilder : SyntaxHeadBuilder
     {
-        private CoordinatedPhraseBuilder(phraseCategory category)
+        private CoordinatedPhraseBuilder(phraseCategory category) : base()
         {
             Phrase = new CoordinatedPhraseElement(category);
         }
 
-        /// <summary>This constructor is called when a CoordinablePhraseBuilder transforms itself into a CoordinatedPhraseBuilder during Coordinate</summary>
-        internal CoordinatedPhraseBuilder(phraseCategory category, IEnumerable<IElementTreeNode> coordinated, ConjunctionBuilder coordinator)
+        /// <summary>This constructor is called when a CoordinablePhraseBuilder transforms itself into a CoordinatedPhraseBuilder during Coordinate.</summary>
+        /// <remarks>This implementation creates a CoordinatedPhraseBuilder that contains only coordinated elements and optionally a coordinating word.  Subclasses may need 
+        /// to override with implementations that bring in additional syntax elements.<para>The argument <paramref name="childOrderings"/> may contain ChildOrderings
+        /// referring to elements that are not coordinated elements or a coordinator.  We remove those orderings here.</para></remarks>
+        internal CoordinatedPhraseBuilder(phraseCategory category, IEnumerable<IElementTreeNode> coordinated, ConjunctionBuilder coordinator, HashSet<ChildOrdering> childOrderings) : base()
         {
             Phrase = new CoordinatedPhraseElement(category);
             SetCoordinatedElements(coordinated);
             SetCoordinator(coordinator);
+            ChildOrderings = childOrderings;
+            HashSet<IElementTreeNode> childrenInOrderingsThatHaveNotBeenMovedYet = new HashSet<IElementTreeNode>();
+            foreach (ChildOrdering ordering in ChildOrderings)
+            {
+                if (!Children.Contains(ordering.Before)) childrenInOrderingsThatHaveNotBeenMovedYet.Add(ordering.Before);
+                if (!Children.Contains(ordering.After)) childrenInOrderingsThatHaveNotBeenMovedYet.Add(ordering.After);
+            }
+            foreach (IElementTreeNode missingChild in childrenInOrderingsThatHaveNotBeenMovedYet)
+            {
+                RemoveChildOrderingsThatReferTo(missingChild);
+            }
         }
 
-        /// <summary>The CoordinatedPhraseElement that will be built by this</summary>
+        /// <summary>The CoordinatedPhraseElement that will be built by this.</summary>
         private CoordinatedPhraseElement Phrase;
 
         public phraseCategory PhraseCategory => Phrase.Category;
@@ -39,7 +53,7 @@ namespace FlexibleRealization
         private protected override void AssignRoleFor(IElementTreeNode child) => throw new NotImplementedException();
 
         /// <summary>Return the IElementBuilders coordinated by this CoordinatedPhraseBuilder</summary>
-        internal IEnumerable<IElementTreeNode> CoordinatedElements => ChildrenWithRole(ChildRole.Coordinated).OrderBy(element => element.MinimumIndex);
+        internal IEnumerable<IElementTreeNode> CoordinatedElements => ChildrenWithRole(ChildRole.Coordinated);
 
         /// <summary>Assign the IElementBuilders to be <paramref name="coordinated"/> by this CoordinatedPhraseBuilder</summary>
         private void SetCoordinatedElements(IEnumerable<IElementTreeNode> coordinated) => AddChildrenWithRole(coordinated, ChildRole.Coordinated);

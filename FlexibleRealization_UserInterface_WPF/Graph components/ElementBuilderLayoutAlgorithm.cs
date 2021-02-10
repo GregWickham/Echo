@@ -26,29 +26,32 @@ namespace FlexibleRealization.UserInterface
             Graph.AddEdgeRange(edges);
         }
 
-        private const double VerticalGapBetweenElements = 70;
+        private const double VerticalGapBetweenElements = 80;
         private const double VerticalGapBetweenPartsOfSpeechAndTokens = 40;
         private const double HorizontalGap = 2;
 
         public void Compute(CancellationToken cancellationToken)
         {
-            IEnumerable<IGrouping<int, ElementBuilderVertex>> ParentElementLayers = Graph.ParentElements
-                .GroupBy(parentVertex => parentVertex.Builder.Depth);
-            double partsOfSpeechY = ParentElementLayers.Count() * VerticalGapBetweenElements;
+            // Parent layers ordered by depth, bottom-to-top
+            IEnumerable<IGrouping<int, ElementBuilderVertex>> parentElementLayers = ParentLayers
+                .OrderByDescending(layer => layer.Key);
+            double partsOfSpeechY = parentElementLayers.Count() * VerticalGapBetweenElements;
             SetPartOfSpeechPositions(partsOfSpeechY);
             double contentY = partsOfSpeechY + VerticalGapBetweenPartsOfSpeechAndTokens;
             SetWordContentPositions(contentY);
-            foreach (IGrouping<int, ElementBuilderVertex> eachParentElementLayer in ParentElementLayers)
+            foreach (IGrouping<int, ElementBuilderVertex> eachParentElementLayer in parentElementLayers)
             {
                 SetPositionsForParentElementLayer(eachParentElementLayer);
             }
         }
 
+        private IEnumerable<IGrouping<int, ParentElementVertex>> ParentLayers => Graph.ParentElements.GroupBy(parentVertex => parentVertex.Builder.Depth);
+
         /// <summary>Set the positions of the vertices in the layer for word parts of speech</summary>
         private void SetPartOfSpeechPositions(double centerY)
         {
             IEnumerable<WordPartOfSpeechVertex> partsOfSpeechLayer = Graph.PartsOfSpeech
-                .OrderBy(partOfSpeechVertex => partOfSpeechVertex.Model.Index);
+                .OrderBy(partOfSpeechVertex => partOfSpeechVertex.Model);
 
             double nextLeftEdge = 0;
             foreach (WordPartOfSpeechVertex eachPartOfSpeechVertex in partsOfSpeechLayer)
@@ -76,7 +79,7 @@ namespace FlexibleRealization.UserInterface
             foreach (ParentElementVertex eachParentElementVertex in parentElementLayer.ToList())
             {
                 double horizontalCenterOfSpannedPartsOfSpeech = Graph
-                    .PartsOfSpeechSpannedBy(eachParentElementVertex.Model)
+                    .ChildrenOf(eachParentElementVertex.Model)
                     .Average(posv => CenterOf(posv).X);  // Average the CENTERS of the spanned part of speech vertices
                 double leftEdgeOfThisSyntaxElement = horizontalCenterOfSpannedPartsOfSpeech - (VertexSizes[eachParentElementVertex].Width / 2);
                 VertexPositions.Add(eachParentElementVertex, new Point(leftEdgeOfThisSyntaxElement, centerY));

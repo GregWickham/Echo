@@ -24,17 +24,14 @@ namespace FlexibleRealization.UserInterface
         internal ElementBuilderVertex Root => ElementBuilders.Where(vertex => vertex.Builder.Parent is RootNode).Single();
 
         /// <summary>Return the vertex representing the word contents that correspond to <paramref name="partOfSpeech"/></summary>
-        internal WordContentVertex WordContentsCorrespondingTo(WordPartOfSpeechVertex partOfSpeech) => WordContents
-            .Where(vertex => vertex.Model == partOfSpeech.Model.WordSource)
-            .Single();
+        internal WordContentVertex WordContentsCorrespondingTo(WordPartOfSpeechVertex partOfSpeech) => WordContents.Single(vertex => vertex.Model == partOfSpeech.Model);
 
-        internal WordContentVertex WordContentVertexFor(WordElementBuilder partOfSpeech) => WordContents
-            .Where(vertex => vertex.Model == partOfSpeech.WordSource)
-            .Single();
+        internal WordContentVertex WordContentVertexFor(WordElementBuilder partOfSpeech) => WordContents.Single(vertex => vertex.Model == partOfSpeech);
 
-        internal WordPartOfSpeechVertex PartOfSpeechCorrespondingTo(WordContentVertex token) => PartsOfSpeech
-            .Where(partOfSpeech => partOfSpeech.Model.Token == token.Model)
-            .Single();
+        internal WordPartOfSpeechVertex PartOfSpeechCorrespondingTo(WordContentVertex token) => PartsOfSpeech.Single(partOfSpeech => partOfSpeech.Model == token.Model);
+
+        internal IEnumerable<ElementBuilderVertex> ChildrenOf(ParentElementBuilder parentElement) => ElementBuilders
+            .Where(elementBuilderVertex => parentElement.Children.Contains(elementBuilderVertex.Builder));
 
         internal IEnumerable<WordPartOfSpeechVertex> PartsOfSpeechSpannedBy(ParentElementBuilder parentElement)
         {
@@ -79,7 +76,7 @@ namespace FlexibleRealization.UserInterface
                     WordPartOfSpeechVertex partOfSpeechVertex = new WordPartOfSpeechVertex(wordElementBuilder);
                     graph.AddVertex(partOfSpeechVertex);
                     // The token node is the one actually containing the word
-                    WordContentVertex contentVertex = new WordContentVertex(wordElementBuilder.WordSource);
+                    WordContentVertex contentVertex = new WordContentVertex(wordElementBuilder);
                     graph.AddVertex(contentVertex);
                     PartOfSpeechToContentEdge contentEdge = new PartOfSpeechToContentEdge(partOfSpeechVertex, contentVertex);
                     graph.AddEdge(contentEdge);

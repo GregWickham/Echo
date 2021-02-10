@@ -8,6 +8,10 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG VPPhraseSpec</summary>
     public class VerbPhraseBuilder : CoordinablePhraseBuilder<VPPhraseSpec>
     {
+        public VerbPhraseBuilder() : base() { }
+
+        internal VerbPhraseBuilder(VerbBuilder head) : base() { AddHead(head); }
+
         /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
         private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
         {
@@ -30,11 +34,23 @@ namespace FlexibleRealization
                 case ModalBuilder mb:
                     SetModal(mb);
                     break;
+                case AdverbBuilder advb:
+                    AddModifier(advb);
+                    break;
+                case NounBuilder nb:
+                    AddComplement(nb);
+                    break;
+                case TemporalNounPhraseBuilder tnpb:
+                    AddModifier(tnpb);
+                    break;
                 case NounPhraseBuilder npb:
                     AddComplement(npb);
                     break;
                 case VerbPhraseBuilder vpb:
-                    AddHead(vpb);
+                    if (vpb.Form == form.INFINITIVE)
+                        AddComplement(vpb);
+                    else
+                        AddHead(vpb);
                     break;
                 case AdjectivePhraseBuilder apb:
                     AddComplement(apb);
@@ -55,7 +71,10 @@ namespace FlexibleRealization
                     AddModifier(pp);
                     break;
                 case SubordinateClauseBuilder scb:
-                    AddModifier(scb);
+                    AssignRoleFor(scb);
+                    break;
+                case InfinitivalToBuilder:
+                    Form = form.INFINITIVE;
                     break;
                 default:
                     AddUnassignedChild(child);
@@ -65,15 +84,17 @@ namespace FlexibleRealization
 
         private void AssignRoleFor(VerbBuilder verb)
         {
-            AddHead(verb.Token.PartOfSpeech switch
-            {
-                "VBD" => verb.AsVerbPhrase(tense.PAST),
-                "VBN" => verb.AsVerbPhrase(tense.PAST),
-                "VBP" => verb.AsVerbPhrase(tense.PRESENT),
-                "VBZ" => verb.AsVerbPhrase(tense.PRESENT),
-                "VBG" => verb.AsVerbPhrase(form.GERUND),
-                _ => verb
-            });
+            AddHead(verb.Token == null 
+                ? verb 
+                : verb.Token.PartOfSpeech switch
+                {
+                    "VBD" => new VerbPhraseBuilder(verb) { Form = form.NORMAL, Tense = tense.PAST },
+                    "VBN" => new VerbPhraseBuilder(verb) { Form = form.PAST_PARTICIPLE, Tense = tense.PAST },
+                    "VBP" => new VerbPhraseBuilder(verb) { Form = form.NORMAL, Tense = tense.PRESENT },
+                    "VBZ" => new VerbPhraseBuilder(verb) { Form = form.NORMAL, Tense = tense.PRESENT },
+                    "VBG" => new VerbPhraseBuilder(verb) { Form = form.GERUND },
+                    _ => verb
+                });
         }
 
         private void AssignRoleFor(CoordinatedPhraseBuilder phrase)
@@ -99,6 +120,11 @@ namespace FlexibleRealization
                     AddUnassignedChild(phrase);
                     break;
             }
+        }
+
+        private void AssignRoleFor(SubordinateClauseBuilder clause)
+        {
+            AddModifier(clause);
         }
 
         /// <summary>Set <paramref name="modal"/> as the ONLY modal for this verb phrase</summary>
@@ -157,15 +183,57 @@ namespace FlexibleRealization
             if (phraseToAssimilate.PassiveSpecified) Passive = phraseToAssimilate.Passive;
         }
 
+        /// <summary>Transform this VerbPhraseBuilder into a CoordinatedPhraseBuilder and return that CoordinatedPhraseBuilder.</summary>
+        /// <remarks>The verb phrase's Modifiers and Complements do not get incorporated into the CoordinatedPhraseElement.  Instead, each of those elements 
+        /// must be applied to one of the coordinated elements.  This will change the syntactic structure of the tree, but while doing that we want to preserve the original 
+        /// word order.  To accomplish that we first create a series of dictionaries that temporarily store the various elements of the original (non-coordinated) phrase,
+        /// along with the original order of those elements. <para>Then we add those elements into the CoordinatedPhraseBuilder, using the dictionaries to preserve
+        /// ordering.</para></remarks>
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
+            Dictionary<PartOfSpeechBuilder, int> partsOfSpeech = GetPartsOfSpeechAndIndices();
+            Dictionary<IElementTreeNode, int> heads = GetHeadsAndIndices();
+            Dictionary<IElementTreeNode, int> modifiers = GetModifiersAndIndices();
+            Dictionary<IElementTreeNode, int> complements = GetComplementsAndIndices();
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.NearestOf(result.CoordinatedElements)));
-            Complements.ToList().ForEach(complement => complement.Complete(complement.NearestOf(result.CoordinatedElements)));
+            foreach (IElementTreeNode eachModifier in modifiers.Keys)
+            {
+                eachModifier.DetachFromParent();
+                eachModifier
+                    .Modify(ElementWithIndexNearest(modifiers[eachModifier], heads))
+                    ?.SetChildOrdering(eachModifier, partsOfSpeech);
+            };
+            foreach (IElementTreeNode eachComplement in complements.Keys)
+            {
+                eachComplement.DetachFromParent();
+                eachComplement
+                    .Complete(ElementWithIndexNearest(complements[eachComplement], heads))
+                    ?.SetChildOrdering(eachComplement, partsOfSpeech);
+            };
             return result;
         }
 
         #endregion Configuration
+
+        #region Editing
+
+        private protected override HashSet<Type> ChildTypesThatCanBeAdded { get; } = new HashSet<Type>
+        {
+            typeof(VerbBuilder),
+            typeof(ConjunctionBuilder),
+            typeof(ModalBuilder),
+            typeof(AdverbBuilder),
+            typeof(NounBuilder),
+
+            typeof(NounPhraseBuilder),
+            typeof(VerbPhraseBuilder),
+            typeof(AdjectivePhraseBuilder),
+            typeof(AdverbPhraseBuilder),
+            typeof(PrepositionalPhraseBuilder),
+            typeof(SubordinateClauseBuilder)
+        };
+
+        #endregion Editing
 
         #region Phrase features
 
@@ -212,10 +280,10 @@ namespace FlexibleRealization
         public bool ModalSpecified => Phrase.MODAL != null;
         public string Modal
         {
-            get => Phrase.MODAL;
+            get => Phrase.MODAL ?? ModalBuilder?.BuildWord().Base;
             set
             {
-                Phrase.MODAL = value.Length == 0 ? null : value;
+                Phrase.MODAL = value == null || value.Length == 0 ? null : value;
                 OnPropertyChanged();
             }
         }

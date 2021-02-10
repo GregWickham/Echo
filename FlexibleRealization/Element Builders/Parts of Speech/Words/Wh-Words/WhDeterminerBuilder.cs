@@ -6,11 +6,11 @@
         public WhDeterminerBuilder(ParseToken token) : base(token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private WhDeterminerBuilder(int index, string word) : base(index, word) { }
+        private WhDeterminerBuilder(string word) : base(word) { }
 
         /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
         public WhDeterminerBuilder() : base() { }
 
-        public override IElementTreeNode CopyLightweight() => new WhDeterminerBuilder(Index, WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new WhDeterminerBuilder(WordSource.GetWord());
     }
 }

@@ -13,23 +13,23 @@ namespace FlexibleRealization
     public class RootNode : IParent
     {
         /// <summary>Construct a new RootNode to be the root of <paramref name="tree"/></summary>
-        public RootNode(IElementTreeNode tree) 
+        public RootNode(IElementTreeNode stem) 
         { 
-            Tree = tree;
-            tree.Parent = this;
+            Stem = stem;
+            stem.Parent = this;
         }
 
         /// <summary>Notify listeners that the structure of the tree has changed</summary>
         public event TreeStructureChanged_EventHandler TreeStructureChanged;
 
         /// <summary>Notify listeners that the tree structure has changed</summary>
-        internal void OnTreeStructureChanged() => TreeStructureChanged?.Invoke(this);
+        public void OnTreeStructureChanged() => TreeStructureChanged?.Invoke(this);
 
-        /// <summary>The <see cref="Tree"/> of which this is the RootNode</summary>
-        public IElementTreeNode Tree { get; set; }
+        /// <summary>The element builder tree of which this is the RootNode</summary>
+        public IElementTreeNode Stem { get; set; }
 
-        /// <summary>Return a lightweight copy of this RootNode and its <see cref="Tree"/></summary>
-        public RootNode CopyLightweight() => new RootNode(Tree.CopyLightweight());
+        /// <summary>Return a lightweight copy of this RootNode and its tree</summary>
+        public RootNode CopyLightweight() => new RootNode(Stem.CopyLightweight());
 
         /// <summary>The CoreNLP parser gave us an unstructured list of semantic <paramref name="dependencies"/> between parts of speech.  Now that we've assembled a tree structure from the constituency
         /// parse, and all the PartOfSpeechBuilder elements are in place, we can go through the list of <paramref name="dependencies"/> and create corresponding
@@ -38,10 +38,10 @@ namespace FlexibleRealization
         {
             foreach ((string Relation, string Specifier, int GovernorIndex, int DependentIndex) eachDependencyTuple in dependencies)
             {
-                PartOfSpeechBuilder governor = Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                PartOfSpeechBuilder governor = Stem.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
                     .Where(partOfSpeech => partOfSpeech.Token.Index == eachDependencyTuple.GovernorIndex)
                     .FirstOrDefault();
-                PartOfSpeechBuilder dependent = Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                PartOfSpeechBuilder dependent = Stem.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
                     .Where(partOfSpeech => partOfSpeech.Token.Index == eachDependencyTuple.DependentIndex)
                     .FirstOrDefault();
                 if (governor != null && dependent != null)
@@ -58,7 +58,7 @@ namespace FlexibleRealization
         /// <summary>Apply dependencies for all the PartOfSpeechBuilders in the <see cref="Tree"/></summary>
         public RootNode ApplyDependencies()
         {
-            IEnumerable<IGrouping<PartOfSpeechBuilder, SyntacticRelation>> relationsGroupedByGovernor = Tree.SyntacticRelationsWithAtLeastOneEndpointInSubtree
+            IEnumerable<IGrouping<PartOfSpeechBuilder, SyntacticRelation>> relationsGroupedByGovernor = Stem.SyntacticRelationsWithAtLeastOneEndpointInSubtree
                 .GroupBy(relation => relation.Governor);
             foreach (IGrouping<PartOfSpeechBuilder, SyntacticRelation> relationsForGovernor in relationsGroupedByGovernor)
             {
@@ -72,82 +72,67 @@ namespace FlexibleRealization
         /// when saving elements to the database.</remarks>
         public RootNode RemoveParseTokens()
         {
-            Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().ToList().ForEach(partOfSpeech =>
+            Stem.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().ToList().ForEach(partOfSpeech =>
             {
-                partOfSpeech.Index = partOfSpeech.Token.Index;
+                //partOfSpeech.Index = partOfSpeech.Token.Index;
                 partOfSpeech.Token = null;
             });
             return this;
         }
 
-        /// <summary>Re-index the parts of speech in the tree that contains <paramref name="insertPoint"/> to accommodate <paramref name="toBeInserted"/> before <paramref name="insertPoint"/> </summary>
-        internal void InsertBefore(ElementBuilder insertPoint, ElementBuilder toBeInserted)
-        {
-            List<PartOfSpeechBuilder> partsOfSpeechToBeInserted = toBeInserted.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
-                .OrderBy(partOfSpeech => partOfSpeech.Index)
-                .ToList();
-            List<PartOfSpeechBuilder> partsOfSpeechAfterInsertPoint = Tree.GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
-                .Where(partOfSpeech => partOfSpeech.Index >= insertPoint.MaximumIndex)
-                .OrderBy(partOfSpeech => partOfSpeech.Index)
-                .ToList();
-            int movedIndex = insertPoint.MinimumIndex + partsOfSpeechToBeInserted.Count;
-            int insertedIndex = insertPoint.MinimumIndex;
-            foreach (PartOfSpeechBuilder eachMovedPartOfSpeech in partsOfSpeechAfterInsertPoint)
-            {
-                eachMovedPartOfSpeech.Index = movedIndex;
-                movedIndex++;
-            }
-            foreach (PartOfSpeechBuilder eachInsertedPartOfSpeech in partsOfSpeechToBeInserted)
-            {
-                eachInsertedPartOfSpeech.Index = insertedIndex;
-                insertedIndex++;
-            }
-        }
-
         /// <summary>Propagate <paramref name="operateOn"/> through the <see cref="Tree"/></summary>
         public RootNode Propagate(ElementTreeNodeOperation operateOn)
         {
-            Tree.Propagate(operateOn);
+            Stem.Propagate(operateOn);
             return this;
         }
 
-        public int Depth => throw new InvalidOperationException("RootNode Depth is undefined");
+        #region Explicit implementation of IParent
 
-        public RootNode Root => this;
+        int IParent.Depth => throw new InvalidOperationException("RootNode Depth is undefined");
 
-        /// <summary>The only valid role for the child of root is NoParent</summary>
-        public List<ParentElementBuilder.ChildRole> ValidRolesForChild(ElementBuilder child) => new List<ParentElementBuilder.ChildRole> { ParentElementBuilder.ChildRole.NoParent };
-
-        public void AddChild(IElementTreeNode child) => throw new InvalidOperationException("RootNode can't add children");
-
-        public void AddChildWithRole(IElementTreeNode child, ParentElementBuilder.ChildRole role) => throw new InvalidOperationException("RootNode can't add children");
+        RootNode IParent.Root => this;
 
         /// <summary>The only valid role for the child of root is NoParent</summary>
-        public ParentElementBuilder.ChildRole RoleFor(IElementTreeNode child) => ParentElementBuilder.ChildRole.NoParent;
+        List<ParentElementBuilder.ChildRole> IParent.ValidRolesForChild(ElementBuilder child) => noParentList;
+        private static List<ParentElementBuilder.ChildRole> noParentList = new List<ParentElementBuilder.ChildRole> { ParentElementBuilder.ChildRole.NoParent };
 
-        public void SetRoleOfChild(IElementTreeNode child, ParentElementBuilder.ChildRole newRole) => throw new InvalidOperationException("RootNode can't change child roles");
+        void IParent.AddChild(IElementTreeNode child) => throw new InvalidOperationException("RootNode can't add children");
 
-        public void RemoveChild(IElementTreeNode child) => throw new InvalidOperationException("RootNode can't remove its only child");
+        void IParent.AddChildWithRole(IElementTreeNode child, ParentElementBuilder.ChildRole role) => throw new InvalidOperationException("RootNode can't add children");
 
-        public void ReplaceChild(IElementTreeNode existingChild, IElementTreeNode newChild)
+        /// <summary>The only valid role for the child of root is NoParent</summary>
+        ParentElementBuilder.ChildRole IParent.RoleFor(IElementTreeNode child) => ParentElementBuilder.ChildRole.NoParent;
+
+        void IParent.SetRoleOfChild(IElementTreeNode child, ParentElementBuilder.ChildRole newRole) => throw new InvalidOperationException("RootNode can't change child roles");
+
+        void IParent.SetChildOrdering(IElementTreeNode childToOrder, IElementTreeNode childToOrderRelativeTo, NodeRelation relation) { }
+
+        void IParent.SetChildOrdering(IElementTreeNode childToOrder, Dictionary<PartOfSpeechBuilder, int> partsOfSpeech) { }
+
+        void IParent.RemoveChild(IElementTreeNode child) => throw new InvalidOperationException("RootNode can't remove its only child");
+
+        void IParent.ReplaceChild(IElementTreeNode existingChild, IElementTreeNode newChild)
         {
-            if (existingChild == Tree)
+            if (existingChild == Stem)
             {
                 newChild.Parent = this;
-                Tree = newChild;
+                Stem = newChild;
             }
             else throw new InvalidOperationException("RootNode can't replace a child that it doesn't currently have");
         }
 
-        public void MoveTo(IParent newParent, ParentElementBuilder.ChildRole role) => throw new InvalidOperationException("RootNode can't move");
+        bool IParent.MoveTo(IParent newParent, ParentElementBuilder.ChildRole role) => throw new InvalidOperationException("RootNode can't move");
 
         /// <summary>A RootNode doesn't participate in syntax</summary>
-        public bool ActsAsHeadOf(PhraseBuilder phrase) => false;
+        bool IParent.ActsAsHeadOf(PhraseBuilder phrase) => false;
 
         /// <summary>A RootNode doesn't participate in syntax</summary>
-        public bool ActsWithRoleInAncestor(ParentElementBuilder.ChildRole role, ParentElementBuilder ancestor) => false;
+        bool IParent.ActsWithRoleInAncestor(ParentElementBuilder.ChildRole role, ParentElementBuilder ancestor) => false;
 
         /// <summary>A RootNode doesn't have Ancestors, and it doesn't participate in syntax</summary>
-        public IParent AncestorOfWhichThisIsDirectlyOrIndirectlyA(ParentElementBuilder.ChildRole role) => null;
+        IParent IParent.AncestorOfWhichThisIsDirectlyOrIndirectlyA(ParentElementBuilder.ChildRole role) => null;
+
+        #endregion Explicit implementation of IParent
     }
 }

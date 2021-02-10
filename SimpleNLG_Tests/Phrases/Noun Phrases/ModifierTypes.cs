@@ -6,7 +6,7 @@ namespace SimpleNLG.Tests.NounPhrases.ModifierTypes
     public class Adjective
     {
         [TestMethod]
-        public void HeadOnly() => Assert.AreEqual("Tall man.",
+        public void TallMan() => Assert.AreEqual("Tall man.",
             Client.Realize(new NPPhraseSpec
             {
                 head = Word.Noun("man"),

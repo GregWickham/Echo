@@ -1,4 +1,6 @@
-﻿using SimpleNLG;
+﻿using System;
+using System.Collections.Generic;
+using SimpleNLG;
 
 namespace FlexibleRealization
 {
@@ -8,7 +10,7 @@ namespace FlexibleRealization
         public VerbBuilder(ParseToken token) : base(lexicalCategory.VERB, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private VerbBuilder(int index, string word) : base(lexicalCategory.VERB, index, word) { }
+        private VerbBuilder(string word) : base(lexicalCategory.VERB, word) { }
 
         /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
         public VerbBuilder() : base(lexicalCategory.VERB) { }
@@ -27,9 +29,9 @@ namespace FlexibleRealization
         /// <summary>Transform this VerbBuilder into a VerbPhraseBuilder with this as its head</summary>
         internal VerbPhraseBuilder AsVerbPhrase()
         {
-            VerbPhraseBuilder result = new VerbPhraseBuilder();
+            VerbPhraseBuilder result = new VerbPhraseBuilder(this);
             Parent?.ReplaceChild(this, result);
-            result.AddHead(this);
+            //result.AddHead(this);
             return result;
         }
 
@@ -42,7 +44,7 @@ namespace FlexibleRealization
             return result;
         }
 
-        /// <summary>Transform this VerbBuilder into a VerbPhraseBuilder with form <paramref name="phraseForm"/> and this as its head</summary>
+        /// <summary>Transform this VerbBuilder into a VerbPhraseBuilder with tense <paramref name="phraseTense"/> and this as its head</summary>
         internal VerbPhraseBuilder AsVerbPhrase(tense phraseTense)
         {
             VerbPhraseBuilder result = new VerbPhraseBuilder() { Tense = phraseTense };
@@ -51,6 +53,31 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new VerbBuilder(Index, WordSource.GetWord());
+        #region Editing
+
+        private protected override HashSet<Type> TypesThatCanBeAdded { get; } = new HashSet<Type>
+        {
+            typeof(AdverbBuilder)
+        };
+
+        /// <summary>Add <paramref name="node"/> to the tree in which this exists</summary>
+        public override IParent Add(IElementTreeNode node)
+        {
+            IParent modifiedParent;
+            switch (node)
+            {
+                case AdverbBuilder advb:
+                    modifiedParent = IsPhraseHead
+                        ? Parent
+                        : this.AsVerbPhrase();
+                    modifiedParent.AddChild(advb);
+                    return modifiedParent;
+                default: return null;
+            }
+        }
+
+        #endregion Editing
+
+        public override IElementTreeNode CopyLightweight() => new VerbBuilder(WordSource.GetWord());
     }
 }

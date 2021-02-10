@@ -19,9 +19,18 @@ namespace FlexibleRealization.UserInterface.ViewModels
 
         private string Description => WordBuilder.DescriptionFor(Model);
 
-        internal override bool CanAcceptDropOf(IElementTreeNode draggedNode) => Model.CanAdd(draggedNode);
+        internal override bool CanAcceptDropOf(Type nodeType) => Model.CanAddNodeOfType(nodeType);
 
-        internal override bool AcceptDropOf(IElementTreeNode draggedNode) => Model.Add(draggedNode);
+        internal override bool AcceptDropOf(IElementTreeNode draggedNode, DragDropEffects effects, int insertPoint)
+        {
+            NodeRelation insertRelation = insertPoint == 0
+                ? NodeRelation.Before
+                : NodeRelation.After;
+            Model.Add(draggedNode)
+                ?.SetChildOrdering(draggedNode, Model, insertRelation);
+            Model.Root.OnTreeStructureChanged();
+            return true;
+        }
 
         /// <summary>Construct and return a UIElement with content based on the Model of this view model.</summary>
         public override UIElement ToolTipContent

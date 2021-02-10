@@ -1,4 +1,6 @@
-﻿namespace FlexibleRealization.Dependencies
+﻿using SimpleNLG;
+
+namespace FlexibleRealization.Dependencies
 {
     /// <summary>aux:pass dependency</summary>
     /// <remarks>https://universaldependencies.org/u/dep/aux_.html</remarks>
@@ -17,12 +19,16 @@
                                 {
                                     verbDependent.DetachFromParent();
                                     verbGovernor.ParentVerbPhrase.Passive = true;
+                                    if (verbGovernor.ParentVerbPhrase.Form == form.PAST_PARTICIPLE)
+                                    {
+                                        // The constituency parse identified the verb as a past participle, but it's a passive past tense so switch it back to normal form
+                                        verbGovernor.ParentVerbPhrase.Form = form.NORMAL;
+                                    }
                                 }
                                 break;
                         }
                         break;
                     }
-                default: break;
             }
         }
     }

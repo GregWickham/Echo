@@ -8,7 +8,7 @@ using FlexibleRealization.Dependencies;
 
 namespace FlexibleRealization
 {
-    public abstract partial class ElementBuilder : IElementBuilder, IElementTreeNode, IIndexRange, INotifyPropertyChanged
+    public abstract partial class ElementBuilder : IElementBuilder, IElementTreeNode, INotifyPropertyChanged, IComparable<IElementTreeNode>
     {
         #region Tree structure
 
@@ -19,68 +19,95 @@ namespace FlexibleRealization
 
         public IParent Parent { get; set; }
 
-        /// <summary>Return the number of parent-child relations between this ElementBuilder and the root of the graph containing it</summary>
-        public int Depth => Parent is RootNode ? 0 : Parent.Depth + 1;
+        /// <summary>Return the number of parent-child relations between this ElementBuilder and the root of the graph containing it.</summary>
+        public int Depth => this == Stem ? 0 : Parent.Depth + 1;
 
-        /// <summary>Return the root ParentElementBuilder of the tree containing this.</summary>
+        /// <summary>Return the root ParentElementBuilder of the tree containing this.  Provides a fixed object that clients can refer to, 
+        /// which is guaranteed not to disappear during transformations of the tree.</summary>
         /// <remarks>The implementation is recursive, terminating with RootNode.</remarks>
         public RootNode Root => Parent?.Root;
+
+        /// <summary>Return the topmost IElementTreeNode in the tree containing this.</summary>
+        /// <remarks>In some situations a tree may not have a Root, but it always has a Stem.</remarks>
+        public IElementTreeNode Stem => (Parent == null || Parent == Root) ? this : Parent.Stem;
 
         /// <summary>Return true if this has the same parent as <paramref name="anotherElement"/></summary>
         internal bool HasSameParentAs(IElementTreeNode anotherElement) => Parent == anotherElement.Parent;
 
-        /// <summary>Return the ElementBuilders that are direct children of this</summary>
+        /// <summary>Return the ElementBuilders that are direct children of this.</summary>
         public abstract IEnumerable<IElementTreeNode> Children { get; }
 
-        /// <summary>Return true if this is a direct child of <paramref name="prospectiveParent"/></summary>
+        /// <summary>Return true if this is a direct child of <paramref name="prospectiveParent"/>.</summary>
         public bool IsChildOf(ParentElementBuilder prospectiveParent) => prospectiveParent.Children.Contains(this);
 
-        ///Return true if this is a phrase head
+        /// <summary>Return the ancestors of this, NOT including the Root.</summary>
+        public List<IElementTreeNode> Ancestors
+        {
+            get
+            {
+                List<IElementTreeNode> result = new List<IElementTreeNode>();
+                IParent current = Parent;
+                while (current is IElementTreeNode element)
+                {
+                    result.Add(element);
+                    current = element.Parent;
+                }
+                return result;
+            }
+        }
+
+        public bool IsInSubtreeOf(IElementTreeNode node) => node == this || Ancestors.Contains(node);
+
+        ///Return true if this is a phrase head.
         public virtual bool IsPhraseHead => AssignedRole == ParentElementBuilder.ChildRole.Head;
 
-        /// <summary>Return this as a phrase of the appropriate type</summary>
-        public virtual PhraseBuilder AsPhrase() => throw new InvalidOperationException("This ElementBuilder can't be converted to a phrase");
+        /// <summary>Return this transformed into a phrase of the appropriate type, or null if this cannot be transformed into a phrase.</summary>
+        public virtual PhraseBuilder AsPhrase() => null;
 
-        /// <summary>Return all the IElementBuilders in the subtree of which this is the root</summary>
+        /// <summary>If this can be converted to a phrase, return that phrase.  If not, return this.</summary>
+        public virtual IElementTreeNode AsPhraseIfConvertible() => this.AsPhrase() ?? this;
+
+        /// <summary>Return all the IElementBuilders in the subtree of which this is the root.</summary>
         public virtual IEnumerable<IElementTreeNode> DescendentBuilders => new List<IElementTreeNode>();
 
-        /// <summary>Return all the IElementBuilders in the subtree of which this is the root</summary>
+        /// <summary>Return all the IElementBuilders in the subtree of which this is the root.</summary>
         public virtual IEnumerable<IElementTreeNode> WithAllDescendentBuilders => new List<IElementTreeNode> { this };
 
-        /// <summary>Return all the descendants of this of type TElement, NOT including this</summary>
+        /// <summary>Return all the descendants of this of type TElement, NOT including this.</summary>
         public IEnumerable<TElement> GetDescendentElementsOfType<TElement>() where TElement : ElementBuilder => DescendentBuilders.Where(element => element is TElement).Cast<TElement>();
 
-        ///// <summary>Return all elements in the subtree of which this is the root, which are of type TElement</summary>
+        /// <summary>Return all elements in the subtree of which this is the root, which are of type TElement.</summary>
         public IEnumerable<TElement> GetElementsOfTypeInSubtree<TElement>() where TElement : ElementBuilder => this.WithAllDescendentBuilders.Where(element => element is TElement).Cast<TElement>();
 
+        /// <summary>Implements IComparable.</summary>
+        /// <remarks>This implementation works ONLY with the relocatable ordering.  DO NOT call it before Tokens are removed and relocatable ordering is installed.</remarks>
+        public virtual int CompareTo(IElementTreeNode node) => LowestCommonAncestor<ParentElementBuilder>(node).CompareDescendants(this, node);
+
         /// <summary>Return the WordElementBuilder descended from this which most immediately follows <paramref name="node"/>, of null if there is no such WordElementBuilder</summary>
-        public WordElementBuilder WordFollowing(IElementTreeNode node) => Root.Tree.GetElementsOfTypeInSubtree<WordElementBuilder>()
+        public WordElementBuilder WordFollowing(IElementTreeNode node) => Stem.GetElementsOfTypeInSubtree<WordElementBuilder>()
             .Where(word => word.Index > node.MaximumIndex)
             .OrderBy(word => word.Index)
             .FirstOrDefault();
 
+        /// <summary>Return the index of <paramref name="partOfSpeech"/> within the subtree of this</summary>
+        public int RelativeIndexOf(PartOfSpeechBuilder partOfSpeech) => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+            .OrderBy(partOfSpeech => partOfSpeech)
+            .ToList()
+            .IndexOf(partOfSpeech) + 1;
+
         /// <summary>Return the smallest token index of the PartOfSpeechBuilders spanned by this</summary>
+        /// <remarks>Because PartOfSpeechBuilder.Index works for both index-based and relocatable ordering, this method also works for both.</remarks>
         public int MinimumIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Min(partOfSpeech => partOfSpeech.Index);
 
         /// <summary>Return the largest token index of the PartOfSpeechBuilders spanned by this</summary>
+        /// <remarks>Because PartOfSpeechBuilder.Index works for both index-based and relocatable ordering, this method also works for both.</remarks>
         public int MaximumIndex => GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().Max(partOfSpeech => partOfSpeech.Index);
 
         /// <summary>Return true if all PartOfSpeechBuilders spanned by this ElementBuilder precede all PartOfSpeechBuilders spanned by <paramref name="theOtherElement"/></summary>
-        public bool ComesBefore(IIndexRange theOtherElement) => MaximumIndex < theOtherElement.MinimumIndex;
+        public bool ComesBefore(IElementTreeNode theOtherElement) => CompareTo(theOtherElement) < 0;
 
         /// <summary>Return true if all PartOfSpeechBuilders spanned by <paramref name="theOtherElement"/> precede all PartOfSpeechBuilders spanned by this ElementBuilder</summary>
-        public bool ComesAfter(IIndexRange theOtherElement) => MinimumIndex > theOtherElement.MinimumIndex;
-
-        /// <summary>Return the <see cref="int"/> distance between the index ranges of this and <paramref name="anotherElement"/>, or zero if their index ranges intersect</summary>
-        public int DistanceFrom(IIndexRange anotherElement)
-        {
-            if (MinimumIndex > anotherElement.MaximumIndex) return MinimumIndex - anotherElement.MaximumIndex;
-            else if (anotherElement.MinimumIndex > MaximumIndex) return anotherElement.MinimumIndex - MaximumIndex;
-            else return 0;
-        }
-
-        /// <summary>Return the one of <paramref name="elements"/> that's nearest to this, based on their part of speech index ranges</summary>
-        public IElementTreeNode NearestOf(IEnumerable<IElementTreeNode> elements) => elements.OrderBy(element => DistanceFrom(element)).First();
+        public bool ComesAfter(IElementTreeNode theOtherElement) => CompareTo(theOtherElement) > 0;
 
         /// <summary>The list of ChildRoles an instance can have if it has no parent.  Only one option.</summary>
         private static readonly List<ParentElementBuilder.ChildRole> NoParentRolesList = new List<ParentElementBuilder.ChildRole> { ParentElementBuilder.ChildRole.NoParent };
@@ -148,22 +175,6 @@ namespace FlexibleRealization
             else return null;
         }
 
-        /// <summary>Return the ancestors of this, NOT including the Root</summary>
-        public List<IElementTreeNode> Ancestors
-        {
-            get
-            {
-                List<IElementTreeNode> result = new List<IElementTreeNode>();
-                IParent current = Parent;
-                while (current is IElementTreeNode element)
-                {
-                    result.Add(element);
-                    current = element.Parent;
-                }
-                return result;
-            }
-        }
-
         /// <summary>Return the Ancestors of this which are of type TElementBuilder</summary>
         IEnumerable<TElementBuilder> GetAncestorsOfType<TElementBuilder>() where TElementBuilder : ElementBuilder => Ancestors.Where(ancestor => ancestor is TElementBuilder).Cast<TElementBuilder>();
 
@@ -181,19 +192,28 @@ namespace FlexibleRealization
         internal bool Specifies(IElementTreeNode governor) => HasDirectOrIndirectRoleRelativeToHead(governor, ParentElementBuilder.ChildRole.Specifier);
 
         /// <summary>If necessary, reconfigure the appropriate things so this becomes a specifier of <paramref name="governor"/></summary>
-        public void Specify(IElementTreeNode governor)
+        /// <returns>The IParent to which this was actually added as a Specifier, or null if no such addition was done.</returns>
+        public IParent Specify(IElementTreeNode governor)
         {
-            if (!Specifies(governor))
+            if (Specifies(governor)) return null;
+            else
             {
+                IParent specifiedParent;
                 if (HasSameParentAs(governor) && governor.IsPhraseHead)
+                {
+                    specifiedParent = Parent;
                     AssignedRole = ParentElementBuilder.ChildRole.Specifier;
+                }
                 else
                 {
-                    if (governor.IsPhraseHead)
-                        MoveTo(governor.Parent, ParentElementBuilder.ChildRole.Specifier);
-                    else
-                        MoveTo(governor.AsPhrase(), ParentElementBuilder.ChildRole.Specifier);
+                    specifiedParent = governor is PhraseBuilder phrase
+                        ? phrase
+                        : governor.IsPhraseHead
+                            ? governor.Parent
+                            : governor.AsPhrase();
+                    MoveTo(specifiedParent, ParentElementBuilder.ChildRole.Specifier);
                 }
+                return specifiedParent;
             }
         }
 
@@ -201,19 +221,28 @@ namespace FlexibleRealization
         internal bool Modifies(IElementTreeNode governor) => HasDirectOrIndirectRoleRelativeToHead(governor, ParentElementBuilder.ChildRole.Modifier);
 
         /// <summary>If necessary, reconfigure the appropriate things so this becomes a modifier of <paramref name="governor"/></summary>
-        public virtual void Modify(IElementTreeNode governor)
+        /// <returns>The IParent to which this was actually added as a Modifier, or null if no such addition was done.</returns>
+        public virtual IParent Modify(IElementTreeNode governor)
         {
-            if (!Modifies(governor))
+            if (Modifies(governor)) return null;
+            else
             {
+                IParent modifiedParent;
                 if (HasSameParentAs(governor) && governor.IsPhraseHead)
+                {
+                    modifiedParent = Parent;
                     AssignedRole = ParentElementBuilder.ChildRole.Modifier;
+                }
                 else
                 {
-                    if (governor.IsPhraseHead)
-                        MoveTo(governor.Parent, ParentElementBuilder.ChildRole.Modifier);
-                    else
-                        MoveTo(governor.AsPhrase(), ParentElementBuilder.ChildRole.Modifier);
+                    modifiedParent = governor is PhraseBuilder phrase
+                        ? phrase
+                        : governor.IsPhraseHead
+                            ? governor.Parent
+                            : governor.AsPhrase();
+                    MoveTo(modifiedParent, ParentElementBuilder.ChildRole.Modifier);
                 }
+                return modifiedParent;
             }
         }
 
@@ -221,24 +250,28 @@ namespace FlexibleRealization
         internal bool Completes(IElementTreeNode governor) => HasDirectOrIndirectRoleRelativeToHead(governor, ParentElementBuilder.ChildRole.Complement);
 
         /// <summary>If necessary, reconfigure the appropriate things so this becomes a complement of <paramref name="governor"/></summary>
-        public void Complete(IElementTreeNode governor)
+        /// <returns>The IParent to which this was actually added as a Complement, or null if no such addition was done.</returns>
+        public IParent Complete(IElementTreeNode governor)
         {
-            if (!Completes(governor))
+            if (Completes(governor)) return null;
+            else
             {
+                IParent completedParent;
                 if (HasSameParentAs(governor) && governor.IsPhraseHead)
+                {
+                    completedParent = Parent;
                     AssignedRole = ParentElementBuilder.ChildRole.Complement;
+                }
                 else
                 {
-                    if (governor.IsPhraseHead)
-                        MoveTo(governor.Parent, ParentElementBuilder.ChildRole.Complement);
-                    else
-                    {
-                        if (IsPhraseHead)
-                            Parent.MoveTo(governor.AsPhrase(), ParentElementBuilder.ChildRole.Complement);
-                        else
-                            MoveTo(governor.AsPhrase(), ParentElementBuilder.ChildRole.Complement);
-                    }
+                    completedParent = governor is PhraseBuilder phrase
+                        ? phrase
+                        : governor.IsPhraseHead
+                            ? governor.Parent
+                            : governor.AsPhrase();
+                    MoveTo(completedParent, ParentElementBuilder.ChildRole.Complement);
                 }
+                return completedParent;
             }
         }
 
@@ -276,19 +309,13 @@ namespace FlexibleRealization
             {
                 return new RootNode(CopyLightweight())
                     .Propagate(Coordinate)
-                    .Tree;
+                    .Stem;
             }
             catch (Exception transformationException)
             {
                 throw new TreeCannotBeTransformedToRealizableFormException(transformationException);
             }
         }
-
-        ///Return an IEnumerator for the variations of this
-        public virtual IEnumerator<IElementTreeNode> GetVariationsEnumerator() => new List<IElementTreeNode> { this }.GetEnumerator();
-
-        /// <summary>Return the realizable variations of this</summary>
-        public virtual IEnumerable<IElementTreeNode> GetRealizableVariations() => new List<IElementTreeNode> { this.AsRealizableTree() };
 
         /// <summary>Propagate the operation specified by <paramref name="operateOn"/> through the subtree of which this is the root, in depth-first fashion.</summary>
         /// <param name="operateOn">The operation to be applied during propagation</param>
@@ -303,7 +330,10 @@ namespace FlexibleRealization
 
         /// <summary>Coordinate <paramref name="target"/></summary>
         public static void Coordinate(IElementTreeNode target) => target.Coordinate();
-        
+
+        /// <summary>Use the part of speech indices from ParseTokens to order children in a relocatable way -- i.e., not based on absolute indices.</summary>
+        public static void CreateChildOrderings(IElementTreeNode target) => target.CreateChildOrderingsFromIndices();
+
         /// <summary>Apply dependencies for all the PartOfSpeechBuilders in the descendant tree</summary>
         public IElementTreeNode ApplyDependencies()
         {
@@ -317,18 +347,17 @@ namespace FlexibleRealization
         }
 
         /// <summary>The default implementation of Configure.  All the interesting stuff takes place in subclass overrides.</summary>
-        /// <returns>The result of applying Configure to this.  May or may not be the same object as this.</returns>
         public virtual void Configure() { }
 
         /// <summary>The default implementation of Coordinate.  All the interesting stuff takes place in subclass overrides.</summary>
-        /// <returns>The result of applying Coordinate to this.  May or may not be the same object as this.</returns>
         public virtual void Coordinate() { }
 
         /// <summary>The default implementation of Consolidate.  All the interesting stuff takes place in subclass overrides.</summary>
-        /// <returns>The result of applying Consolidate to this.  May or may not be the same object as this.</returns>
         public virtual void Consolidate() { }
 
-        /// <summary>If this ElementBuilder has a parent, remove that parent's child relation to this</summary>
+        public abstract void CreateChildOrderingsFromIndices();
+
+        /// <summary>If this ElementBuilder has a parent, remove that parent's child relation to this.</summary>
         public IElementTreeNode DetachFromParent()
         {
             Parent?.RemoveChild(this);
@@ -340,19 +369,20 @@ namespace FlexibleRealization
         /// <item>Detach this from its current parent</item>
         /// <item>Add it as a child of <paramref name="newParent"/> with ChildRole <paramref name="newRole"/></item>
         /// </list></summary>
-        public void MoveTo(IParent newParent, ParentElementBuilder.ChildRole newRole)
+        public bool MoveTo(IParent newParent, ParentElementBuilder.ChildRole newRole)
         {
             IElementTreeNode oldParent = Parent as IElementTreeNode;
             DetachFromParent();
             newParent.AddChildWithRole(this, newRole);
             oldParent?.Consolidate();
+            return true;
         }
 
         /// <summary><list type="bullet">
-        /// <item>Detach this from its current parent</item>
-        /// <item>Add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent</item>
-        /// <item>Notify listeners that the tree structure has changed</item>
-        /// <item>Return true to indicate success</item>
+        /// <item>Detach this from its current parent;</item>
+        /// <item>Add it as a child of <paramref name="newParent"/> with a ChildRole selected by the new parent;</item>
+        /// <item>Notify listeners that the tree structure has changed;</item>
+        /// <item>Return true to indicate success.</item>
         /// </list></summary>
         public bool MoveTo(IParent newParent)
         {
@@ -360,8 +390,14 @@ namespace FlexibleRealization
             DetachFromParent();
             newParent.AddChild(this);
             oldParent?.Consolidate();
-            OnTreeStructureChanged();
             return true;
+        }
+
+        /// <summary>Remove this node from the tree that contains it.</summary>
+        public void Remove()
+        {
+            //RootNode root = Root;
+            Become(null);
         }
 
         /// <summary>Update references from other objects so <paramref name="replacement"/> replaces this in the ElementBuilder tree</summary>
@@ -373,6 +409,9 @@ namespace FlexibleRealization
             Parent?.ReplaceChild(this, replacement);
             return replacement;
         }
+
+        /// <summary>Insert this ElementBuilder into the tree containing <paramref name="insertPoint"/>, either before or after <paramref name="insertPoint"/> depending on <paramref name="relation"/></summary>
+        public void SetOrderingRelativeTo(IElementTreeNode insertPoint, NodeRelation relation) => Parent.SetChildOrdering(this, insertPoint, relation);
 
         /// <summary>Return a "lighweight" copy of the subtree rooted in this ElementBuilder.</summary>
         /// <remarks>A lightweight copy has the following properties:
@@ -388,8 +427,22 @@ namespace FlexibleRealization
 
         #endregion Configuration
 
+        #region Variations
+
+        ///Return an IEnumerator for the variations of this
+        public virtual IEnumerator<IElementTreeNode> GetVariationsEnumerator() => new List<IElementTreeNode> { this }.GetEnumerator();
+
+        /// <summary>Return the total number of forms specified for this element.</summary>
+        public abstract int CountForms();
+
+        /// <summary>Return the realizable variations of this</summary>
+        public virtual IEnumerable<IElementTreeNode> GetRealizableVariations() => new List<IElementTreeNode> { this.AsRealizableTree() };
+
+        #endregion Variations
+
         #region Database
 
+        /// <summary>The ID of this element in the Flex database</summary>
         public int FlexDB_ID { get; set; } = 0;
 
         #endregion Database

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FlexibleRealization.UserInterface.ViewModels
 {
-    /// <summary>Provides utility methods for UI-friendly rendering of <see cref="WordElementBuilder"/> features</summary>
+    /// <summary>Provides utility methods for UI-friendly rendering of WordElementBuilder features</summary>
     internal static class WordBuilder
     {
         internal static readonly IEnumerable<string> PartOfSpeechDescriptions = new List<string>
@@ -40,6 +40,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
             PrepositionBuilder => "Prp",
             PronounBuilder => "Prn",
 
+            CardinalNumberBuilder => "Num",
+
             _ => throw new InvalidOperationException("Can't find a label for this part of speech")
         };
 
@@ -59,6 +61,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
             ParticleBuilder => "Particle",
             PrepositionBuilder => "Preposition",
             PronounBuilder => "Pronoun",
+
+            CardinalNumberBuilder => "Number",
 
             _ => throw new InvalidOperationException("Can't find a description for this part of speech")
         };
@@ -80,6 +84,8 @@ namespace FlexibleRealization.UserInterface.ViewModels
             "Particle" => new ParticleBuilder(),
             "Preposition" => new PrepositionBuilder(),
             "Pronoun" => new PronounBuilder(),
+
+            "Number" => new CardinalNumberBuilder(),
 
             _ => throw new InvalidOperationException("Can't make a WordElementBuilder for this description type")
         };

@@ -66,46 +66,98 @@ namespace SimpleNLG.Tests.Clauses.Independent.Coordinated
                 Conjunction = "but",
                 Coordinated = new NLGElement[]
                 {
-                new SPhraseSpec
-                {
-                    Subjects = new NLGElement[]
+                    new SPhraseSpec
                     {
-                        new NPPhraseSpec
+                        Subjects = new NLGElement[]
                         {
-                            Specifier = Word.Determiner("the"),
-                            Head = Word.Noun("child"),
-                            Number = numberAgreement.PLURAL
+                            new NPPhraseSpec
+                            {
+                                Specifier = Word.Determiner("the"),
+                                Head = Word.Noun("child"),
+                                Number = numberAgreement.PLURAL
+                            }
+                        },
+                        Predicate = new VPPhraseSpec
+                        {
+                            Tense = tense.PAST,
+                            Head = Word.Verb("run"),
                         }
                     },
-                    Predicate = new VPPhraseSpec
+                    new SPhraseSpec
                     {
-                        Tense = tense.PAST,
-                        Head = Word.Verb("run"),
-                    }
-                },
-                new SPhraseSpec
-                {
-                    Subjects = new NLGElement[]
-                    {
-                        new NPPhraseSpec
+                        Subjects = new NLGElement[]
                         {
-                            Specifier = Word.Determiner("the"),
-                            Head = Word.Noun("monster")
-                        }
-                    },
-                    Predicate = new VPPhraseSpec
-                    {
-                        Tense = tense.PAST,
-                        Head = Word.Verb("catch"),
-                        Complements = new NLGElement[]
+                            new NPPhraseSpec
+                            {
+                                Specifier = Word.Determiner("the"),
+                                Head = Word.Noun("monster")
+                            }
+                        },
+                        Predicate = new VPPhraseSpec
                         {
-                            Word.Pronoun("them")
+                            Tense = tense.PAST,
+                            Head = Word.Verb("catch"),
+                            Complements = new NLGElement[]
+                            {
+                                Word.Pronoun("them")
+                            }
                         }
                     }
-                }
                 }
             }));
         }
+
+        [TestMethod]
+        public void TheChildrenRanBecauseTheMonsterWasChasingThem()
+        {
+            Assert.AreEqual("the children ran because the monster was chasing them",
+            Client.Realize(new CoordinatedPhraseElement
+            {
+                Conjunction = "because",
+                Coordinated = new NLGElement[]
+                {
+                    new SPhraseSpec
+                    {
+                        Subjects = new NLGElement[]
+                        {
+                            new NPPhraseSpec
+                            {
+                                Specifier = Word.Determiner("the"),
+                                Head = Word.Noun("child"),
+                                Number = numberAgreement.PLURAL
+                            }
+                        },
+                        Predicate = new VPPhraseSpec
+                        {
+                            Tense = tense.PAST,
+                            Head = Word.Verb("run"),
+                        }
+                    },
+                    new SPhraseSpec
+                    {
+                        Subjects = new NLGElement[]
+                        {
+                            new NPPhraseSpec
+                            {
+                                Specifier = Word.Determiner("the"),
+                                Head = Word.Noun("monster")
+                            }
+                        },
+                        Predicate = new VPPhraseSpec
+                        {
+                            Tense = tense.PAST,
+                            Progressive = true,
+                            Head = Word.Verb("chase"),
+                            Complements = new NLGElement[]
+                            {
+                                Word.Pronoun("them")
+                            }
+                        }
+                    }
+                }
+            }));
+        }
+
     }
 }
 

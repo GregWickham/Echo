@@ -11,12 +11,12 @@ namespace FlexibleRealization
         public DeterminerBuilder(ParseToken token) : base(lexicalCategory.DETERMINER, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private protected DeterminerBuilder(int index, string word) : base(lexicalCategory.DETERMINER, index, word) { }
+        private protected DeterminerBuilder(string word) : base(lexicalCategory.DETERMINER, word) { }
 
         /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
         public DeterminerBuilder() : base(lexicalCategory.DETERMINER) { }
 
-        public override IElementTreeNode CopyLightweight() => new DeterminerBuilder(Index, WordSource.GetWord());
+        public override IElementTreeNode CopyLightweight() => new DeterminerBuilder(WordSource.GetWord());
 
         internal override string SelectWord()
         {

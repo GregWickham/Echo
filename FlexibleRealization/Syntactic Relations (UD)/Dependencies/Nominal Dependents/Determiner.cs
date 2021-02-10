@@ -16,10 +16,8 @@ namespace FlexibleRealization.Dependencies
                         case NounBuilder nounGovernor:
                             determinerDependent.Specify(nounGovernor);
                             break;
-                        default: throw new InvalidOperationException();
                     }
                     break;
-                default: throw new InvalidOperationException();
             }
         }
     }

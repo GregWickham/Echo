@@ -1,8 +1,10 @@
-﻿namespace FlexibleRealization.UserInterface
+﻿using System;
+
+namespace FlexibleRealization.UserInterface
 {
-    public delegate void ElementDragStarted_EventHandler(ElementBuilder dragged);
+    public delegate void ElementDragStarted_EventHandler(Type draggedType);
 
-    public delegate void ElementDragCancelled_EventHandler(ElementBuilder dragged);
+    public delegate void ElementDragCancelled_EventHandler(Type draggedType);
 
-    public delegate void ElementDropCompleted_EventHandler(ElementBuilder dropped);
+    public delegate void ElementDropCompleted_EventHandler(Type droppedType);
 }

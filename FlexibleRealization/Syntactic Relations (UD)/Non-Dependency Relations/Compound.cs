@@ -28,7 +28,6 @@ namespace FlexibleRealization.Dependencies
                         default: throw new InvalidOperationException();
                     }
                     break;
-                default: throw new InvalidOperationException();
             }
         }
     }

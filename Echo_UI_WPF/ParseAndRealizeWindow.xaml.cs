@@ -15,8 +15,8 @@ namespace Echo.UserInterface
         public ParseAndRealizeWindow()
         {
             InitializeComponent();
-            GraphEditor.RealizationFailed += GraphEditor_RealizationFailed;
-            GraphEditor.TextRealized += GraphEditor_TextRealized;
+            TreeEditor.RealizationFailed += GraphEditor_RealizationFailed;
+            TreeEditor.TextRealized += GraphEditor_TextRealized;
         }
 
         /// <summary>This event handler is called when the GraphEditor has successfully realized some text</summary>
@@ -38,8 +38,8 @@ namespace Echo.UserInterface
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            GraphEditor.RealizationFailed -= GraphEditor_RealizationFailed;
-            GraphEditor.TextRealized -= GraphEditor_TextRealized;
+            TreeEditor.RealizationFailed -= GraphEditor_RealizationFailed;
+            TreeEditor.TextRealized -= GraphEditor_TextRealized;
         }
 
         /// <summary>When the user changes a setting for the CoreNLP server, save its settings</summary>
@@ -57,7 +57,7 @@ namespace Echo.UserInterface
         }
 
         /// <summary>Send <paramref name="text"/> to the GraphEditor</summary>
-        private void HandleTextInput(string text) => GraphEditor.ParseText(text);
+        private void HandleTextInput(string text) => TreeEditor.ParseText(text);
 
         /// <summary>The user has entered some text in the inputTextBox</summary>
         private void inputTextBox_TextInput(object sender, TextCompositionEventArgs e) => HandleTextInput(e.Text);

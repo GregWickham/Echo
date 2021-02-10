@@ -47,6 +47,4 @@ namespace SimpleNLG.Tests.VerbPhrases.HeadForms
             }
         }
     }
-
-
 }

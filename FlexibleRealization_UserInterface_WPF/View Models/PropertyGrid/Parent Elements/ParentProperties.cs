@@ -15,11 +15,11 @@ namespace FlexibleRealization.UserInterface.ViewModels
             AdjectivePhraseBuilder apb => new AdjectivePhraseProperties(apb),
             AdverbPhraseBuilder apb => new AdverbPhraseProperties(apb),
             PrepositionalPhraseBuilder ppb => new PrepositionalPhraseProperties(ppb),
-            CoordinatedPhraseBuilder cpb => new CoordinatedPhraseProperties(cpb),
             NominalModifierBuilder nmb => new NominalModifierProperties(nmb),
             CompoundBuilder cwb => new CompoundWordProperties(cwb),
+            UnknownParentBuilder upb => new UnknownParentProperties(upb),
 
-            _ => throw new InvalidOperationException("No properties class defined for this ParentElementBuilder type")
+            _ => throw new ArgumentException("No properties class defined for this ParentElementBuilder type")
         };
 
         private protected ParentProperties(ParentElementBuilder peb) { Model = peb; }

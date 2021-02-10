@@ -12,9 +12,9 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <graphx:ZoomControl Grid.Column="0" x:Name="ZoomCtrl" Background="White">
@@ -22,7 +22,16 @@
                 <ResourceDictionary Source="./Templates/ElementBuilderGraphXTemplates.xaml"/>
             </graphx:ZoomControl.Resources>
             <graphModels:ElementBuilderGraphArea x:Name="ElementGraphArea" x:FieldModifier="internal" Background="White" 
-                SelectedBuilderChanged="GraphArea_SelectedBuilderChanged" />
+                SelectedNodeChanged="GraphArea_SelectedNodeChanged">
+                <Ellipse  
+                      Canvas.Top="50"  
+                      Canvas.Left="50"  
+                      Fill="#FFFFFF00"  
+                      Height="75"  
+                      Width="75"  
+                      StrokeThickness="5"  
+                      Stroke="#FF0000FF"/>
+            </graphModels:ElementBuilderGraphArea>
         </graphx:ZoomControl>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Width="2"/>

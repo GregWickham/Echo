@@ -30,7 +30,6 @@ namespace FlexibleRealization.Dependencies
                     break;
                 case NounBuilder nounGovernor:
                     break;
-                default: throw new InvalidOperationException();
             }
         }
     }

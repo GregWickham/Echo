@@ -21,10 +21,8 @@ namespace FlexibleRealization.Dependencies
                             if (!adjectiveGovernor.Completes(verbDependent))
                                 throw new InvalidOperationException();
                             break;
-                        default: throw new InvalidOperationException();
                     }
                     break;
-                default: throw new InvalidOperationException();
             }
         }
     }

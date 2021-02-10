@@ -43,6 +43,12 @@
     <Reference Include="GraphX.WPF.Controls, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphX.3.0.0\lib\net461\GraphX.WPF.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics, Version=4.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Numerics.4.9.1\lib\net461\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Spatial, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Spatial.0.6.0\lib\net461\MathNet.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationFramework.Aero" />
@@ -58,6 +64,9 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -69,6 +78,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildNodeInsertPoint.xaml.cs">
+      <DependentUpon>ChildNodeInsertPoint.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EdgeControl_Extensions.cs" />
     <Compile Include="ElementBuilderTreeEditor.xaml.cs">
       <DependentUpon>ElementBuilderTreeEditor.xaml</DependentUpon>
     </Compile>
@@ -76,9 +89,10 @@
     <Compile Include="Graph components\ElementBuilderControlFactory.cs" />
     <Compile Include="Graph components\ElementBuilderEdgeRoutingAlgorithm.cs" />
     <Compile Include="Graph components\ElementBuilderOverlapRemovalAlgorithm.cs" />
+    <Compile Include="VertexControl_Extensions.cs" />
     <Compile Include="View Models\Generic\NLGElementFeature.cs" />
     <Compile Include="View Models\Generic\Parent.cs" />
-    <Compile Include="View Models\Generic\PartOfSpeech.cs" />
+    <Compile Include="View Models\Generic\PronounBuilder.cs" />
     <Compile Include="View Models\Generic\WordBuilder.cs" />
     <Compile Include="View Models\GraphX\Edge types\DependencyEdge.cs" />
     <Compile Include="View Models\GraphX\Edge types\ParentElementToChildEdge.cs" />
@@ -105,10 +119,17 @@
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\NounPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\PrepositionalPhraseProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parent Elements\Syntax Elements\Phrases\VerbPhraseProperties.cs" />
+    <Compile Include="View Models\PropertyGrid\Parent Elements\UnknownParentProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parts of Speech\CompoundWordProperties.cs" />
+    <Compile Include="View Models\PropertyGrid\Parts of Speech\NounProperties.cs" />
+    <Compile Include="View Models\PropertyGrid\Parts of Speech\PronounProperties.cs" />
     <Compile Include="View Models\PropertyGrid\Parts of Speech\WordPartOfSpeechProperties.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ChildNodeInsertPoint.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ElementBuilderTreeEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

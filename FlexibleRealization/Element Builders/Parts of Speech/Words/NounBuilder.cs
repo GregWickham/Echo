@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SimpleNLG;
 
 namespace FlexibleRealization
@@ -6,10 +7,29 @@ namespace FlexibleRealization
     public class NounBuilder : WordElementBuilder, IPhraseHead
     {
         /// <summary>This constructor is using during parsing</summary>
-        public NounBuilder(ParseToken token) : base(lexicalCategory.NOUN, token) { }
+        public NounBuilder(ParseToken token) : base(lexicalCategory.NOUN, token) 
+        {
+            switch (token.PartOfSpeech)
+            {
+                case "NN":
+                    Number = numberAgreement.SINGULAR;
+                    break;
+                case "NNS":
+                    Number = numberAgreement.PLURAL;
+                    break;
+                case "NNP":
+                    Proper = true;
+                    Number = numberAgreement.SINGULAR;
+                    break;
+                case "NNPS":
+                    Proper = true;
+                    Number = numberAgreement.PLURAL;
+                    break;
+            }
+        }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private NounBuilder(int index, string word) : base(lexicalCategory.NOUN, index, word) { }
+        private NounBuilder(string word) : base(lexicalCategory.NOUN, word) { }
 
         /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
         public NounBuilder() : base(lexicalCategory.NOUN) { }
@@ -44,6 +64,7 @@ namespace FlexibleRealization
             }
         }
 
+        /// <summary>Return true if this NounBuilder is part of a compound noun.</summary>
         internal bool IsPartOfACompoundNoun => Parent is CompoundNounBuilder && AssignedRole == ParentElementBuilder.ChildRole.Component;
 
         /// <summary>Return true if this noun is allowed to form a compound noun with <paramref name="anotherNoun"/></summary>
@@ -68,6 +89,7 @@ namespace FlexibleRealization
             }
         }
 
+        /// <summary>Return true if this NounBuilder and <paramref name="anotherElementModifier"/> are part of a nominal modifier.</summary>
         private bool IsPartOfNominalModifierWith(ElementBuilder anotherElementModifier)
         {
             NominalModifierBuilder commonAncestorNominalModifier = LowestCommonAncestor<NominalModifierBuilder>(anotherElementModifier);
@@ -94,6 +116,45 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new NounBuilder(Index, WordSource.GetWord());
+        #region Features
+
+        private numberAgreement _number;
+        public numberAgreement Number
+        {
+            get => _number;
+            set
+            {
+                _number = value;
+                NumberSpecified = true;
+            }
+        }
+        public bool NumberSpecified { get; set; } = false;
+
+        #endregion Features
+
+        #region Editing
+
+        private protected override HashSet<Type> TypesThatCanBeAdded { get; } = new HashSet<Type>
+        {
+            typeof(AdjectiveBuilder)
+        };
+
+        /// <summary>Add <paramref name="node"/> to the tree in which this exists</summary>
+        public override IParent Add(IElementTreeNode node)
+        {
+            IParent modifiedParent;
+            switch (node)
+            {
+                case AdjectiveBuilder advb:
+                    modifiedParent = this.AsNounPhrase();
+                    modifiedParent.AddChild(advb);
+                    return modifiedParent;
+                default: return null;
+            }
+        }
+
+        #endregion Editing
+
+        public override IElementTreeNode CopyLightweight() => new NounBuilder(WordSource.GetWord());
     }
 }

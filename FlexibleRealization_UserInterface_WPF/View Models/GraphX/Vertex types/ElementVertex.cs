@@ -20,10 +20,10 @@ namespace FlexibleRealization.UserInterface.ViewModels
         /// <summary>The IsWordContents property is used by XAML style triggers</summary>
         public abstract bool IsWordContents { get; }
 
-        internal abstract bool CanAcceptDropOf(IElementTreeNode node);
+        internal abstract bool CanAcceptDropOf(Type nodeType);
 
         /// <summary>Respond as appropriate to <paramref name="node"/> being dropped on this, and return true if successful.</summary>
-        internal abstract bool AcceptDropOf(IElementTreeNode node);
+        internal abstract bool AcceptDropOf(IElementTreeNode node, DragDropEffects effects, int insertPoint);
 
         private protected static readonly Thickness ToolTipBorderThickness = new Thickness(2);
         private protected static readonly CornerRadius ToolTipCornerRadius = new CornerRadius(8);
@@ -43,7 +43,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
                     BorderBrush = Brushes.Black,
                     BorderThickness = ToolTipBorderThickness,
                     CornerRadius = ToolTipCornerRadius,
-                    Background = control.FindResource("LightGradientBrush") as Brush,
+                    Background = control.FindResource("LightGrayGradient") as Brush,
                     UseLayoutRounding = true,
                     Child = ToolTipContent
                 }

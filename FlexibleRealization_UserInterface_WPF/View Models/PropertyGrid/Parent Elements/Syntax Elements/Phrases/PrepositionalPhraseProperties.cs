@@ -25,6 +25,14 @@ namespace FlexibleRealization.UserInterface.ViewModels
             set => Model.AssignedRole = Parent.ChildRole.FromDescription(value);
         }
 
+        [Category("Syntax|")]
+        [DisplayName("Start Index")]
+        public int MinimumIndex => Model.MinimumIndex;
+
+        [Category("Syntax|")]
+        [DisplayName("End Index")]
+        public int MaximumIndex => Model.MaximumIndex;
+
         #endregion Syntax
 
         #region Features

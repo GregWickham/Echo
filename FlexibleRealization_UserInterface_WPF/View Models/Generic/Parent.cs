@@ -14,6 +14,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
             FragmentBuilder => "Frag",
             IndependentClauseBuilder => "S",
             SubordinateClauseBuilder => "SBAR",
+            TemporalNounPhraseBuilder => "NP-TMP",
             NounPhraseBuilder => "NP",
             NominalModifierBuilder => "NML",
             VerbPhraseBuilder => "VP",
@@ -30,6 +31,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
                 _ => throw new InvalidOperationException("Can't find a label for this coordinated phrase type")
             },
             CompoundNounBuilder => "CompN",
+            UnknownParentBuilder => "X",
 
             _ => throw new InvalidOperationException("Can't find a label for this builder type")
         };
@@ -40,6 +42,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
             FragmentBuilder => "Fragment",
             IndependentClauseBuilder => "Independent Clause",
             SubordinateClauseBuilder => "Subordinate Clause",
+            TemporalNounPhraseBuilder => "Temporal Noun Phrase",
             NounPhraseBuilder => "Noun Phrase",
             NominalModifierBuilder => "Nominal Modifier",
             VerbPhraseBuilder => "Verb Phrase",
@@ -56,6 +59,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
                 _ => throw new InvalidOperationException("Can't find a description for this coordinated phrase type")
             },
             CompoundNounBuilder => "Compound Noun",
+            UnknownParentBuilder => "Unknown",
 
             _ => throw new InvalidOperationException("Can't find a description for this builder type")
         };

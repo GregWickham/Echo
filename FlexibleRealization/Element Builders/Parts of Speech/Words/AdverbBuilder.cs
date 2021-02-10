@@ -1,4 +1,6 @@
-﻿using SimpleNLG;
+﻿using System;
+using System.Collections.Generic;
+using SimpleNLG;
 
 namespace FlexibleRealization
 {
@@ -8,9 +10,9 @@ namespace FlexibleRealization
         public AdverbBuilder(ParseToken token) : base(lexicalCategory.ADVERB, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private protected AdverbBuilder(int index, string word) : base(lexicalCategory.ADVERB, index, word) { }
+        private protected AdverbBuilder(string word) : base(lexicalCategory.ADVERB, word) { }
 
-        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
+        /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph.</summary>
         public AdverbBuilder() : base(lexicalCategory.ADVERB) { }
 
         /// <summary>Implementation of IPhraseHead : AsPhrase()</summary>
@@ -19,7 +21,7 @@ namespace FlexibleRealization
         internal bool Comparative => Token.PartOfSpeech.Equals("RBR");
         internal bool Superlative => Token.PartOfSpeech.Equals("RBS");
 
-        /// <summary>Transform this <see cref="AdverbBuilder"/> into an <see cref="AdverbPhraseBuilder"/> with this as its head</summary>
+        /// <summary>Transform this AdverbBuilder into an AdverbPhraseBuilder with this as its head.</summary>
         internal AdverbPhraseBuilder AsAdverbPhrase()
         {
             AdverbPhraseBuilder result = new AdverbPhraseBuilder();
@@ -28,6 +30,29 @@ namespace FlexibleRealization
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(Index, WordSource.GetWord());
+        #region Editing
+
+        private protected override HashSet<Type> TypesThatCanBeAdded { get; } = new HashSet<Type>
+        {
+            typeof(AdverbBuilder)
+        };
+
+        /// <summary>Add <paramref name="node"/> to the tree in which this exists.</summary>
+        public override IParent Add(IElementTreeNode node)
+        {
+            IParent modifiedParent;
+            switch (node)
+            {
+                case AdverbBuilder advb:
+                    modifiedParent = this.AsAdverbPhrase();
+                    modifiedParent.AddChild(advb);
+                    return modifiedParent;
+                default: return null;
+            }
+        }
+
+        #endregion Editing
+
+        public override IElementTreeNode CopyLightweight() => new AdverbBuilder(WordSource.GetWord());
     }
 }

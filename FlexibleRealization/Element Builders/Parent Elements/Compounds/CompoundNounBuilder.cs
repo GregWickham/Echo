@@ -9,7 +9,7 @@ namespace FlexibleRealization
         /// <summary>Implementation of IPhraseHead : AsPhrase()</summary>
         public override PhraseBuilder AsPhrase() => AsNounPhrase();
 
-        /// <summary>Transform this NounBuilder into a NounPhraseBuilder with this as its head</summary>
+        /// <summary>Transform this CompoundNounBuilder into a NounPhraseBuilder with this as its head</summary>
         internal NounPhraseBuilder AsNounPhrase()
         {
             NounPhraseBuilder result = new NounPhraseBuilder();

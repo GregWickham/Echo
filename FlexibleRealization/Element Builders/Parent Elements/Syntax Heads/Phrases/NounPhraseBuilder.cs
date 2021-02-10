@@ -8,6 +8,8 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG NPPhraseSpec</summary>
     public class NounPhraseBuilder : CoordinablePhraseBuilder<NPPhraseSpec>
     {
+        public NounPhraseBuilder() : base() { }
+
         /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
         private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
         {
@@ -25,7 +27,7 @@ namespace FlexibleRealization
             switch (child)
             {
                 case NounBuilder nb:
-                    AddHead(nb);
+                    AssignRoleFor(nb);
                     break;
                 case DeterminerBuilder db:
                     SetSpecifier(db);
@@ -46,7 +48,7 @@ namespace FlexibleRealization
                     AssignRoleFor(npb);
                     break;
                 case VerbPhraseBuilder vpb:
-                    AddComplement(vpb);
+                    AddModifier(vpb);
                     break;
                 case AdjectivePhraseBuilder apb:
                     AddModifier(apb);
@@ -72,18 +74,30 @@ namespace FlexibleRealization
                 case SubordinateClauseBuilder scb:
                     AddComplement(scb);
                     break;
+                case CardinalNumberBuilder cnb:
+                    AddModifier(cnb);
+                    break;
                 default:
                     AddUnassignedChild(child);
                     break;
             }
         }
 
+        private void AssignRoleFor(NounBuilder noun)
+        {
+            AddHead(noun);
+            //if (noun.NumberSpecified) Number = noun.Number;
+        }
+
         private void AssignRoleFor(PronounBuilder pronoun)
         {
             switch (pronoun.Case)
             {
-                case PronounCase.Subjective:
+                case PronounCase.Nominative:
                     AddHead(pronoun);
+                    if (pronoun.PersonSpecified) Person = pronoun.Person;
+                    if (pronoun.GenderSpecified) Gender = pronoun.Gender;
+                    if (pronoun.NumberSpecified) Number = pronoun.Number;
                     break;
                 case PronounCase.Possessive:
                     SetSpecifier(pronoun.AsNounPhrase());
@@ -125,7 +139,7 @@ namespace FlexibleRealization
 
         #region Configuration
 
-        public sealed override void Configure()
+        public override void Configure()
         {
             base.Configure();
             // The CoreNLP constituency parse can have a noun phrase that contains another noun phrase as its head.  
@@ -155,6 +169,15 @@ namespace FlexibleRealization
             _ => throw new InvalidOperationException("Unable to resolve Specifier")
         };
 
+        private Dictionary<IElementTreeNode, int> GetSpecifiersAndIndices()
+        {
+            SortedList<IElementTreeNode, object> sortedChildren = new SortedList<IElementTreeNode, object>();
+            Children.ToList().ForEach(child => sortedChildren.Add(child, null));
+            Dictionary<IElementTreeNode, int> result = new Dictionary<IElementTreeNode, int>();
+            Specifiers.ToList().ForEach(specifier => result.Add(specifier, sortedChildren.IndexOfKey(specifier)));
+            return result;
+        }
+
         /// <summary>Merge <paramref name="phraseToAssimilate"/> into this NounPhraseBuilder</summary>
         private void Assimilate(NounPhraseBuilder phraseToAssimilate)
         {
@@ -173,39 +196,67 @@ namespace FlexibleRealization
             AddComplements(phraseToAssimilate.Complements);
         }
 
-        /// <summary>Return the CoordinatedPhraseBuilder for this noun phrase</summary>
-        /// <remarks>The noun phrase's Specifier does not get incorporated into the CoordinatedPhraseElement.  Instead, it must be applied to one of the
-        /// coordinated elements.  When the noun phrase is in its non-coordinated form, the Specifier is present in its expected place, so the Determiner
-        /// syntactic relation will not change anything when applied.  Therefore we need to re-apply that syntactic relation after coordinating the phrase.</remarks>
+        /// <summary>Transform this NounPhraseBuilder into a CoordinatedPhraseBuilder and return that CoordinatedPhraseBuilder.</summary>
+        /// <remarks>The noun phrase's Specifier, Modifiers, and Complements do not get incorporated into the CoordinatedPhraseElement.  Instead, each of those elements 
+        /// must be applied to one of the coordinated elements.  This will change the syntactic structure of the tree, but while doing that we want to preserve the original 
+        /// word order.  To accomplish that we first create a series of dictionaries that temporarily store the various elements of the original (non-coordinated) phrase,
+        /// along with the original order of those elements. <para>Then we add those elements into the CoordinatedPhraseBuilder, using the dictionaries to preserve
+        /// ordering.</para></remarks>
         private protected sealed override CoordinatedPhraseBuilder AsCoordinatedPhrase()
         {
+            Dictionary<PartOfSpeechBuilder, int> partsOfSpeech = GetPartsOfSpeechAndIndices();
+            Dictionary<IElementTreeNode, int> heads = GetHeadsAndIndices();
+            Dictionary<IElementTreeNode, int> specifiers = GetSpecifiersAndIndices();
+            Dictionary<IElementTreeNode, int> modifiers = GetModifiersAndIndices();
+            Dictionary<IElementTreeNode, int> complements = GetComplementsAndIndices();
             CoordinatedPhraseBuilder result = base.AsCoordinatedPhrase();
-            SpecifierBuilder?.Specify(SpecifierBuilder.NearestOf(result.CoordinatedElements));
-            Modifiers.ToList().ForEach(modifier => modifier.Modify(modifier.NearestOf(result.CoordinatedElements)));
-            Complements.ToList().ForEach(complement => complement.Complete(complement.NearestOf(result.CoordinatedElements)));
+            foreach (IElementTreeNode eachSpecifier in specifiers.Keys)
+            {
+                eachSpecifier.DetachFromParent();
+                eachSpecifier
+                    .Specify(ElementWithIndexNearest(specifiers[eachSpecifier], heads))
+                    ?.SetChildOrdering(eachSpecifier, partsOfSpeech);
+            };
+            foreach (IElementTreeNode eachModifier in modifiers.Keys)
+            {
+                eachModifier.DetachFromParent();
+                eachModifier
+                    .Modify(ElementWithIndexNearest(modifiers[eachModifier], heads))
+                    ?.SetChildOrdering(eachModifier, partsOfSpeech);
+            };
+            foreach (IElementTreeNode eachComplement in complements.Keys)
+            {
+                eachComplement.DetachFromParent();
+                eachComplement
+                    .Complete(ElementWithIndexNearest(complements[eachComplement], heads))
+                    ?.SetChildOrdering(eachComplement, partsOfSpeech);
+            };
             return result;
         }
 
-        public override IElementTreeNode CopyLightweight() => new NounPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
-            .LightweightCopyChildrenFrom(this);
 
         #endregion Configuration
 
-        public override NLGElement BuildElement()
+        #region Editing
+
+        private protected override HashSet<Type> ChildTypesThatCanBeAdded { get; } = new HashSet<Type>
         {
-            if (SpecifierBuilder != null) Phrase.spec = SpecifierBuilder.BuildElement();
-            Phrase.preMod = PreModifiers
-                .Select(preModifier => preModifier.BuildElement())
-                .ToArray();
-            if (UnaryHead != null) Phrase.head = UnaryHead.BuildWord();
-            Phrase.compl = Complements
-                .Select(complement => complement.BuildElement())
-                .ToArray();
-            Phrase.postMod = PostModifiers
-                .Select(postModifier => postModifier.BuildElement())
-                .ToArray();
-            return Phrase;
-        }
+            typeof(NounBuilder),
+            typeof(ConjunctionBuilder),
+            typeof(DeterminerBuilder),
+            typeof(AdjectiveBuilder),
+            typeof(AdverbBuilder),
+            typeof(PronounBuilder),
+            typeof(VerbBuilder),
+            typeof(NounPhraseBuilder),
+            typeof(VerbPhraseBuilder),
+            typeof(AdjectivePhraseBuilder),
+            typeof(PrepositionalPhraseBuilder),
+            typeof(SubordinateClauseBuilder),
+            typeof(CardinalNumberBuilder)
+        };
+
+        #endregion Editing
 
         #region Phrase features
 
@@ -218,6 +269,7 @@ namespace FlexibleRealization
                 OnPropertyChanged();
             }
         }
+
         public bool AdjectiveOrdering
         {
             get => Phrase.ADJECTIVE_ORDERING;
@@ -350,5 +402,24 @@ namespace FlexibleRealization
         }
 
         #endregion Phrase features
+
+        public override IElementTreeNode CopyLightweight() => new NounPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
+            .LightweightCopyChildrenFrom(this);
+
+        public override NLGElement BuildElement()
+        {
+            if (SpecifierBuilder != null) Phrase.spec = SpecifierBuilder.BuildElement();
+            Phrase.preMod = PreModifiers
+                .Select(preModifier => preModifier.BuildElement())
+                .ToArray();
+            if (UnaryHead != null) Phrase.head = UnaryHead.BuildWord();
+            Phrase.compl = Complements
+                .Select(complement => complement.BuildElement())
+                .ToArray();
+            Phrase.postMod = PostModifiers
+                .Select(postModifier => postModifier.BuildElement())
+                .ToArray();
+            return Phrase;
+        }
     }
 }

@@ -1,26 +1,58 @@
-﻿namespace FlexibleRealization
+﻿using System;
+using System.Linq;
+
+namespace FlexibleRealization
 {
-    public class WhNounPhraseBuilder : WhWordPhraseBuilder
+    public class WhNounPhraseBuilder : NounPhraseBuilder
     {
         public WhNounPhraseBuilder() : base() { }
+
+        internal WordElementBuilder WhWord { get; private set; }
 
         private protected override void AssignRoleFor(IElementTreeNode child)
         {
             switch (child)
             {
                 case WhDeterminerBuilder wdb:
-                    HeadWord = wdb;
+                    SetWhWord(wdb);
                     break;
                 case WhPronounBuilder wpb:
-                    HeadWord = wpb;
+                    SetWhWord(wpb);
                     break;
                 default:
-                    AddUnassignedChild(child);
+                    base.AssignRoleFor(child);
                     break;
             }
         }
 
-        public override IElementTreeNode CopyLightweight() => new WhNounPhraseBuilder { HeadWord = (WordElementBuilder)HeadWord.CopyLightweight() }
+        private void SetWhWord(WordElementBuilder whWordBuilder)
+        {
+            if (WhWord != null) throw new InvalidOperationException("Can't add multiple Wh words to a WhNounPhraseBuilder");
+            else WhWord = whWordBuilder;
+        }
+
+        public override void Consolidate()
+        {
+            if (WhWord != null)
+            {
+                if (Parent is SubordinateClauseBuilder subordinateClause)
+                {
+                    subordinateClause.SetComplementizer(WhWord);
+                    WhWord = null;
+                }
+            }
+            if (Children.Count() == 0) Become(null);
+            else BecomeNounPhrase();
+        }
+
+        private void BecomeNounPhrase()
+        {
+            NounPhraseBuilder nounPhrase = new NounPhraseBuilder();
+            Parent?.ReplaceChild(this, nounPhrase);
+            MoveChildrenTo(nounPhrase);
+        }
+
+        public override IElementTreeNode CopyLightweight() => new WhNounPhraseBuilder { WhWord = (WordElementBuilder)WhWord.CopyLightweight() }
             .LightweightCopyChildrenFrom(this);
     }
 }

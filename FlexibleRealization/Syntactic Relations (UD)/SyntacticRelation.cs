@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace FlexibleRealization.Dependencies
 {
-    [DebuggerDisplay("D: {Dependent.Token.Word} <- {Relation}{Specifier?.ToString()} <- G: {Governor.Token.Word}")]
+    [DebuggerDisplay("D: {Dependent.Token.Word} <- {Relation}:{Specifier?.ToString()} <- G: {Governor.Token.Word}")]
     public class SyntacticRelation
     {
         /// <summary>Return a new <see cref="SyntacticRelation"/> of the type described by <paramref name="relation"/> and <paramref name="specifier"/></summary>
@@ -15,6 +15,7 @@ namespace FlexibleRealization.Dependencies
             {
                 // Core arguments
                 "nsubj" => new NominalSubject(),
+                "nsubj:xsubj" => new NominalSubjectControlling(),
                 "csubj" => new ClausalSubject(),
                 "obj" => new Object(),
                 "ccomp" => new ClausalComplement(),
@@ -22,7 +23,11 @@ namespace FlexibleRealization.Dependencies
                 "xcomp" => new OpenClausalComplement(),
 
                 // Non-core dependencies
-                "obl" => new ObliqueNominal(),
+                "obl" => specifier switch
+                {
+                    "tmod" => new TemporalModifier(),
+                    _ => new ObliqueNominal()
+                },
                 "advcl" => new AdverbialClauseModifier(),
                 "advmod" => new AdverbialModifier(),
                 "aux" => specifier switch
@@ -97,7 +102,7 @@ namespace FlexibleRealization.Dependencies
         /// <summary>Hook this syntactic relation to its governor and dependent parts of speech</summary>
         public void Install()
         {
-            Console.WriteLine($"Installing {Governor.Token.Word} <- ({Relation}) <- {Dependent.Token.Word}");
+            Console.WriteLine($"Installing {Governor.Token.Word} <- ({Relation}{((Specifier != null) ? ":" : "")}{Specifier?.ToString()}) <- {Dependent.Token.Word}");
             Governor.AddIncomingRelation(this);
             Dependent.AddOutgoingRelation(this);
         }

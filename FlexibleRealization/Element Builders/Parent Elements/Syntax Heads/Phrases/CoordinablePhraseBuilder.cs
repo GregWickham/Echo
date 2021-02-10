@@ -11,6 +11,8 @@ namespace FlexibleRealization
     /// decision by checking to see whether we have multiple head elements and a coordinating conjunction.</remarks>
     public abstract class CoordinablePhraseBuilder : PhraseBuilder
     {
+        private protected CoordinablePhraseBuilder() : base() { }
+
         /// <summary>If we decide during Configure that we're NOT going to build a CoordinatedPhraseElement, then we expect to have exactly one head element</summary>
         internal IPhraseHead UnaryHead => Heads.Count() switch
         {
@@ -20,10 +22,14 @@ namespace FlexibleRealization
         };
 
         /// <summary>Return the Modifiers of this that come before the head</summary>
-        private protected IEnumerable<IElementTreeNode> PreModifiers => Modifiers.Where(modifier => modifier.ComesBefore(UnaryHead));
+        private protected IEnumerable<IElementTreeNode> PreModifiers => Modifiers
+            .Where(modifier => modifier.ComesBefore(UnaryHead))
+            .OrderBy(modifier => modifier);
 
         /// <summary>Return the Modifiers of this that come after the head</summary>
-        private protected IEnumerable<IElementTreeNode> PostModifiers => Modifiers.Where(modifier => modifier.ComesAfter(UnaryHead));
+        private protected IEnumerable<IElementTreeNode> PostModifiers => Modifiers
+            .Where(modifier => modifier.ComesAfter(UnaryHead))
+            .OrderBy(modifier => modifier);
 
         /// <summary>Set <paramref name="coordinator"/> as the ONLY coordinating conjunction of the PhraseElement we're going to build.</summary>
         /// <remarks>If we already have a coordinating conjunction and try to add another one, throw an exception.</remarks>
@@ -45,12 +51,12 @@ namespace FlexibleRealization
         };
 
         /// <summary>Decide whether this CoordinablePhraseBuilder is going to build a CoordinatedPhraseElement or not.</summary>
-        /// <returns><list type="bullet">
-        /// <item>If this is a coordinated phrase, return the appropriate CoordinatedPhraseBuilder;</item>
-        /// <item>If this phrase has exactly one child, return that child;</item>
-        /// <item>If this phrase does not require coordination, return this phrase.</item>
-        /// </list></returns>
-        public override void Coordinate() //=> IsCoordinated switch
+        /// <remarks><list type="bullet">
+        /// <item>If this is a coordinated phrase, become the appropriate CoordinatedPhraseBuilder;</item>
+        /// <item>If this phrase has exactly one child, become that child;</item>
+        /// <item>If this phrase does not require coordination, preserve its current form.</item>
+        /// </list></remarks>
+        public override void Coordinate()
         {
             if (IsCoordinated) Become(this.AsCoordinatedPhrase());
             else switch (Children.Count())
@@ -66,6 +72,9 @@ namespace FlexibleRealization
                         case ParentElementBuilder peb:
                             Become(peb);
                             break;
+                        //case WordElementBuilder web:
+                        //    if (!web.IsPhraseHead) Become(web);
+                        //    break;
                         default: break;
                     }
                     break;
@@ -78,8 +87,13 @@ namespace FlexibleRealization
 
         /// <summary>Convert this CoordinablePhraseBuilder to a CoordinatedPhraseBuilder, and return that CoordinatedPhraseBuilder</summary>
         /// <remarks>Can be override by subclasses that require custom coordination behavior</remarks>
-        private protected virtual CoordinatedPhraseBuilder AsCoordinatedPhrase() => new CoordinatedPhraseBuilder(PhraseCategory, Heads, CoordinatorBuilder);
+        private protected virtual CoordinatedPhraseBuilder AsCoordinatedPhrase() => new CoordinatedPhraseBuilder(PhraseCategory, Heads, CoordinatorBuilder, ChildOrderings);
 
+        /// <summary>From the <paramref name="candidates"/> collection, select and return the IElementTreeNode Key whose index Value is closest to <paramref name="index"/></summary>
+        private protected IElementTreeNode ElementWithIndexNearest(int index, Dictionary<IElementTreeNode, int> candidates) => candidates
+            .OrderBy(kvp => Math.Abs(index - kvp.Value))
+            .Select(kvp => kvp.Key)
+            .FirstOrDefault();
     }
 
     /// <summary>This subclass of CoordinablePhraseBuilder adds the parameterized type of the PhraseElement that this PhraseBuilder can build.</summary>

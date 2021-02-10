@@ -47,17 +47,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Element Builders\Default Element Sources\SingleWordSource.cs" />
-    <Compile Include="Element Builders\Interfaces\Element Sources\IWordSource.cs" />
-    <Compile Include="Element Builders\Interfaces\IElementBuilder.cs" />
-    <Compile Include="Element Builders\Interfaces\IElementTreeNode.cs" />
-    <Compile Include="Element Builders\Interfaces\IIndexRange.cs" />
-    <Compile Include="Element Builders\Interfaces\IParent.cs" />
-    <Compile Include="Element Builders\Interfaces\IPhraseHead.cs" />
-    <Compile Include="Element Builders\Interfaces\ISyntaxComponent.cs" />
-    <Compile Include="Element Builders\Interfaces\ISyntaxHead.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\Element Sources\IWordSource.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\IElementBuilder.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\IElementTreeNode.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\IParent.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\IPhraseHead.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\ISyntaxComponent.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\IWeightedWord.cs" />
+    <Compile Include="Element Builders\Interfaces and Enums\NodeRelation.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Temporal Phrases\TemporalNounPhrase.cs" />
+    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhAdjectivePhraseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhAdverbPhraseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhNounPhraseBuilder.cs" />
-    <Compile Include="Element Builders\Parent Elements\Syntax Heads\Phrases\Wh-Word Phrases\WhWordPhraseBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Compounds\CompoundBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Compounds\CompoundNounBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\Clauses\IndependentClauseBuilder.cs" />
@@ -65,6 +66,9 @@
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\NominalModifierBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\Syntax Heads\SyntaxHeadBuilder.cs" />
     <Compile Include="Element Builders\Parent Elements\ParticleParent.cs" />
+    <Compile Include="Element Builders\Parent Elements\UnknownParentBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\CardinalNumberBuilder.cs" />
+    <Compile Include="Element Builders\Parts of Speech\Words\InfinitivalToBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\ParticleBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhAdverbBuilder.cs" />
     <Compile Include="Element Builders\Parts of Speech\Words\Wh-Words\WhDeterminerBuilder.cs" />
@@ -75,6 +79,7 @@
     <Compile Include="RootNode.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\ClausalComplement.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\IndirectObject.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\NominalSubjectControlling.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\Object.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Core Arguments\OpenClausalComplement.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Nominal Dependents\AdjectivalClause.cs" />
@@ -100,6 +105,7 @@
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Expletive.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Marker.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\ObliqueNominal.cs" />
+    <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\TemporalModifier.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Dependencies\Non-Core Dependents\Vocative.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Compound.cs" />
     <Compile Include="Syntactic Relations %28UD%29\Non-Dependency Relations\Conjuct.cs" />

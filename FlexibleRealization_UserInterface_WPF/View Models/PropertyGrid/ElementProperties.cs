@@ -6,7 +6,7 @@ namespace FlexibleRealization.UserInterface.ViewModels
     {
         public abstract string Description { get; }
 
-        internal static ElementProperties For(ElementBuilder builder) => builder switch
+        internal static ElementProperties For(IElementTreeNode node) => node switch
         {
             WordElementBuilder web => WordPartOfSpeechProperties.For(web),
             ParentElementBuilder peb => ParentProperties.For(peb),

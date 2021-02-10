@@ -9,6 +9,8 @@ namespace FlexibleRealization
 
         RootNode Root { get; }
 
+        IElementTreeNode Stem { get; }
+
         List<ParentElementBuilder.ChildRole> ValidRolesForChild(ElementBuilder child);
 
         void AddChild(IElementTreeNode child);
@@ -19,11 +21,15 @@ namespace FlexibleRealization
 
         void SetRoleOfChild(IElementTreeNode child, ParentElementBuilder.ChildRole newRole);
 
+        void SetChildOrdering(IElementTreeNode childToOrder, IElementTreeNode childToOrderRelativeTo, NodeRelation relation);
+
+        void SetChildOrdering(IElementTreeNode childToOrder, Dictionary<PartOfSpeechBuilder, int> partsOfSpeech);
+
         void RemoveChild(IElementTreeNode child);
 
         void ReplaceChild(IElementTreeNode existingChild, IElementTreeNode newChild);
 
-        void MoveTo(IParent newParent, ParentElementBuilder.ChildRole role);
+        bool MoveTo(IParent newParent, ParentElementBuilder.ChildRole role);
 
         bool ActsAsHeadOf(PhraseBuilder phrase);
 

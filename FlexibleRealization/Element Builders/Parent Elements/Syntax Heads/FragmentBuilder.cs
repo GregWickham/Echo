@@ -7,6 +7,8 @@ namespace FlexibleRealization
     /// <summary>FragmentBuilders can be created by the CoreNLP constituency parse, but they must be eliminated during the Configuration process</summary>
     public class FragmentBuilder : SyntaxHeadBuilder
     {
+        public FragmentBuilder() : base() { }
+
         /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
         private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
         {

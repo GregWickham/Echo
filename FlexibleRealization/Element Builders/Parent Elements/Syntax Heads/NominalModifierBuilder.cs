@@ -7,6 +7,8 @@ namespace FlexibleRealization
 {
     public class NominalModifierBuilder : SyntaxHeadBuilder
     {
+        public NominalModifierBuilder() : base() { }
+
         private StringElement NominalModifier = new StringElement();
 
         /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
@@ -47,7 +49,9 @@ namespace FlexibleRealization
 
         public override NLGElement BuildElement()
         {
-            PartOfSpeechBuilder[] orderedPartsOfSpeech = GetElementsOfTypeInSubtree<PartOfSpeechBuilder>().OrderBy(child => child.MinimumIndex).ToArray();
+            PartOfSpeechBuilder[] orderedPartsOfSpeech = GetElementsOfTypeInSubtree<PartOfSpeechBuilder>()
+                .OrderBy(child => child)
+                .ToArray();
             StringBuilder stringValue = new StringBuilder();
             for (int childIndex = 0; childIndex < orderedPartsOfSpeech.Length - 1; childIndex++)
             {

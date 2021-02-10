@@ -23,7 +23,7 @@ namespace FlexibleRealization
         {
             switch (child)
             {
-                case NounPhraseBuilder npb:
+                case NounPhraseBuilder npb:  // Might be a WhNounPhraseBuilder
                     AddSubject(npb);
                     break;
                 case VerbPhraseBuilder vpb:
@@ -35,17 +35,17 @@ namespace FlexibleRealization
                 case IndependentClauseBuilder icb:
                     Assimilate(icb);
                     break;
-                case WhAdverbPhraseBuilder wapb:
-                    SetComplementizer(wapb.HeadWord);
+                case ConjunctionBuilder cb:
+                    SetComplementizer(cb);
                     break;
-                case WhNounPhraseBuilder wnpb:
-                    SetComplementizer(wnpb.HeadWord);
-                    break;
-                case AdverbPhraseBuilder apb:
+                case AdverbPhraseBuilder apb:  // Might be a WhAdverbPhraseBuilder
                     AddUnassignedChild(apb);
                     break;
                 case PrepositionBuilder pb:
                     AddUnassignedChild(pb);
+                    break;
+                case AdjectivePhraseBuilder whadjpb:  // Might be a WhAdjectivePhraseBuilder
+                    AddUnassignedChild(whadjpb);
                     break;
                 default: throw new InvalidOperationException("Subordinate clause can't find a role for this element");
             }
@@ -54,8 +54,9 @@ namespace FlexibleRealization
         #endregion Initial assignment of children
 
         /// <summary>Set <paramref name="complementizer"/> as the ONLY complementizer of the subordinate clause we're going to build.</summary>
-        /// <remarks>If we already have a complementizer and try to add another one, throw an exception.</remarks>
-        private void SetComplementizer(WordElementBuilder complementizer)
+        /// <remarks>If we already have a complementizer and try to add another one, throw an exception.  Visibility is not private because the
+        /// Complementizer can be set by a Wh word phrase during its Configuration.</remarks>
+        internal void SetComplementizer(WordElementBuilder complementizer)
         {
             if (Complementizers.Count() == 0)
             {
@@ -74,6 +75,41 @@ namespace FlexibleRealization
             1 => Complementizers.First(),
             _ => throw new InvalidOperationException("Unable to resolve complementizer")
         };
+
+        #region Features
+
+        //public bool ComplementiserSpecified => Clause.Complementiser != null;
+        //public string Complementiser
+        //{
+        //    get => Clause.COMPLEMENTISER;
+        //    set
+        //    {
+        //        Clause.COMPLEMENTISER = value == null || value.Length == 0 ? null : value;
+        //        OnPropertyChanged();
+        //    }
+        //}
+
+        //public bool SuppressedComplementiserSpecified
+        //{
+        //    get => Clause.SUPRESSED_COMPLEMENTISERSpecified;
+        //    set
+        //    {
+        //        Clause.SUPRESSED_COMPLEMENTISERSpecified = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
+        //public bool SuppressedComplementiser
+        //{
+        //    get => Clause.SUPRESSED_COMPLEMENTISER;
+        //    set
+        //    {
+        //        Clause.SUPRESSED_COMPLEMENTISER = value;
+        //        Clause.SUPRESSED_COMPLEMENTISERSpecified = true;
+        //        OnPropertyChanged();
+        //    }
+        //}
+
+        #endregion Features
 
         public override IElementTreeNode CopyLightweight() => new SubordinateClauseBuilder { Clause = Clause.CopyWithoutSpec() }
             .LightweightCopyChildrenFrom(this);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SimpleNLG;
 
@@ -7,6 +8,8 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG AdvPhraseSpec</summary>
     public class AdverbPhraseBuilder : CoordinablePhraseBuilder<AdvPhraseSpec>
     {
+        public AdverbPhraseBuilder() : base() { }
+
         /// <summary>Add the valid ChildRoles for <paramref name="child"/> to <paramref name="listOfRoles"/></summary>
         private protected override void AddValidRolesForChildTo(List<ChildRole> listOfRoles, ElementBuilder child)
         {
@@ -41,6 +44,17 @@ namespace FlexibleRealization
         }
 
         #endregion Initial assignment of children
+
+        #region Editing
+
+        private protected override HashSet<Type> ChildTypesThatCanBeAdded { get; } = new HashSet<Type>
+        {
+            typeof(AdverbBuilder),
+            typeof(ConjunctionBuilder),
+            typeof(AdverbPhraseBuilder),
+        };
+
+        #endregion Editing
 
         public override IElementTreeNode CopyLightweight() => new AdverbPhraseBuilder { Phrase = Phrase.CopyWithoutSpec() }
             .LightweightCopyChildrenFrom(this);

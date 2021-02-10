@@ -5,7 +5,7 @@
     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
     xmlns:controls="http://schemas.panthernet.ru/graphx/">
 
-    <LinearGradientBrush x:Key="DarkGradientBrush" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+    <LinearGradientBrush x:Key="DarkGrayGradient" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
         <GradientStop Color="#FFFFFFFF" Offset="0"/>
         <GradientStop Color="#FFA4ADBB" Offset="0.521"/>
         <GradientStop Color="#FFD7E0EA" Offset="0.194"/>
@@ -13,7 +13,7 @@
         <GradientStop Color="#FFBCC5D5" Offset="0.507"/>
         <GradientStop Color="#FFE3E4E6" Offset="1"/>
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="LightGradientBrush" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+    <LinearGradientBrush x:Key="LightGrayGradient" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
         <GradientStop Color="#FFFFFFFF" Offset="0"/>
         <GradientStop Color="#FFC1C7D1" Offset="0.521"/>
         <GradientStop Color="#FFF8FAFC" Offset="0.194"/>
@@ -21,7 +21,7 @@
         <GradientStop Color="#FFDBE0E9" Offset="0.507"/>
         <GradientStop Color="#FFFEFEFE" Offset="1"/>
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="GradientBrushYes" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+    <LinearGradientBrush x:Key="VertexYesGradient" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
         <GradientStop Color="#FFE1F9E0" Offset="0"/>
         <GradientStop Color="#FFB6E8B4" Offset="0.521"/>
         <GradientStop Color="#FFD6F4E4" Offset="0.194"/>
@@ -29,7 +29,12 @@
         <GradientStop Color="#FFB9F4B7" Offset="0.507"/>
         <GradientStop Color="#FFE1F9E0" Offset="1"/>
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="GradientBrushNo" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+    <LinearGradientBrush x:Key="EdgeYesGradient" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
+        <GradientStop Color="#FFB6E8B4" Offset="0"/>
+        <GradientStop Color="#FFA4ADBB" Offset="0.67"/>
+        <GradientStop Color="#FF000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="VertexNoGradient" EndPoint="0.5,1" StartPoint="0.5,0" po:Freeze="true">
         <GradientStop Color="#FFFFD8D8" Offset="0"/>
         <GradientStop Color="#FFFCABAB" Offset="0.521"/>
         <GradientStop Color="#FFFFBCBC" Offset="0.194"/>
@@ -56,9 +61,9 @@
                 <ControlTemplate TargetType="{x:Type controls:VertexControl}">
                     <Grid>
                         <Border x:Name="BackgroundNorm" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"/>
-                        <Border x:Name="BackgroundNorm_highlight" Margin="1" BorderBrush="{DynamicResource NormalHighlightBrush}" BorderThickness="1,0,1,1" CornerRadius="5" Opacity="0.65" />
+                        <!--<Border x:Name="BackgroundNorm_highlight" Margin="1" BorderBrush="{DynamicResource NormalHighlightBrush}" BorderThickness="1,0,1,1" CornerRadius="5" Opacity="0.65" />-->
                         <Border x:Name="BackgroundOver" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Opacity="0" Background="{DynamicResource MouseOverBrush}" BorderBrush="{DynamicResource MouseOverBorderBrush}"/>
-                        <Border x:Name="BackgroundOver_Highlight" Margin="1" BorderThickness="1,0,1,1" CornerRadius="5" Opacity="0" BorderBrush="{DynamicResource MouseOverHighlightBrush}"/>
+                        <!--<Border x:Name="BackgroundOver_Highlight" Margin="1" BorderThickness="1,0,1,1" CornerRadius="5" Opacity="0" BorderBrush="{DynamicResource MouseOverHighlightBrush}"/>-->
                         <TextBlock Name="LabelText" Text="{Binding LabelText}" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Foreground="Black" Grid.Column="1" Grid.Row="0" Margin="5,3,5,3">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -94,7 +99,7 @@
                 <Setter Property="Background" Value="{StaticResource GhostWhiteBrush}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding IsWordContents}" Value="False">
-                <Setter Property="Background" Value="{StaticResource DarkGradientBrush}"/>
+                <Setter Property="Background" Value="{StaticResource DarkGrayGradient}"/>
             </DataTrigger>
 
             <!-- VERTEX HIGHLIGHT -->
@@ -122,9 +127,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:EdgeControl}">
                     <Grid>
-                        <Path Stroke="{StaticResource EdgeBrush}"
-                          StrokeThickness="2" MinWidth="1" MinHeight="1"
-                          ToolTip="{TemplateBinding ToolTip}" 
+                        <Path Stroke="{TemplateBinding Foreground}"
+                            StrokeThickness="2" MinWidth="1" MinHeight="1"
+                            ToolTip="{TemplateBinding ToolTip}"
                             x:Name="PART_edgePath"/>
                         <controls:DefaultEdgePointer NeedRotation="true" x:Name="PART_EdgePointerForTarget" >
                             <Path Data="M0,0.5 L1,1 1,0" Fill="Black" Stretch="Uniform"  Width="10" Height="15"/>
@@ -138,12 +143,20 @@
         <Setter Property="MinHeight" Value="1" />
         <Setter Property="Opacity" Value="1" />
         <Setter Property="DashStyle" Value="{Binding ElementDashStyle}" />
-        <Setter Property="controls:HighlightBehaviour.IsHighlightEnabled" Value="False"/>
+        <!--<Setter Property="controls:HighlightBehaviour.IsHighlightEnabled" Value="True"/>-->
+
+        <Style.Triggers>
+            <!-- EDGE HIGHLIGHT -->
+            <Trigger Property="controls:HighlightBehaviour.Highlighted" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource EdgeYesGradient}"/>
+                <!--<Setter Property="BorderThickness" Value="3"/>-->
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- EDGE LABEL CONTROL -->
     <Style TargetType="{x:Type controls:AttachableEdgeLabelControl}">
-        <Setter Property="Background" Value="{StaticResource LightGradientBrush}"/>
+        <Setter Property="Background" Value="{StaticResource LightGrayGradient}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontSize" Value="9" />
         <Setter Property="Padding" Value="0"/>

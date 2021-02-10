@@ -8,7 +8,7 @@ namespace FlexibleRealization
     /// <summary>Builds a SimpleNLG SPhraseSpec</summary>
     public abstract class ClauseBuilder : SyntaxHeadBuilder
     {
-        private protected ClauseBuilder(clauseStatus type) => ClauseStatus = type;
+        private protected ClauseBuilder(clauseStatus type) : base() => ClauseStatus = type;
 
         #region Initial assignment of children
 
@@ -55,7 +55,7 @@ namespace FlexibleRealization
 
         public SPhraseSpec Clause = new SPhraseSpec();
 
-        #region Clause features
+        #region Features
 
         public bool DiscourseFunctionSpecified
         {
@@ -143,7 +143,7 @@ namespace FlexibleRealization
             get => Clause.COMPLEMENTISER;
             set
             {
-                Clause.COMPLEMENTISER = value.Length == 0 ? null : value;
+                Clause.COMPLEMENTISER = value == null || value.Length == 0 ? null : value;
                 OnPropertyChanged();
             }
         }
@@ -194,7 +194,7 @@ namespace FlexibleRealization
             get => Clause.MODAL;
             set
             {
-                Clause.MODAL = value.Length == 0 ? null : value;
+                Clause.MODAL = value == null || value.Length == 0 ? null : value;
                 OnPropertyChanged();
             }
         }
@@ -359,7 +359,7 @@ namespace FlexibleRealization
             }
         }
 
-        #endregion Clause features
+        #endregion Features
 
     }
 }

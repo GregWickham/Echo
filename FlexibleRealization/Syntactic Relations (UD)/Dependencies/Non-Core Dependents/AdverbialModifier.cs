@@ -31,6 +31,11 @@ namespace FlexibleRealization.Dependencies
                         case VerbBuilder verbGovernor:
                             adverbDependent.Modify(verbGovernor);
                             break;
+                        case NounBuilder nounGovernor:
+                            AdjectiveBuilder interveningAdjective = InterveningAdjective; 
+                            if (interveningAdjective != null)
+                                adverbDependent.Modify(interveningAdjective);
+                            break;
                         default: break;
                     }
                     break;
@@ -43,5 +48,11 @@ namespace FlexibleRealization.Dependencies
             .Cast<AdverbBuilder>()
             .Where(advb => advb.Comparative)
             .FirstOrDefault();
+
+        private AdjectiveBuilder InterveningAdjective => Dependent.LowestCommonAncestor<PhraseBuilder>(Governor).PartsOfSpeechInSubtreeBetween(Dependent, Governor)
+            .Where(posb => posb is AdjectiveBuilder)
+            .Cast<AdjectiveBuilder>()
+            .FirstOrDefault();
+
     }
 }

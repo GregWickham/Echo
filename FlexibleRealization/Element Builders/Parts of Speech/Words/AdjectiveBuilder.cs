@@ -1,4 +1,6 @@
-﻿using SimpleNLG;
+﻿using System;
+using System.Collections.Generic;
+using SimpleNLG;
 
 namespace FlexibleRealization
 {
@@ -8,7 +10,7 @@ namespace FlexibleRealization
         public AdjectiveBuilder(ParseToken token) : base(lexicalCategory.ADJECTIVE, token) { }
 
         /// <summary>This constructor is used during LightweightCopy().</summary>
-        private AdjectiveBuilder(int index, string word) : base(lexicalCategory.ADJECTIVE, index, word) { }
+        private AdjectiveBuilder(string word) : base(lexicalCategory.ADJECTIVE, word) { }
 
         /// <summary>This constructor is used by the UI for changing the part of speech of a word in the graph</summary>
         public AdjectiveBuilder() : base(lexicalCategory.ADJECTIVE) { }
@@ -65,30 +67,39 @@ namespace FlexibleRealization
             return result;
         }
 
-        /// <summary>Return true if this AdjectiveBuilder knows how to "add" <paramref name="node"/> to the tree in which it exists</summary>
-        public override bool CanAdd(IElementTreeNode node) => node switch
+        #region Editing
+
+        private protected override HashSet<Type> TypesThatCanBeAdded { get; } = new HashSet<Type>
         {
-            AdverbBuilder => true,
-            _ => false
+            typeof(AdverbBuilder),
+            typeof(AdverbPhraseBuilder),
+            typeof(PrepositionalPhraseBuilder)
         };
 
         /// <summary>Add <paramref name="node"/> to the tree in which this exists</summary>
-        public override bool Add(IElementTreeNode node)
+        public override IParent Add(IElementTreeNode node)
         {
+            IParent modifiedParent;
             switch (node)
             {
                 case AdverbBuilder advb:
-                    if (IsPhraseHead)
-                        ParentAdjectivePhrase.AddChild(advb);
-                    else
-                        this.AsAdjectivePhrase().AddChild(advb);
-                    advb.InsertBefore(this);
-                    OnTreeStructureChanged();
-                    return true;
-                default: return false;
+                    modifiedParent = this.AsAdjectivePhrase();
+                    modifiedParent.AddChild(advb);
+                    return modifiedParent;
+                case AdverbPhraseBuilder apb:
+                    modifiedParent = this.AsAdjectivePhrase();
+                    modifiedParent.AddChild(apb);
+                    return modifiedParent;
+                case PrepositionalPhraseBuilder ppb:
+                    modifiedParent = this.AsAdjectivePhrase();
+                    modifiedParent.AddChild(ppb);
+                    return modifiedParent;
+                default: return null;
             }
         }
 
-        public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(Index, WordSource.GetWord());
+        #endregion Editing
+
+        public override IElementTreeNode CopyLightweight() => new AdjectiveBuilder(WordSource.GetWord());
     }
 }

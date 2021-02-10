@@ -39,4 +39,3 @@ namespace SimpleNLG.Tests.Clauses.Subordinate.WhWord.Adverbs
     }
 
 }
-
